@@ -6,37 +6,63 @@ from npc import NPC
 
 class Menu(State):
     WHITE = (0, 255, 0)
+    OTHER_COLOR = (255, 127, 255)
 
     def __init__(self, screen):
-        size = screen.get_size()
         self.screen = screen
-        self.done = False
-        self.clock = pygame.time.Clock()
-        self.player = Entity(size[0]/2, size[1]/2, 3, 3, 10, 10, screen)
-        self.controls = Controller(self.player)
-        self.baddies = []
+        self.scr_width = self.screen.get_rect().width
+        self.scr_height = self.screen.get_rect().height
 
-        for i in xrange(10):
-            temp_baddie = NPC(size[0]/2, size[1]/2, 3, 3, 10, 10, screen)
-            self.baddies.append(temp_baddie)
+        self.bg_color = self.WHITE
+        self.clock = pygame.time.Clock()
+
+        items = ('Quit', 'Resume')
+        font_size = 30
+        font_color = (255, 255, 255)
+
+        self.items = items
+        self.font = pygame.font.SysFont("Helvetica", font_size)
+        self.font_color = font_color
+
+        self.items = []
+        self.button_rects = []
+        self.highlighted_button = -1;
+        for index, item in enumerate(items):
+            label = self.font.render(item, 1, font_color)
+
+            width = label.get_rect().width
+            height = label.get_rect().height
+
+            posx = (self.scr_width / 2) - (width / 2)
+            # t_h: total height of text block
+            t_h = len(items) * height
+            posy = (self.scr_height / 2) - (t_h / 2) + (index * height)
+
+            self.items.append([item, label, (width, height), (posx, posy)])
+            self.button_rects.append(pygame.Rect(posx, posy, width, height))
 
     def update(self):
-        self.controls.update();
-        self.player.update()
-
-        for bad in self.baddies:
-            bad.update()
-
         if pygame.key.get_pressed()[pygame.K_r]:
             self.manager.go_back_state()
+
+        mouse_position = pygame.mouse.get_pos()
+        for i, button in enumerate(self.button_rects):
+            if button.collidepoint(mouse_position):
+                self.highlighted_button = i
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.highlighted_button > 0:
+                self.manager.go_back_state()
 
         pygame.event.pump()
 
     def draw(self):
         self.screen.fill(self.WHITE)
 
-        self.player.draw()
-        for bad in self.baddies:
-            bad.draw()
+        for i, (name, label, (width, height), (posx, posy)) in enumerate(self.items):
+            self.screen.blit(label, (posx, posy))
+            if i == self.highlighted_button:
+                r = self.button_rects[i]
+                pygame.draw.rect(self.screen, self.OTHER_COLOR, [r.x, r.y, r.width, r.height], 3)
 
         pygame.display.flip()
