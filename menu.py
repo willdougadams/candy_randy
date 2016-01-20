@@ -34,7 +34,6 @@ class Menu(State):
             height = label.get_rect().height
 
             posx = (self.scr_width / 2) - (width / 2)
-            # t_h: total height of text block
             t_h = len(items) * height
             posy = (self.scr_height / 2) - (t_h / 2) + (index * height)
 
@@ -45,6 +44,7 @@ class Menu(State):
         if pygame.key.get_pressed()[pygame.K_r]:
             self.manager.go_back_state()
 
+        self.highlighted_button = -1
         mouse_position = pygame.mouse.get_pos()
         for i, button in enumerate(self.button_rects):
             if button.collidepoint(mouse_position):

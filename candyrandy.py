@@ -30,7 +30,7 @@ mr_manager = StateManager(game)
 done = False
 
 while not done:
-    sleep(.03)
+    sleep(.01)
     mr_manager.state.update()
     mr_manager.state.draw()
 
