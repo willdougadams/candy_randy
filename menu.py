@@ -48,6 +48,9 @@ class Menu(State):
                 if event.key == pygame.K_m:
                     self.manager.go_back_state()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if self.highlighted_button == 0:
+                    print "Exiting..."
+                    exit()
                 if self.highlighted_button == 1:
                     self.manager.go_back_state()
 
