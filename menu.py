@@ -1,8 +1,5 @@
 import pygame
 from state import State
-from entity import Entity
-from controls import Controller
-from npc import NPC
 
 class Menu(State):
     WHITE = (0, 255, 0)
@@ -40,19 +37,19 @@ class Menu(State):
             self.items.append([item, label, (width, height), (posx, posy)])
             self.button_rects.append(pygame.Rect(posx, posy, width, height))
 
-    def update(self):
-        if pygame.key.get_pressed()[pygame.K_r]:
-            self.manager.go_back_state()
-
+    def update(self, user_input, mouse_position):
         self.highlighted_button = -1
-        mouse_position = pygame.mouse.get_pos()
         for i, button in enumerate(self.button_rects):
             if button.collidepoint(mouse_position):
                 self.highlighted_button = i
 
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.highlighted_button > 0:
-                self.manager.go_back_state()
+        for event in user_input:
+            if event.type == pygame.KEYDOWN: # key inputs
+                if event.key == pygame.K_m:
+                    self.manager.go_back_state()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if self.highlighted_button == 1:
+                    self.manager.go_back_state()
 
         pygame.event.pump()
 
