@@ -7,14 +7,11 @@
 '''
 
 import pygame
-from time import sleep
-from entity import Entity
-from npc import NPC
-from state_manager import StateManager
 from game import Game
+from state_manager import StateManager
 
-HEIGHT = 800
-WIDTH = 1000
+HEIGHT = 1000
+WIDTH = 1250
 size = (WIDTH, HEIGHT)
 
 pygame.init()
