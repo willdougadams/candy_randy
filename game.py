@@ -45,7 +45,7 @@ class Game(State):
             n.update()
 
         for a in self.active_skills:
-            a.update()
+            a.update(self.pcs, self.npcs)
 
     def draw(self):
         self.screen.fill(self.WHITE)

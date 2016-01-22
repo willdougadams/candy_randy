@@ -18,6 +18,9 @@ class NPC(PC):
         self.alive = True
 
     def update(self):
+        if not self.alive:
+            return
+
         seed = randint(1, 100)
         x_pos = self.center[0]
         y_pos = self.center[1]

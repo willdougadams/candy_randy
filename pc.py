@@ -30,6 +30,9 @@ class PC:
         self.alive = True
 
     def update(self):
+        if not self.alive:
+            return
+            
         x_pos = self.center[0]
         y_pos = self.center[1]
 
@@ -55,8 +58,8 @@ class PC:
 
         self.center = (x_pos, y_pos)
 
-        for i, skill in enumerate(self.skills):
-            skill.update()
+        for skill in self.skills:
+            skill.update([], [])
 
     def draw(self):
         pygame.draw.circle(self.screen, self.draw_color, self.center, self.r, 2)
@@ -68,7 +71,8 @@ class PC:
 
     If the skill can be fired, the skill object will be returned to
     Game.active_skills[], and a new Skill object will be created and put in the PC's
-    skills[]
+    skills[].  Game.active_skills[] ignores None entries, and continues
+    handling active Skills.
     '''
     def fire(self, coord):
         ret_skill = self.skills[self.active_skill].fire(coord)
@@ -76,8 +80,9 @@ class PC:
             self.skills[self.active_skill] = AOE(50, self.screen)
         return ret_skill
 
-    def take_damage(damage):
-        self.health_points -= damage
+    def take_damage(self, damage):
         if self.health_points <= 0:
             self.draw_color = self.dead_color
             self.alive = False
+        else:
+            self.health_points -= damage
