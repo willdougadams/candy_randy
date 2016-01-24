@@ -38,11 +38,19 @@ class Game(State):
                     self.pcs[self.active_pc].active_skill = 0
                 elif event.key == pygame.K_2:
                     self.pcs[self.active_pc].active_skill = 1
+                elif event.key == pygame.K_3:
+                    self.pcs[self.active_pc].active_skill = 2
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.pcs[self.active_pc].target_dest = mouse_position
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                     self.active_skills.append(self.pcs[self.active_pc].fire(mouse_position))
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
+                    skills_amt = len(self.pcs[self.active_pc].skills)
+                    self.pcs[self.active_pc].active_skill = (self.pcs[self.active_pc].active_skill + 1) % skills_amt
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
+                    skills_amt = len(self.pcs[self.active_pc].skills)
+                    self.pcs[self.active_pc].active_skill = (self.pcs[self.active_pc].active_skill - 1) % skills_amt
 
         self.active_skills = [a for a in self.active_skills if a is not None]
         self.active_skills = [a for a in self.active_skills if a.active_countdown > 0]

@@ -1,6 +1,7 @@
 import pygame
 from aoe import AOE
 from bolt import Bolt
+from aura import Aura
 
 class PC:
 
@@ -32,6 +33,7 @@ class PC:
         self.skill_types = []
         self.skill_types.append(AOE)
         self.skill_types.append(Bolt)
+        self.skill_types.append(Aura)
         for skill_type in self.skill_types:
             self.skills.append(skill_type(self, self.screen))
 
