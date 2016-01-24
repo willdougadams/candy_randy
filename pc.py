@@ -1,5 +1,6 @@
 import pygame
 from aoe import AOE
+from bolt import Bolt
 
 class PC:
 
@@ -23,8 +24,17 @@ class PC:
         self.move_speed = 3
         self.max_speed = 15
 
+        '''
+        skills[] will hold the actual skill objects, and will refill skill
+        slots appropriatly using skill_types, which is a list of the constructors
+        '''
         self.skills = []
-        self.skills.append(AOE(50, self.screen))
+        self.skill_types = []
+        self.skill_types.append(AOE)
+        self.skill_types.append(Bolt)
+        for skill_type in self.skill_types:
+            self.skills.append(skill_type(self, self.screen))
+
         self.active_skill = 0
         self.health_points = PC.MAX_HEALTH
         self.alive = True
@@ -32,7 +42,7 @@ class PC:
     def update(self):
         if not self.alive:
             return
-            
+
         x_pos = self.center[0]
         y_pos = self.center[1]
 
@@ -77,7 +87,7 @@ class PC:
     def fire(self, coord):
         ret_skill = self.skills[self.active_skill].fire(coord)
         if ret_skill is not None:
-            self.skills[self.active_skill] = AOE(50, self.screen)
+            self.skills[self.active_skill] = self.skill_types[self.active_skill](self, self.screen)
         return ret_skill
 
     def take_damage(self, damage):

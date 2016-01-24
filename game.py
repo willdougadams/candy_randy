@@ -4,19 +4,22 @@ from pc import PC
 from npc import NPC
 from menu import Menu
 from aoe import AOE
+from hud import HUD
 
 class Game(State):
     WHITE = (255, 255, 255)
 
     def __init__(self, screen):
         size = screen.get_size()
-        self.highlighted_guy = 0
+        self.active_pc = 0
         self.active_skills = []
         self.screen = screen
         self.clock = pygame.time.Clock()
 
         self.pcs = []
         self.npcs = []
+
+        self.hud = HUD(self)
 
         for p in range(3):
             self.pcs.append(PC((100, 100), 10, screen))
@@ -26,14 +29,20 @@ class Game(State):
 
     def update(self, user_input, mouse_position):
         for event in user_input:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                self.manager.go_to(Menu(self.screen))
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
-                self.highlighted_guy = (self.highlighted_guy + 1) % len(self.pcs)
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                self.pcs[self.highlighted_guy].target_dest = mouse_position
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
-                self.active_skills.append(self.pcs[self.highlighted_guy].fire(mouse_position))
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.manager.go_to(Menu(self.screen))
+                elif event.key == pygame.K_TAB:
+                    self.active_pc = (self.active_pc + 1) % len(self.pcs)
+                elif event.key == pygame.K_1:
+                    self.pcs[self.active_pc].active_skill = 0
+                elif event.key == pygame.K_2:
+                    self.pcs[self.active_pc].active_skill = 1
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.pcs[self.active_pc].target_dest = mouse_position
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+                    self.active_skills.append(self.pcs[self.active_pc].fire(mouse_position))
 
         self.active_skills = [a for a in self.active_skills if a is not None]
         self.active_skills = [a for a in self.active_skills if a.active_countdown > 0]
@@ -44,6 +53,9 @@ class Game(State):
         for n in self.npcs:
             n.update()
 
+        '''
+        Pass updated pcs and npcs to each skill to check for collisions.
+        '''
         for a in self.active_skills:
             a.update(self.pcs, self.npcs)
 
@@ -58,5 +70,7 @@ class Game(State):
 
         for p in self.pcs:
             p.draw()
+
+        self.hud.draw()
 
         pygame.display.flip()
