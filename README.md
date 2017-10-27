@@ -2,6 +2,9 @@
 
 Python 2.7
 
-Run with "python candyrandy.py"
+Run with "python src/candyrandy.py"
 
-Change attack with scroll wheel, move with WASD.
+click: move
+right click: attack
+tab: change pc
+scroll: change attack

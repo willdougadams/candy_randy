@@ -3,7 +3,7 @@ from aoe import AOE
 from bolt import Bolt
 from aura import Aura
 
-class PC:
+class PC(pygame.sprite.Sprite):
 
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -14,6 +14,9 @@ class PC:
     MAX_HEALTH = 100
 
     def __init__(self, coord, r, screen):
+        pygame.sprite.Sprite.__init__(self)
+        self.rect = None
+
         self.target_dest = (0, 0)
         self.screen = screen
         self.center = coord
@@ -41,7 +44,13 @@ class PC:
         self.health_points = PC.MAX_HEALTH
         self.alive = True
 
-    def update(self):
+        self.sprite_sheet = pygame.image.load("res/DawnLike/Slime0.png").convert()
+        self.image = pygame.Surface([16, 16]).convert()
+        self.image.blit(self.sprite_sheet, (0, 0), (0, 0, 16, 16))
+        self.image.set_colorkey(PC.BLACK)
+
+    def pc_update(self):
+        pygame.sprite.Sprite.update(self)
         if not self.alive:
             return
 
@@ -69,11 +78,16 @@ class PC:
             y_pos += y_move_dist
 
         self.center = (x_pos, y_pos)
+        self.image.blit(self.sprite_sheet, (0, 0), (0, 0, 16, 16))
+        self.image.set_colorkey(PC.BLACK)
+        self.rect = self.image.get_rect()
 
         for skill in self.skills:
             skill.update([], [])
 
     def draw(self):
+        self.image.blit(self.sprite_sheet, self.center, (0, 0, 16, 16))
+
         pygame.draw.circle(self.screen, self.draw_color, self.center, self.r, 2)
 
     '''

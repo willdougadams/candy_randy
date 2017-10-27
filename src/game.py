@@ -18,14 +18,17 @@ class Game(State):
 
         self.pcs = []
         self.npcs = []
+        self.sprites = pygame.sprite.Group()
 
         self.hud = HUD(self)
 
         for p in range(3):
             self.pcs.append(PC((100, 100), 10, screen))
+            self.sprites.add(self.pcs[-1])
 
         for n in range(5):
             self.npcs.append(NPC((100 + n*100, 100 + n*20), 10, screen))
+            self.sprites.add(self.pcs[-1])
 
     def update(self, user_input, mouse_position):
         for event in user_input:
@@ -56,10 +59,12 @@ class Game(State):
         self.active_skills = [a for a in self.active_skills if a.active_countdown > 0]
 
         for p in self.pcs:
-            p.update()
+            p.pc_update()
 
         for n in self.npcs:
             n.update()
+
+        self.sprites.update()
 
         '''
         Pass updated pcs and npcs to each skill to check for collisions.
@@ -78,6 +83,8 @@ class Game(State):
 
         for p in self.pcs:
             p.draw()
+
+        self.sprites.draw(self.screen)
 
         self.hud.draw()
 

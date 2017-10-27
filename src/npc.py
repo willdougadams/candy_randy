@@ -3,6 +3,7 @@ from random import randint
 
 class NPC(PC):
     def __init__(self, coord, r, screen):
+        PC.__init__(self, coord, r, screen)
         self.target_dest = (0, 0)
         self.screen = screen
         self.center = coord
