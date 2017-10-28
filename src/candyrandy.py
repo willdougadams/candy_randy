@@ -24,12 +24,12 @@ mr_manager = StateManager(game) # We just say manager
 done = False
 
 while not done:
-    clock.tick(61)
+  clock.tick(61)
 
-    user_input = pygame.event.get()
-    mouse_position = pygame.mouse.get_pos()
+  user_input = pygame.event.get()
+  mouse_position = pygame.mouse.get_pos()
 
-    mr_manager.state.update(user_input, mouse_position)
-    mr_manager.state.draw()
+  mr_manager.state.update(user_input, mouse_position)
+  mr_manager.state.draw()
 
 pygame.quit()
