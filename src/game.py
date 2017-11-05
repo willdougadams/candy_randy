@@ -24,19 +24,16 @@ class Game(State):
 
     self.pcs = []
     self.npcs = []
-    self.sprites = pygame.sprite.Group()
 
     self.hud = HUD(self)
 
     for p in range(3):
-      self.pcs.append(PC((100, 100), 10, screen))
-      self.sprites.add(self.pcs[-1])
+      self.pcs.append(PC((100, 100), 10, screen, "res/pcs/Knight.pc"))
 
     for n in range(5):
-      self.npcs.append(NPC((100 + n*100, 100 + n*20), 10, screen))
-      self.sprites.add(self.pcs[-1])
+      self.npcs.append(NPC((100 + n*100, 100 + n*20), 10, screen, "res/npcs/beholder.npc"))
 
-  def update(self, user_input, mouse_position):
+  def update(self, user_input, mouse_position, elapsed):
     for event in user_input:
       if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_ESCAPE:
@@ -65,20 +62,19 @@ class Game(State):
     self.active_skills = [a for a in self.active_skills if a.active_countdown > 0]
 
     for p in self.pcs:
-      p.pc_update()
+      p.pc_update(elapsed)
 
     for n in self.npcs:
-      n.update()
+      n.npc_update(elapsed)
 
     '''
     Pass updated pcs and npcs to each skill to check for collisions.
     '''
     for a in self.active_skills:
-      a.update(self.pcs, self.npcs)
+      a.update(self.pcs, self.npcs, elapsed)
 
   def draw(self):
     self.screen.fill(self.WHITE)
-    self.sprites.clear(self.screen, self.background)
 
     for a in self.active_skills:
       a.draw()

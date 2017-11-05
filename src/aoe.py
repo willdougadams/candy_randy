@@ -22,7 +22,7 @@ class AOE():
     self.active_countdown = 120
     self.damage_per_tick = 1
 
-  def update(self, pcs, npcs):
+  def update(self, pcs, npcs, elasped):
     if self.cooldown_countdown > 0:
       self.cooldown_countdown -= 1
 

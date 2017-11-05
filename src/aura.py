@@ -23,7 +23,7 @@ class Aura():
     self.active_countdown = 120
     self.damage_per_tick = 2
 
-  def update(self, pcs, npcs):
+  def update(self, pcs, npcs, elapsed):
     if self.cooldown_countdown > 0:
       self.cooldown_countdown -= 1
 

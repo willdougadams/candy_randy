@@ -23,16 +23,18 @@ class Bolt():
     self.damage_per_tick = 10
     self.active_countdown = float('inf')
 
-  def update(self, pcs, npcs):
+  def update(self, pcs, npcs, elapsed):
     if self.cooldown_countdown > 0:
-      self.cooldown_countdown -= 1
+      self.cooldown_countdown -= elapsed
       return
 
     if not self.fired:
       return
 
     current_x, current_y = self.center
-    new_coord = (current_x + self.x_speed, current_y + self.y_speed)
+    new_x = (current_x + self.x_speed) * elapsed
+    new_y = (current_y + self.y_speed) * elapsed
+    new_coord = (new_x, new_y)
     self.center = new_coord
 
     for pc in pcs:

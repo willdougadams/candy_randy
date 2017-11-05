@@ -37,7 +37,7 @@ class HUD:
 
         pygame.draw.circle(self.game.screen,
                         HUD.HIGHLIGHT_SKILL_COLOR,
-                        pc.center,
+                        (int(pc.center[0]), int(pc.center[1])),
                         HUD.ACTIVE_SKILL_RADIUS,
                         3)
 

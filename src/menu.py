@@ -37,7 +37,7 @@ class Menu(State):
       self.items.append([item, label, (width, height), (posx, posy)])
       self.button_rects.append(pygame.Rect(posx, posy, width, height))
 
-  def update(self, user_input, mouse_position):
+  def update(self, user_input, mouse_position, elapsed):
     self.highlighted_button = -1
     for i, button in enumerate(self.button_rects):
       if button.collidepoint(mouse_position):
