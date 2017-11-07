@@ -1,0 +1,7 @@
+move_speed: 100
+
+health: 89
+spritesheets: Slime0.png Slime1.png
+sprite_width: 16
+sprite_height: 16
+spritesheet_position: 1 1

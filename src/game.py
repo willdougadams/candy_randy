@@ -5,18 +5,14 @@ from npc import NPC
 from menu import Menu
 from aoe import AOE
 from hud import HUD
+from level import Level
 
 class Game(State):
   WHITE = (255, 255, 255)
 
   def __init__(self, screen):
     self.screen = screen
-
-    size = self.screen.get_size()
-    self.background = pygame.Surface(self.screen.get_size())
-    self.background = self.background.convert()
-
-    screen.blit(self.background, (0,0))
+    self.buffer_frame = pygame.Surface(self.screen.get_size())
 
     self.active_pc = 0
     self.active_skills = []
@@ -26,12 +22,13 @@ class Game(State):
     self.npcs = []
 
     self.hud = HUD(self)
+    self.level = Level(self.buffer_frame)
 
     for p in range(3):
-      self.pcs.append(PC((100, 100), 10, screen, "res/pcs/Knight.pc"))
+      self.pcs.append(PC((100, 100), 10, self.buffer_frame, "res/pcs/Knight.pc"))
 
     for n in range(5):
-      self.npcs.append(NPC((100 + n*100, 100 + n*20), 10, screen, "res/npcs/beholder.npc"))
+      self.npcs.append(NPC((100 + n*100, 100 + n*20), 10, self.buffer_frame, "res/npcs/beholder.npc"))
 
   def update(self, user_input, mouse_position, elapsed):
     for event in user_input:
@@ -58,6 +55,9 @@ class Game(State):
           skills_amt = len(self.pcs[self.active_pc].skills)
           self.pcs[self.active_pc].active_skill = (self.pcs[self.active_pc].active_skill - 1) % skills_amt
 
+    new_level_offset = (0, 0)
+    self.level.update(new_level_offset)
+
     self.active_skills = [a for a in self.active_skills if a is not None]
     self.active_skills = [a for a in self.active_skills if a.active_countdown > 0]
 
@@ -67,14 +67,13 @@ class Game(State):
     for n in self.npcs:
       n.npc_update(elapsed)
 
-    '''
-    Pass updated pcs and npcs to each skill to check for collisions.
-    '''
     for a in self.active_skills:
       a.update(self.pcs, self.npcs, elapsed)
 
   def draw(self):
     self.screen.fill(self.WHITE)
+
+    self.level.draw()
 
     for a in self.active_skills:
       a.draw()
@@ -84,6 +83,9 @@ class Game(State):
 
     for p in self.pcs:
       p.draw()
+
+    w, h = self.screen.get_size()
+    self.screen.blit(self.buffer_frame, (self.level.offset[0], self.level.offset[1]), (0, 0, w, h))
 
     self.hud.draw()
 

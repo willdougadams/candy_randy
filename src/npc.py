@@ -6,8 +6,8 @@ class NPC(PC):
   def __init__(self, coord, r, screen, npc_filename):
     PC.__init__(self, coord, r, screen, npc_filename)
 
-    self.spritesheet_x = int(self.attrib_dict["spritesheet_position"][0])
-    self.spritesheet_y = int(self.attrib_dict["spritesheet_position"][1])
+    self.spritesheet_x = self.width * int(self.attrib_dict["spritesheet_position"][0])
+    self.spritesheet_y = self.height * int(self.attrib_dict["spritesheet_position"][1])
     self.step = 0.0
     self.current_sprite_index = 0
 

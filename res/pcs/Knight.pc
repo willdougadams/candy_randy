@@ -1,0 +1,6 @@
+move_speed: 120
+
+health: 89
+spritesheets: Paladin.png Paladin.png
+sprite_width: 16
+sprite_height: 16

@@ -14,11 +14,11 @@ class PC():
   MAX_HEALTH = 100
   STEP_LENGTH = 10
 
-  def __init__(self, coord, r, screen, filename):
+  def __init__(self, coord, r, buffer_frame, filename):
     self.attrib_dict = read_char_file(filename)
     w, h = pygame.display.get_surface().get_size()
     self.target_dest = (w/2, h/2)
-    self.screen = screen
+    self.screen = buffer_frame
     self.orientation = 0
     self.step = 0
     self.center = coord
@@ -56,6 +56,7 @@ class PC():
                       (0, 0, self.width, self.height)
                     )
     self.image.set_colorkey(PC.BLACK)
+    self.step_time = 0
 
   def pc_update(self, elapsed):
     if not self.alive:
@@ -88,8 +89,12 @@ class PC():
 
     self.center = (x_pos, y_pos)
 
+    self.step_time += elapsed
+    if self.step_time > 0.5:
+      self.step = (self.step + 1) % 4
+      self.step_time = 0.0
 
-    self.image.blit(self.curr_sprite_sheet, (0, 0), (self.orientation * 16, self.step * 16, 16, 16))
+    self.image.blit(self.curr_sprite_sheet, (0, 0), (self.step * 16, self.orientation * 16, 16, 16))
     self.image.set_colorkey(PC.BLACK)
     self.rect = self.image.get_rect()
 
