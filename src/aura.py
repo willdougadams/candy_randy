@@ -45,7 +45,8 @@ class Aura():
           npc.take_damage(self.damage_per_tick)
 
   def draw(self):
-    pygame.draw.circle(self.screen, self.draw_color, self.center, self.r)
+    center = (int(self.center[0]), int(self.center[1]))
+    pygame.draw.circle(self.screen, self.draw_color, center, self.r)
 
   '''
   Aura.fire() will return itself to indicate that it is available for use,

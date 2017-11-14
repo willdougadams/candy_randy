@@ -25,15 +25,15 @@ class Bolt():
 
   def update(self, pcs, npcs, elapsed):
     if self.cooldown_countdown > 0:
-      self.cooldown_countdown -= elapsed
+      self.cooldown_countdown -= 1
       return
 
     if not self.fired:
       return
 
     current_x, current_y = self.center
-    new_x = (current_x + self.x_speed) * elapsed
-    new_y = (current_y + self.y_speed) * elapsed
+    new_x = current_x + (self.x_speed * elapsed)
+    new_y = current_y + (self.y_speed * elapsed)
     new_coord = (new_x, new_y)
     self.center = new_coord
 
@@ -46,9 +46,8 @@ class Bolt():
         npc.take_damage(self.damage_per_tick)
 
   def draw(self):
-    self.center = (int(self.center[0]), int(self.center[1]))
-
-    pygame.draw.circle(self.screen, self.draw_color, self.center, self.r)
+    center = (int(self.center[0]), int(self.center[1]))
+    pygame.draw.circle(self.screen, self.draw_color, center, self.r)
 
   '''
   AOE.fire() will return itself to indicate that it is available for use,

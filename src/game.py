@@ -24,7 +24,7 @@ class Game(State):
     self.hud = HUD(self)
     self.level = Level(self.buffer_frame)
 
-    for p in range(3):
+    for p in range(1):
       self.pcs.append(PC((100, 100), 10, self.buffer_frame, "res/pcs/Knight.pc"))
 
     for n in range(5):
