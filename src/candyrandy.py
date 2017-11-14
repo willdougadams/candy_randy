@@ -11,11 +11,16 @@ import time
 from game import Game
 from state_manager import StateManager
 
+pygame.init()
+
 HEIGHT = 1000
 WIDTH = 1250
 size = (WIDTH, HEIGHT)
+HEIGHT, WIDTH = pygame.display.Info().current_h, pygame.display.Info().current_w
+HEIGHT = int(HEIGHT * 0.95)
+WIDTH = int(WIDTH * 0.95)
+size = (WIDTH, HEIGHT)
 
-pygame.init()
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Candy Randy")
 clock = pygame.time.Clock()

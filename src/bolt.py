@@ -17,7 +17,7 @@ class Bolt():
     self.r = r
     self.x_speed = 0
     self.y_speed = 0
-    self.move_speed = 8
+    self.move_speed = 100
     self.draw_color = Bolt.GREEN
     self.cooldown_countdown = 10
     self.damage_per_tick = 10
