@@ -13,12 +13,9 @@ from state_manager import StateManager
 
 pygame.init()
 
-HEIGHT = 1000
-WIDTH = 1250
-size = (WIDTH, HEIGHT)
-HEIGHT, WIDTH = pygame.display.Info().current_h, pygame.display.Info().current_w
-HEIGHT = int(HEIGHT * 0.95)
-WIDTH = int(WIDTH * 0.95)
+WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+WIDTH = 1280 # int(HEIGHT * 0.80)
+HEIGHT = 800 # int(WIDTH * 0.80)
 size = (WIDTH, HEIGHT)
 
 screen = pygame.display.set_mode(size)
