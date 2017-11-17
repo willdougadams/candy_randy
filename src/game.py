@@ -12,6 +12,8 @@ class Game(State):
 
   def __init__(self, screen):
     self.screen = screen
+    self.screen_w = self.screen.get_size()[0]
+    self.screen_h = self.screen.get_size()[1]
     self.buffer_frame = pygame.Surface(self.screen.get_size())
 
     self.active_pc = 0
@@ -61,7 +63,10 @@ class Game(State):
           skills_amt = len(self.pcs[self.active_pc].skills)
           self.pcs[self.active_pc].active_skill = (self.pcs[self.active_pc].active_skill - 1) % skills_amt
 
-    new_level_offset = self.window_offset
+    new_x = self.pcs[self.active_pc].center[0] - (self.screen_w/4)
+    new_y = self.pcs[self.active_pc].center[1] - (self.screen_h/4)
+    new_level_offset = (new_x, new_y)
+    self.window_offset = new_level_offset
     self.level.update(new_level_offset)
 
     self.active_skills = [a for a in self.active_skills if a is not None]
@@ -78,6 +83,8 @@ class Game(State):
 
   def draw(self):
     self.screen.fill(self.WHITE)
+    self.buffer_frame.fill(self.WHITE)
+
 
     self.level.draw()
 

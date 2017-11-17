@@ -66,4 +66,4 @@ class Level():
 
   def draw(self):
     w, h = self.screen.get_size()
-    self.screen.blit(self.tilemap, (0, 0), (self.offset[0], self.offset[1], w, h))
+    self.screen.blit(self.tilemap, (0, 0), (0, 0, w, h))
