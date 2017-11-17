@@ -26,7 +26,7 @@ class Game(State):
     self.hud = HUD(self)
     self.level = Level(self.buffer_frame)
 
-    for p in range(1):
+    for p in range(3):
       self.pcs.append(PC((100, 100), 10, self.buffer_frame, "res/pcs/Knight.pc"))
 
     for n in range(5):
@@ -63,11 +63,9 @@ class Game(State):
           skills_amt = len(self.pcs[self.active_pc].skills)
           self.pcs[self.active_pc].active_skill = (self.pcs[self.active_pc].active_skill - 1) % skills_amt
 
-    new_x = self.pcs[self.active_pc].center[0] - (self.screen_w/4)
-    new_y = self.pcs[self.active_pc].center[1] - (self.screen_h/4)
-    new_level_offset = (new_x, new_y)
-    self.window_offset = new_level_offset
-    self.level.update(new_level_offset)
+
+    self.window_offset = get_new_offset(self)
+    self.level.update(self.window_offset)
 
     self.active_skills = [a for a in self.active_skills if a is not None]
     self.active_skills = [a for a in self.active_skills if a.active_countdown > 0]
@@ -107,3 +105,8 @@ class Game(State):
     self.hud.draw()
 
     pygame.display.flip()
+
+def get_new_offset(game):
+    new_x = game.pcs[game.active_pc].center[0] - (game.screen_w/4)
+    new_y = game.pcs[game.active_pc].center[1] - (game.screen_h/4)
+    return (new_x, new_y)
