@@ -53,8 +53,11 @@ class Level():
 
     self.grid = generate_level.generate(self.map_size)
 
+    self.tilemap.fill((0, 0, 0))
     for y, row in enumerate(self.grid):
       for x, tile in enumerate(row):
+        if not tile in floor_tile_symbols:
+          continue
         map_location = (x * self.tile_size, y * self.tile_size)
         tile_x = floor_tile_offsets[floor_tile_symbols[tile]][0]
         tile_y = floor_tile_offsets[floor_tile_symbols[tile]][1] + (self.tile_size * self.current_level * 3)

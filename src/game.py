@@ -28,7 +28,7 @@ class Game(State):
     self.level_w = self.level.get_w()
     self.level_h = self.level.get_h()
 
-    for p in range(3):
+    for p in range(1):
       self.pcs.append(PC((100, 100), 10, self.buffer_frame, "res/pcs/Knight.pc"))
 
     for n in range(5):
@@ -117,6 +117,7 @@ def get_new_offset(game):
     max_x = game.level_w/game.window_scale_factor - half_w
     max_y = game.level_h/game.window_scale_factor - half_h
 
+    '''
     if new_x < 0:
         new_x = 0
     elif new_x > max_x:
@@ -126,5 +127,6 @@ def get_new_offset(game):
         new_y = 0
     elif new_y > max_y:
         new_y = max_y
+    '''
 
     return (new_x, new_y)

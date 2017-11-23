@@ -21,7 +21,7 @@ class Room():
 
 
 def generate(size):
-  grid = [list("." * size) for i in range(size)]
+  grid = [list("x" * size) for i in range(size)]
 
   rooms = [Room(random.randint(0, size-1), random.randint(0, size-1)) for _ in range(5)]
 
@@ -38,13 +38,24 @@ def generate(size):
     bottom = min(size-1, room.rect.bottom)
     left = max(0, room.rect.left)
     right = min(size-1, room.rect.right)
-    for tile in range(left, right):
+
+    grid[top][left] = "}"
+    grid[bottom][left] = "{"
+    grid[bottom][right] = "["
+    grid[top][left] = "]"
+
+    for tile in range(left+1, right-1):
       grid[top][tile] = "-"
       grid[bottom][tile] = "_"
 
-    # draw left and right_hallway
-    for tile in range(top, bottom):
-      grid[tile][left] = ";"
-      grid[tile][right] = ":"
+    for row in range(top+1, bottom-1):
+      grid[row][left] = ";"
+      for tile in range(left+1, right-1):
+        grid[row][tile] = "."
+      grid[row][right] = ":"
+
+    with open("bunk/map.txt", "w+") as fout:
+      for row in grid:
+        fout.write(", ".join(row))
 
   return grid
