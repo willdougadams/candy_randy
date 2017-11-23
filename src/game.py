@@ -25,14 +25,14 @@ class Game(State):
 
     self.hud = HUD(self)
     self.level = Level(self.buffer_frame)
-    self.level_w = self.level.get_h()
-    self.level_h = self.level.get_w()
+    self.level_w = self.level.get_w()
+    self.level_h = self.level.get_h()
 
     for p in range(3):
       self.pcs.append(PC((100, 100), 10, self.buffer_frame, "res/pcs/Knight.pc"))
 
     for n in range(5):
-      self.npcs.append(NPC((100 + n*100, 100 + n*20), 10, self.buffer_frame, "res/npcs/beholder.npc"))
+      self.npcs.append(NPC((100 + n*100, 100 + n*100), 10, self.buffer_frame, "res/npcs/beholder.npc"))
 
     self.window_scale_factor = 2
     self.window_offset = (0, 0)
