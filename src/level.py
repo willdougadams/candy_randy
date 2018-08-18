@@ -9,31 +9,32 @@ class Level():
     self.screen = screen
     self.tile_size = 16
     self.map_size = 100
-    self.current_level = 1
+    self.current_level = 4
 
     self.floor_tilesheet = pygame.image.load("res/DawnLike/Floor.png").convert()
     self.wall_tilesheet = pygame.image.load("res/DawnLike/Wall.png").convert()
 
     floor_tile_offsets = {}
-    floor_tile_offsets["top_left"]     = (0, 0)
-    floor_tile_offsets["top_center"]    = (1, 0)
-    floor_tile_offsets["top_right"]      = (2, 0)
 
-    floor_tile_offsets["left_wall"]     = (0, 1)
-    floor_tile_offsets["center"]        = (1, 1)
-    floor_tile_offsets["right_wall"]    = (2, 1)
+    floor_tile_offsets["top_left"]       = (0, 0)
+    floor_tile_offsets["top_center"]     = (10, 0)
+    floor_tile_offsets["top_right"]      = (20, 0)
 
-    floor_tile_offsets["bottom_left"]  = (0, 2)
-    floor_tile_offsets["bottom_center"] = (1, 2)
-    floor_tile_offsets["bottom_right"]   = (2, 2)
+    floor_tile_offsets["left_wall"]     = (0, 10)
+    floor_tile_offsets["center"]        = (10, 10)
+    floor_tile_offsets["right_wall"]    = (20, 10)
 
-    floor_tile_offsets["top_hallway"]    = (3, 0)
-    floor_tile_offsets["vert_hallway"]   = (3, 1)
-    floor_tile_offsets["bottom_hallway"] = (3, 2)
+    floor_tile_offsets["bottom_left"]    = (0, 20)
+    floor_tile_offsets["bottom_center"]  = (10, 20)
+    floor_tile_offsets["bottom_right"]   = (20, 20)
 
-    floor_tile_offsets["left_hallway"]  = (4, 1)
-    floor_tile_offsets["hori_hallway"]  = (5, 1)
-    floor_tile_offsets["right_hallway"] = (6, 1)
+    floor_tile_offsets["top_hallway"]    = (30, 0)
+    floor_tile_offsets["vert_hallway"]   = (30, 10)
+    floor_tile_offsets["bottom_hallway"] = (30, 20)
+
+    floor_tile_offsets["left_hallway"]  = (40, 10)
+    floor_tile_offsets["hori_hallway"]  = (50, 10)
+    floor_tile_offsets["right_hallway"] = (60, 10)
 
     floor_tile_symbols = {}
     floor_tile_symbols["{"] = "top_right"
