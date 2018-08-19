@@ -1,12 +1,13 @@
 import random
 import pygame
+import copy
 
 ROOM_BUFFER = 3
 
-def draw_room(grid, room, r, c):
-  print "Printing room to grid..."
+def print_room_to_grid(grid, room, r, c):
   for row in range(room.height+ROOM_BUFFER):
     for col in range(room.width+ROOM_BUFFER):
+      # 'B' does not corresond to a tile, provides buffer
       grid[r+row][c+col] = 'B'
 
   for row in range(room.height-1):
@@ -51,17 +52,122 @@ def spot_valid(grid, room, r, c):
   return valid
 
 def place_room(grid, room):
-  print "Placing room {0}".format(room)
   for r in range(len(grid)):
     for c in range(len(grid)):
       if spot_valid(grid, room, r, c):
-        grid = draw_room(grid, room, r, c)
+        grid = print_room_to_grid(grid, room, r, c)
         return grid
 
   return grid
 
+def print_hallway_to_map(grid, spot, direction):
+  grid[spot[0]][spot[1]] = '.'
+
+  step = (spot[0]+direction[0], spot[1]+direction[1])
+  if (step[0]<len(grid) and step[0]>=0) and (step[1]<len(grid[0]) and step[1]>=0) and (not grid[step[0]][step[1]] == '.'):
+    grid = print_hallway_to_map(grid, step, direction)
+
+  return grid
+
+def search_for_room(grid, r, c):
+  visited = {}
+  stack = [(r, c)]
+  while stack:
+    spot = stack.pop(0)
+    if grid[spot[0]][spot[1]] == '.':
+      return spot
+
+    visited[spot] = True
+    around = [
+      (spot[0]-1, spot[1]-1),
+      (spot[0]-1, spot[1]),
+      (spot[0]-1, spot[1]+1),
+      (spot[0], spot[1]-1),
+      (spot[0], spot[1]+1),
+      (spot[0]+1, spot[1]-1),
+      (spot[0]+1, spot[1]),
+      (spot[0]+1, spot[1]+1),
+    ]
+
+    for direction in around:
+      if direction in visited:
+        continue
+      try:
+        _ = grid[direction[0]][direction[1]]
+        visited[direction] = True
+        stack.append(direction)
+      except IndexError:
+        pass
+
+  return None
+
+def scout(grid, spot, direction):
+  good_to_go = False
+  try:
+    # first detect edge of room
+    while grid[spot[0]][spot[1]] == '.':
+      spot = (spot[0]+direction[0], spot[1]+direction[1])
+
+    # then keep going, if new room detected return true, else false
+    while not grid[spot[0]][spot[1]] == '.':
+      spot = (spot[0]+direction[0], spot[1]+direction[1])
+
+    spot = (spot[0]+direction[0], spot[1]+direction[1])
+    good_to_go = (grid[spot[0]][spot[1]] == '.')
+  except IndexError:
+    return False
+
+  return good_to_go
+
+def add_hallway(grid):
+  unconnected = [[' ']*len(grid[0]) for _ in range(len(grid))]
+  for r in range(len(grid)):
+      for c in range(len(grid[0])):
+        if grid[r][c] == '.':
+          unconnected = erase_space(copy.deepcopy(grid), r, c)
+
+  room_to_add = search_for_room(unconnected, random.randint(0, len(grid)-1), random.randint(0, len(grid)-1))
+
+  if room_to_add is None:
+    print 'FATAL ERROR: cannot connect all rooms in level'
+    exit()
+
+  for direction in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+    if scout(grid, room_to_add, direction):
+      grid = print_hallway_to_map(grid, room_to_add, direction)
+
+  return grid
+
+def erase_space(grid, r, c):
+    grid[r][c] = " "
+
+    if r > 0 and grid[r-1][c] == ".":
+        grid = erase_space(grid, r-1, c)
+    if r < len(grid) - 1 and grid[r+1][c] == ".":
+        grid = erase_space(grid, r+1, c)
+    if c > 0 and grid[r][c-1] == ".":
+        grid = erase_space(grid, r, c-1)
+    if c < len(grid[0]) - 1 and grid[r][c+1] == ".":
+        grid = erase_space(grid, r, c+1)
+
+    return grid
+
+def all_connected(grid):
+  for r in range(len(grid)):
+    for c in range(len(grid[0])):
+      if grid[r][c] == '.':
+        erased = erase_space(copy.deepcopy(grid), r, c)
+        return not any(t == '.' for row in erased for t in row)
+
+def connect_rooms(grid):
+  while not all_connected(grid):
+    print 'Rooms, not connected, adding hallway...'
+    grid = add_hallway(grid)
+    for row in grid:
+      print ''.join(row)
+  return grid
+
 def generate(size):
-  print "Generating grid..."
   grid = [[" "]*size for _ in range(size)]
 
   rooms_amt = 10
@@ -71,5 +177,7 @@ def generate(size):
 
   for room in rooms:
     grid = place_room(grid, room)
+
+  grid = connect_rooms(grid)
 
   return grid
