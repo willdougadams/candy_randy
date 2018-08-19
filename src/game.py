@@ -14,7 +14,9 @@ class Game(State):
     self.screen = screen
     self.screen_w = self.screen.get_size()[0]
     self.screen_h = self.screen.get_size()[1]
-    self.buffer_frame = pygame.Surface(self.screen.get_size())
+    self.buffer_size = 16383 # <-- max size
+    self.buffer_size = 16383 / 5
+    self.buffer_frame = pygame.Surface((self.buffer_size, self.buffer_size))
 
     self.active_pc = 0
     self.active_skills = []

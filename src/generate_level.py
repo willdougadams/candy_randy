@@ -1,68 +1,75 @@
 import random
 import pygame
 
-class Room():
-  def __init__(self, x, y):
-    self.rect = pygame.Rect((x, y), (1, 1))
+ROOM_BUFFER = 3
 
-    self.can_expand = True
+def draw_room(grid, room, r, c):
+  print "Printing room to grid..."
+  for row in range(room.height+ROOM_BUFFER):
+    for col in range(room.width+ROOM_BUFFER):
+      grid[r+row][c+col] = 'B'
 
-  def __str__(self):
-    return "rect: {0}".format(self.rect)
+  for row in range(room.height-1):
+    for col in range(room.width-1):
+      grid[r+row][c+col] = '.'
 
-  def expand(self, other_rooms):
-    expanded = self.rect.inflate(2, 2)
+  for i in range(1, room.width):
+    grid[r][c+i] = '='
+    grid[r+1][c+i] = '-'
+    grid[r+room.height-1][c+i] = '='
+    grid[r+room.height-2][c+i] = '_'
 
-    if any(room.rect.colliderect(expanded) for room in other_rooms):
-      self.can_expand = False
-      return
+  for i in range(1, room.height-1):
+    grid[r+i][c] = '|'
+    grid[r+i][c+1] = ';'
+    grid[r+i][c+room.width-1] = '|'
+    grid[r+i][c+room.width-2] = ':'
 
-    self.rect = expanded
-
-def put_hori_wall(spot, grid):
-  for i in range(len(grid[0])):
-    grid[spot-1][i] = '-'
-    grid[spot][i] = ' '
-    grid[spot+1][i] = '_'
+  grid[r][c] = '('
+  grid[r+1][c+1] = '{'
+  grid[r][c+room.width-1] = ')'
+  grid[r+1][c+room.width-2] = '}'
+  
+  grid[r+room.height-1][c] = 'l'
+  grid[r+room.height-2][c+1] = '['
+  grid[r+room.height-1][c+room.width-1] = 'r'
+  grid[r+room.height-2][c+room.width-2] = ']'
 
   return grid
 
-def put_vert_wall(spot, grid):
-  for i in range(len(grid)):
-    grid[i][spot-1] = ':'
-    grid[i][spot] = ' '
-    grid[i][spot+1] = ';'
+def spot_valid(grid, room, r, c):
+  valid = True
+  if r+room.height >= len(grid) - ROOM_BUFFER or c+room.width>=len(grid[0]) - ROOM_BUFFER:
+    return False
+
+  for i in range(r, r+room.height+ROOM_BUFFER):
+    for j in range(c, c+room.width+ROOM_BUFFER):
+      if not grid[i][j] == ' ':
+        valid = False
+        break
+
+  return valid
+
+def place_room(grid, room):
+  print "Placing room {0}".format(room)
+  for r in range(len(grid)):
+    for c in range(len(grid)):
+      if spot_valid(grid, room, r, c):
+        grid = draw_room(grid, room, r, c)
+        return grid
 
   return grid
 
 def generate(size):
-  print 'Generating Level...'
-  grid = [['.'] * size for _ in range(size)]
+  print "Generating grid..."
+  grid = [[" "]*size for _ in range(size)]
 
-  for i in range(size):
-    grid[0][i] = '-'
-    grid[size-1][i] = '_'
-    grid[i][0] = ';'
-    grid[i][size-1] = ':'
+  rooms_amt = 10
+  room_min_size = 5
+  room_max_size = 25
+  rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(rooms_amt)]
 
-    horizontal_wall_count = 5
-    vertical_wall_count = 10
-
-  for wall in range(horizontal_wall_count):
-    location = wall * (size/horizontal_wall_count)
-    grid = put_hori_wall(location, grid)
-
-  for wall in range(vertical_wall_count):
-    location = wall * (size/vertical_wall_count)
-    grid = put_vert_wall(location, grid)
-
-  with open("bunk/map.txt", "w+") as fout:
-      for row in grid:
-        fout.write(''.join(row)+'\n')
-
-  return grid
-
-def generate2(size):
-  grid = [['.'] * size for _ in range(size)]
+  for room in rooms:
+    grid = place_room(grid, room)
 
   return grid
