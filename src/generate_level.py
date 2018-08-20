@@ -62,6 +62,8 @@ def place_room(grid, room):
 
 def print_hallway_to_map(grid, spot, direction):
   grid[spot[0]][spot[1]] = '.'
+  grid[spot[0]-direction[1]][spot[1]-direction[0]] = '.'
+  grid[spot[0]+direction[1]][spot[1]+direction[0]] = '.'
 
   step = (spot[0]+direction[0], spot[1]+direction[1])
   if (step[0]<len(grid) and step[0]>=0) and (step[1]<len(grid[0]) and step[1]>=0) and (not grid[step[0]][step[1]] == '.'):
@@ -167,7 +169,7 @@ def connect_rooms(grid):
 def generate(size):
   grid = [[" "]*size for _ in range(size)]
 
-  rooms_amt = 2
+  rooms_amt = 5
   room_min_size = 5
   room_max_size = 25
   rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(rooms_amt)]

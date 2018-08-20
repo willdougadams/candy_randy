@@ -114,7 +114,8 @@ class PC():
     x = int(x)
     y = int(y)
 
-    self.screen.blit(self.image, (x - self.width/2, y - self.height/2), (0, 0, self.width, self.height))
+    if self.alive:
+      self.screen.blit(self.image, (x - self.width/2, y - self.height/2), (0, 0, self.width, self.height))
 
   '''
   PC.fire() calls the Skill.fire() method of the currently selected skill,
@@ -135,6 +136,10 @@ class PC():
   def take_damage(self, damage):
     if self.health_points <= 0:
       self.draw_color = self.dead_color
+      self.image.blit(self.curr_sprite_sheet,
+                    (0, 0),
+                    (self.spritesheet_x, self.spritesheet_y, self.width, self.height)
+                  )
       self.alive = False
     else:
       self.health_points -= damage

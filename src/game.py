@@ -1,4 +1,7 @@
 import pygame
+import generate_level
+import random
+
 from state import State
 from pc import PC
 from npc import NPC
@@ -6,6 +9,7 @@ from menu import Menu
 from aoe import AOE
 from hud import HUD
 from level import Level
+
 
 class Game(State):
   WHITE = (255, 255, 255)
@@ -33,10 +37,12 @@ class Game(State):
     self.level_h = self.level.get_h()
 
     for p in range(1):
-      self.pcs.append(PC((100, 100), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
+      spawn = generate_level.search_for_room(self.level.grid, random.randint(0, len(self.level.grid)-1), random.randint(0, len(self.level.grid)-1))
+      self.pcs.append(PC(tuple(map(lambda x: x*self.level.tile_size+1, spawn[::-1])), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
 
-    for n in range(5):
-      self.npcs.append(NPC((100 + n*100, 100 + n*100), 10, self.buffer_frame, "res/npcs/beholder.npc", self.level))
+    for n in range(15):
+      spawn = generate_level.search_for_room(self.level.grid, random.randint(0, len(self.level.grid)-1), random.randint(0, len(self.level.grid)-1))
+      self.npcs.append(NPC(tuple(map(lambda x: x*self.level.tile_size+1, spawn[::-1])), 10, self.buffer_frame, "res/npcs/beholder.npc", self.level))
 
   def update(self, user_input, mouse_position, elapsed):
     for event in user_input:
