@@ -3,13 +3,14 @@ from random import randint
 import math
 
 class NPC(PC):
-  def __init__(self, coord, r, screen, npc_filename):
-    PC.__init__(self, coord, r, screen, npc_filename)
+  def __init__(self, coord, r, screen, npc_filename, level):
+    PC.__init__(self, coord, r, screen, npc_filename, level)
 
     self.spritesheet_x = self.width * int(self.attrib_dict["spritesheet_position"][0])
     self.spritesheet_y = self.height * int(self.attrib_dict["spritesheet_position"][1])
     self.step = 0.0
     self.current_sprite_index = 0
+    self.level = level
 
 
   def npc_update(self, elapsed):

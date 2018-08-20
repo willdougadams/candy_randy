@@ -14,14 +14,16 @@ class PC():
   MAX_HEALTH = 100
   STEP_LENGTH = 10
 
-  def __init__(self, coord, r, buffer_frame, filename):
+  def __init__(self, coord, r, buffer_frame, filename, level):
     self.attrib_dict = read_char_file(filename)
     w, h = pygame.display.get_surface().get_size()
     self.target_dest = (w/2, h/2)
     self.screen = buffer_frame
+    self.level = level
     self.orientation = 0
     self.step = 0
     self.center = coord
+    self.location_grid_space = self.center[1]/len(self.level.grid), self.center[0]/len(self.level.grid[0])
     self.r = r
     self.width = int(self.attrib_dict["sprite_width"])
     self.height = int(self.attrib_dict["sprite_height"])
@@ -87,8 +89,14 @@ class PC():
     elif y_pos < self.target_dest[1]:
       y_pos += y_move_dist
 
-    self.center = (x_pos, y_pos)
+    step = (x_pos, y_pos)
+    grid_step = int(step[1]/self.level.tile_size), int(step[0]/self.level.tile_size)
 
+    stepping_onto = self.level.grid[grid_step[0]][grid_step[1]]
+    if stepping_onto in self.level.floor_tile_symbols:
+      self.center = step
+      self.location_grid_space = grid_step
+  
     self.step_time += elapsed
     if self.step_time > 0.5:
       self.step = (self.step + 1) % 4

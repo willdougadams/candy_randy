@@ -161,16 +161,13 @@ def all_connected(grid):
 
 def connect_rooms(grid):
   while not all_connected(grid):
-    print 'Rooms, not connected, adding hallway...'
     grid = add_hallway(grid)
-    for row in grid:
-      print ''.join(row)
   return grid
 
 def generate(size):
   grid = [[" "]*size for _ in range(size)]
 
-  rooms_amt = 10
+  rooms_amt = 2
   room_min_size = 5
   room_max_size = 25
   rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(rooms_amt)]

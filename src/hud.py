@@ -4,8 +4,8 @@ class HUD:
   METER_RADIUS = 10
   CHARGING_COLOR = (255, 127, 127)
   READY_COLOR = (127, 127, 255)
-  HIGHLIGHT_PC_COLOR = (188, 188, 99)
-  HIGHLIGHT_SKILL_COLOR = (0, 0, 0)
+  HIGHLIGHT_PC_COLOR = (188, 254, 99)
+  HIGHLIGHT_SKILL_COLOR = (0, 254, 0)
   COLUMN_SPACING = METER_RADIUS * 3
   SKILL_METER_SPACING = METER_RADIUS * 2
   ACTIVE_PC_BOX_WIDTH = METER_RADIUS * 1.5
@@ -34,7 +34,7 @@ class HUD:
                         draw_y - (len(pc.skills) * HUD.SKILL_METER_SPACING * 2),
                         HUD.METER_RADIUS * 2,
                         len(pc.skills) * HUD.SKILL_METER_SPACING * 2))
-
+        
         pygame.draw.circle(self.game.screen,
                         HUD.HIGHLIGHT_SKILL_COLOR,
                         (int(pc.center[0]), int(pc.center[1])),

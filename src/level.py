@@ -11,6 +11,7 @@ class Level():
     self.map_size = 60
     self.current_level = 1
     self.current_world = 0
+    self.floor_tile_symbols = ['.', '{', '}', '[', ']', ':', ';', '_', '-']
 
     self.floor_tilesheet = pygame.image.load("res/DawnLike/Floor.png").convert()
     self.wall_tilesheet = pygame.image.load("res/DawnLike/Wall.png").convert()
@@ -43,6 +44,7 @@ class Level():
     floor_tile_symbols["["] = "bottom_left"
     floor_tile_symbols["_"] = "bottom_center"
     floor_tile_symbols["]"] = "bottom_right"
+    self.floor_tile_symbols = floor_tile_symbols
 
     wall_tile_symbols = {}
     wall_tile_symbols['='] = "top_center"
@@ -100,7 +102,7 @@ class Level():
 
   def draw(self):
     size = self.screen.get_size()
-    self.screen.blit(self.tilemap, (0, 0, size[0], size[1]))
+    self.screen.blit(self.tilemap, (0, 0), (0, 0, size[0], size[1]))
 
   def get_w(self):
     return self.tilemap.get_size()[0]

@@ -43,7 +43,7 @@ class AOE():
           npc.take_damage(self.damage_per_tick)
 
   def draw(self):
-    pygame.draw.circle(self.screen, self.draw_color, self.center, self.r)
+    pygame.draw.circle(self.screen, self.draw_color, self.center, int(self.r))
 
   '''
   AOE.fire() will return itself to indicate that it is available for use,
@@ -52,7 +52,7 @@ class AOE():
   '''
   def fire(self, position):
     if self.cooldown_countdown == 0 and not self.fired:
-      self.center = position
+      self.center = tuple(map(int, position))
       self.fired = True
       return self
 

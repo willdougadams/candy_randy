@@ -17,6 +17,8 @@ class Game(State):
     self.buffer_size = 16383 # <-- max size
     self.buffer_size = 16383 / 5
     self.buffer_frame = pygame.Surface((self.buffer_size, self.buffer_size))
+    self.window_scale_factor = 2
+    self.window_offset = (0, 0)
 
     self.active_pc = 0
     self.active_skills = []
@@ -31,13 +33,10 @@ class Game(State):
     self.level_h = self.level.get_h()
 
     for p in range(1):
-      self.pcs.append(PC((100, 100), 10, self.buffer_frame, "res/pcs/Knight.pc"))
+      self.pcs.append(PC((100, 100), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
 
     for n in range(5):
-      self.npcs.append(NPC((100 + n*100, 100 + n*100), 10, self.buffer_frame, "res/npcs/beholder.npc"))
-
-    self.window_scale_factor = 2
-    self.window_offset = (0, 0)
+      self.npcs.append(NPC((100 + n*100, 100 + n*100), 10, self.buffer_frame, "res/npcs/beholder.npc", self.level))
 
   def update(self, user_input, mouse_position, elapsed):
     for event in user_input:
