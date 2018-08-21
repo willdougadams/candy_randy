@@ -4,6 +4,7 @@ import generate_level
 
 class Level():
   def __init__(self, screen):
+    print 'Init level...'
     self.grid = []
     self.offset = (0, 0)
     self.screen = screen

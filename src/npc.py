@@ -5,7 +5,7 @@ import math
 class NPC(PC):
   def __init__(self, coord, r, screen, npc_filename, level):
     PC.__init__(self, coord, r, screen, npc_filename, level)
-
+    print 'Init NPC...'
     self.spritesheet_x = self.width * int(self.attrib_dict["spritesheet_position"][0])
     self.spritesheet_y = self.height * int(self.attrib_dict["spritesheet_position"][1])
     self.step = 0.0

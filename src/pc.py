@@ -15,6 +15,7 @@ class PC():
   STEP_LENGTH = 10
 
   def __init__(self, coord, r, buffer_frame, filename, level):
+    print 'Init PC...'
     self.attrib_dict = read_char_file(filename)
     w, h = pygame.display.get_surface().get_size()
     self.target_dest = (w/2, h/2)

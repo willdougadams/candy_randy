@@ -55,6 +55,7 @@ def place_room(grid, room):
   for r in range(len(grid)):
     for c in range(len(grid)):
       if spot_valid(grid, room, r, c):
+        print 'Placing room...'
         grid = print_room_to_grid(grid, room, r, c)
         return grid
 
@@ -104,14 +105,19 @@ def search_for_room(grid, r, c):
   return None
 
 def scout(grid, spot, direction):
+  print 'Scouting: {0}, {1}\r'.format(spot, direction),
   good_to_go = False
   try:
     # first detect edge of room
     while grid[spot[0]][spot[1]] == '.':
+      if spot[0]<0 or spot[1]<0 or spot[0]>=len(grid) or spot[1]>=len(grid[0]):
+        return False
       spot = (spot[0]+direction[0], spot[1]+direction[1])
 
     # then keep going, if new room detected return true, else false
     while not grid[spot[0]][spot[1]] == '.':
+      if spot[0]<0 or spot[1]<0 or spot[0]>=len(grid) or spot[1]>=len(grid[0]):
+        return False
       spot = (spot[0]+direction[0], spot[1]+direction[1])
 
     spot = (spot[0]+direction[0], spot[1]+direction[1])
@@ -164,13 +170,14 @@ def all_connected(grid):
 def connect_rooms(grid):
   while not all_connected(grid):
     grid = add_hallway(grid)
+  print 'Rooms connected! Proceeding...'
   return grid
 
 def generate(size):
   grid = [[" "]*size for _ in range(size)]
 
   rooms_amt = 5
-  room_min_size = 5
+  room_min_size = 10
   room_max_size = 25
   rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(rooms_amt)]
 

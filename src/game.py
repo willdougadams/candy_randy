@@ -15,6 +15,7 @@ class Game(State):
   WHITE = (255, 255, 255)
 
   def __init__(self, screen):
+    print "Init game..."
     self.screen = screen
     self.screen_w = self.screen.get_size()[0]
     self.screen_h = self.screen.get_size()[1]
@@ -45,6 +46,24 @@ class Game(State):
       self.npcs.append(NPC(tuple(map(lambda x: x*self.level.tile_size+1, spawn[::-1])), 10, self.buffer_frame, "res/npcs/beholder.npc", self.level))
 
   def update(self, user_input, mouse_position, elapsed):
+    pressed = pygame.key.get_pressed()
+    up = pressed[pygame.K_w]
+    left = pressed[pygame.K_a]
+    down = pressed[pygame.K_s]
+    right = pressed[pygame.K_d]
+
+    # it gave you a 1 and a 0 for a reason
+    if any([up, down, left, right]):
+      step_dist = 3
+      up *= step_dist
+      down *= step_dist
+      right *= step_dist
+      left *= step_dist
+
+      now = self.pcs[self.active_pc].center
+      later = (now[0]+right-left), (now[1]+down-up)
+      self.pcs[self.active_pc].target_dest = later
+
     for event in user_input:
       if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_ESCAPE:
