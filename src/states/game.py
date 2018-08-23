@@ -1,14 +1,14 @@
 import pygame
-import generate_level
+from core import generate_level
 import random
 
-from state import State
-from pc import PC
-from npc import NPC
-from menu import Menu
-from aoe import AOE
-from hud import HUD
-from level import Level
+from states.state import State
+from states.menu import Menu
+from characters.pc import PC
+from characters.npc import NPC
+from skills.aoe import AOE
+from core.hud import HUD
+from core.level import Level
 
 
 class Game(State):
@@ -139,20 +139,5 @@ def get_new_offset(game):
 
     new_x = game.pcs[game.active_pc].center[0] - half_w
     new_y = game.pcs[game.active_pc].center[1] - half_h
-
-    max_x = game.level_w/game.window_scale_factor - half_w
-    max_y = game.level_h/game.window_scale_factor - half_h
-
-    '''
-    if new_x < 0:
-        new_x = 0
-    elif new_x > max_x:
-        new_x = max_x
-
-    if new_y < 0:
-        new_y = 0
-    elif new_y > max_y:
-        new_y = max_y
-    '''
 
     return (new_x, new_y)

@@ -1,4 +1,4 @@
-import pygame
+import pygame # pylint: disable=W0611
 
 class HUD:
   METER_RADIUS = 10

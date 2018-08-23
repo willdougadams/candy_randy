@@ -1,5 +1,5 @@
 import pygame
-from state import State
+from states.state import State
 
 class Menu(State):
   WHITE = (0, 255, 0)

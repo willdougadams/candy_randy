@@ -1,7 +1,7 @@
-import pygame
-from aoe import AOE
-from bolt import Bolt
-from aura import Aura
+import pygame # pylint: disable=E1121
+from skills.aoe import AOE
+from skills.bolt import Bolt
+from skills.aura import Aura
 
 class PC():
 
