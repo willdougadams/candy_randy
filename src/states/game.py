@@ -1,6 +1,7 @@
 import pygame
 from core import generate_level
 import random
+import threading
 
 from states.state import State
 from states.menu import Menu

@@ -1,6 +1,6 @@
 import pygame
 import random
-import generate_level
+from generate_level import *
 
 class Level():
   def __init__(self, screen):
@@ -18,7 +18,6 @@ class Level():
     self.wall_tilesheet = pygame.image.load("res/DawnLike/Wall.png").convert()
 
     floor_tile_offsets = {}
-
     floor_tile_offsets["top_left"]       = (0, 0)
     floor_tile_offsets["top_center"]     = (1, 0)
     floor_tile_offsets["top_right"]      = (2, 0)
@@ -34,6 +33,7 @@ class Level():
     floor_tile_offsets["left_hallway"]  = (4, 1)
     floor_tile_offsets["hori_hallway"]  = (5, 1)
     floor_tile_offsets["right_hallway"] = (6, 1)
+    self.floor_tile_offsets = floor_tile_offsets
 
     floor_tile_symbols = {}
     floor_tile_symbols["}"] = "top_right"
@@ -54,11 +54,24 @@ class Level():
     wall_tile_symbols['|'] = 'left_edge'
     wall_tile_symbols['l'] = 'bottom_left'
     wall_tile_symbols['r'] = 'bottom_right'
+    self.wall_tile_symbols = wall_tile_symbols
 
-    tilemap_size = self.map_size * self.tile_size
-    self.tilemap = pygame.surface.Surface((tilemap_size, tilemap_size))
+    self.tilemap_size = self.map_size * self.tile_size
+    self.tilemap = pygame.surface.Surface((self.tilemap_size, self.tilemap_size))
 
-    self.grid = generate_level.generate(self.map_size)
+
+    grid = [[" "]*self.map_size for _ in range(self.map_size)]
+
+    rooms_amt = 5
+    room_min_size = 10
+    room_max_size = 25
+    rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(rooms_amt)]
+
+    for room in rooms:
+      grid = place_room(grid, room)
+
+    grid = connect_rooms(grid)
+    self.grid = grid#generate_level.generate(self.map_size)
 
     level_offset = (3 * self.tile_size * self.current_level)
     world_offset = (7 * self.tile_size * self.current_world)

@@ -174,16 +174,4 @@ def connect_rooms(grid):
   return grid
 
 def generate(size):
-  grid = [[" "]*size for _ in range(size)]
-
-  rooms_amt = 5
-  room_min_size = 10
-  room_max_size = 25
-  rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(rooms_amt)]
-
-  for room in rooms:
-    grid = place_room(grid, room)
-
-  grid = connect_rooms(grid)
-
   return grid

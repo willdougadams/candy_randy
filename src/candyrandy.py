@@ -9,7 +9,7 @@
 import pygame
 import time
 from states.game import Game
-from core.state_manager import StateManager
+from states.state_manager import StateManager
 
 pygame.init()
 
