@@ -35,6 +35,10 @@ class Game(State):
 
     self.hud = HUD(self)
     self.level = Level(self.buffer_frame)
+    gen_thread = threading.Thread(target=self.level.generate_grid)
+    gen_thread.start()
+    while not self.level.grid_generated:
+      self.draw_loading_screen(self.level.get_progress())
     self.level_w = self.level.get_w()
     self.level_h = self.level.get_h()
 

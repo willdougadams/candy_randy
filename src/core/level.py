@@ -6,13 +6,16 @@ class Level():
   def __init__(self, screen):
     print 'Init level...'
     self.grid = []
+    self.grid_generated = False
+    self.rooms_amt = 5
+    self.components_generated = 0
+    self.components_total = self.rooms_amt * 3
     self.offset = (0, 0)
     self.screen = screen
     self.tile_size = 16
     self.map_size = 60
     self.current_level = 1
     self.current_world = 0
-    self.floor_tile_symbols = ['.', '{', '}', '[', ']', ':', ';', '_', '-']
 
     self.floor_tilesheet = pygame.image.load("res/DawnLike/Floor.png").convert()
     self.wall_tilesheet = pygame.image.load("res/DawnLike/Wall.png").convert()
@@ -59,18 +62,23 @@ class Level():
     self.tilemap_size = self.map_size * self.tile_size
     self.tilemap = pygame.surface.Surface((self.tilemap_size, self.tilemap_size))
 
-
+  def generate_grid(self):
     grid = [[" "]*self.map_size for _ in range(self.map_size)]
+    self.grid = grid
 
-    rooms_amt = 5
     room_min_size = 10
     room_max_size = 25
-    rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(rooms_amt)]
+    rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(self.rooms_amt)]
 
     for room in rooms:
       grid = place_room(grid, room)
+      self.components_generated += 1
 
-    grid = connect_rooms(grid)
+    while not all_connected(grid):
+      last_grid = grid[:]
+      grid = add_hallway(grid)
+      if grid == last_grid:
+        self.components_generated += 1
     self.grid = grid#generate_level.generate(self.map_size)
 
     level_offset = (3 * self.tile_size * self.current_level)
@@ -78,23 +86,23 @@ class Level():
     self.tilemap.fill((0, 0, 0))
     for y, row in enumerate(self.grid):
       for x, tile in enumerate(row):
-        if not tile in floor_tile_symbols and not tile in wall_tile_symbols:
+        if not tile in self.floor_tile_symbols and not tile in self.wall_tile_symbols:
           continue
         tileset_x = 0
         tileset_y = 0
-        if tile in floor_tile_symbols:
-          tileset_x = floor_tile_offsets[floor_tile_symbols[tile]][0] * self.tile_size
-          tileset_y = floor_tile_offsets[floor_tile_symbols[tile]][1] * self.tile_size
+        if tile in self.floor_tile_symbols:
+          tileset_x = self.floor_tile_offsets[self.floor_tile_symbols[tile]][0] * self.tile_size
+          tileset_y = self.floor_tile_offsets[self.floor_tile_symbols[tile]][1] * self.tile_size
           tile_x = tileset_x + world_offset
           tile_y = tileset_y + level_offset
           map_location = (x * self.tile_size, y * self.tile_size)
           tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
           self.tilemap.blit(self.floor_tilesheet, map_location, tile_rect)
-        elif tile in wall_tile_symbols:
+        elif tile in self.wall_tile_symbols:
           if tile == '/':
             tile = '|'
-            tileset_x = floor_tile_offsets[wall_tile_symbols[tile]][0] * self.tile_size
-            tileset_y = floor_tile_offsets[wall_tile_symbols[tile]][1] * self.tile_size
+            tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
+            tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
             tile_x = tileset_x + world_offset
             tile_y = tileset_y + level_offset
             map_location = (x * self.tile_size, y * self.tile_size)
@@ -103,13 +111,15 @@ class Level():
             tile_surface.blit(self.wall_tilesheet, (0, 0), tile_rect)
             self.tilemap.blit(pygame.transform.flip(tile_surface, True, False), map_location, (0, 0, self.tile_size, self.tile_size))
           else:
-            tileset_x = floor_tile_offsets[wall_tile_symbols[tile]][0] * self.tile_size
-            tileset_y = floor_tile_offsets[wall_tile_symbols[tile]][1] * self.tile_size
+            tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
+            tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
             tile_x = tileset_x + world_offset
             tile_y = tileset_y + level_offset
             map_location = (x * self.tile_size, y * self.tile_size)
             tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
             self.tilemap.blit(self.wall_tilesheet, map_location, tile_rect)
+
+    self.grid_generated = True
 
   def update(self, new_offset):
     self.offset = new_offset
@@ -123,3 +133,6 @@ class Level():
 
   def get_h(self):
     return self.tilemap.get_size()[1]
+
+  def get_progress(self):
+    return self.components_generated / float(self.components_total)
