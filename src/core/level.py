@@ -4,8 +4,8 @@ from generate_level import *
 
 class Level():
   def __init__(self, screen):
-    print 'Init level...'
     self.grid = []
+    self.path_weight_grid = []
     self.grid_generated = False
     self.rooms_amt = 5
     self.components_generated = 0

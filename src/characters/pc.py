@@ -15,15 +15,14 @@ class PC():
   STEP_LENGTH = 10
 
   def __init__(self, coord, r, buffer_frame, filename, level):
-    print 'Init PC...'
     self.attrib_dict = read_char_file(filename)
     w, h = pygame.display.get_surface().get_size()
-    self.target_dest = (w/2, h/2)
+    self.center = coord
+    self.target_dest = coord
     self.screen = buffer_frame
     self.level = level
     self.orientation = 0
     self.step = 0
-    self.center = coord
     self.location_grid_space = self.center[1]/len(self.level.grid), self.center[0]/len(self.level.grid[0])
     self.r = r
     self.width = int(self.attrib_dict["sprite_width"])
@@ -133,6 +132,9 @@ class PC():
     if ret_skill is not None:
       self.skills[self.active_skill] = self.skill_types[self.active_skill](self, self.screen)
     return ret_skill
+
+  def attack(self):
+    pass
 
   def take_damage(self, damage):
     if self.health_points <= 0:

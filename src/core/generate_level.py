@@ -55,7 +55,6 @@ def place_room(grid, room):
   for r in range(len(grid)):
     for c in range(len(grid)):
       if spot_valid(grid, room, r, c):
-        print 'Placing room...'
         grid = print_room_to_grid(grid, room, r, c)
         return grid
 
@@ -63,8 +62,8 @@ def place_room(grid, room):
 
 def print_hallway_to_map(grid, spot, direction):
   grid[spot[0]][spot[1]] = '.'
-  grid[spot[0]-direction[1]][spot[1]-direction[0]] = '.'
-  grid[spot[0]+direction[1]][spot[1]+direction[0]] = '.'
+  #grid[spot[0]-direction[1]][spot[1]-direction[0]] = '.'
+  #grid[spot[0]+direction[1]][spot[1]+direction[0]] = '.'
 
   step = (spot[0]+direction[0], spot[1]+direction[1])
   if (step[0]<len(grid) and step[0]>=0) and (step[1]<len(grid[0]) and step[1]>=0) and (not grid[step[0]][step[1]] == '.'):
@@ -105,7 +104,6 @@ def search_for_room(grid, r, c):
   return None
 
 def scout(grid, spot, direction):
-  print 'Scouting: {0}, {1}\r'.format(spot, direction),
   good_to_go = False
   try:
     # first detect edge of room
@@ -166,12 +164,3 @@ def all_connected(grid):
       if grid[r][c] == '.':
         erased = erase_space(copy.deepcopy(grid), r, c)
         return not any(t == '.' for row in erased for t in row)
-
-def connect_rooms(grid):
-  while not all_connected(grid):
-    grid = add_hallway(grid)
-  print 'Rooms connected! Proceeding...'
-  return grid
-
-def generate(size):
-  return grid

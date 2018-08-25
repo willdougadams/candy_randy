@@ -16,7 +16,6 @@ class Game(State):
   WHITE = (255, 255, 255)
 
   def __init__(self, screen):
-    print "Init game..."
     self.screen = screen
     self.screen_w = self.screen.get_size()[0]
     self.screen_h = self.screen.get_size()[1]
@@ -38,7 +37,8 @@ class Game(State):
     gen_thread = threading.Thread(target=self.level.generate_grid)
     gen_thread.start()
     while not self.level.grid_generated:
-      self.draw_loading_screen(self.level.get_progress())
+      str_grid = [''.join(row) for row in self.level.grid]
+      self.draw_loading_screen(self.level.get_progress(), msg=str_grid)
     self.level_w = self.level.get_w()
     self.level_h = self.level.get_h()
 
@@ -52,19 +52,13 @@ class Game(State):
 
   def update(self, user_input, mouse_position, elapsed):
     pressed = pygame.key.get_pressed()
-    up = pressed[pygame.K_w]
-    left = pressed[pygame.K_a]
-    down = pressed[pygame.K_s]
-    right = pressed[pygame.K_d]
+    step_dist = 3
+    up = pressed[pygame.K_w] * step_dist
+    left = pressed[pygame.K_a] * step_dist
+    down = pressed[pygame.K_s] * step_dist
+    right = pressed[pygame.K_d] * step_dist
 
-    # it gave you a 1 and a 0 for a reason
     if any([up, down, left, right]):
-      step_dist = 3
-      up *= step_dist
-      down *= step_dist
-      right *= step_dist
-      left *= step_dist
-
       now = self.pcs[self.active_pc].center
       later = (now[0]+right-left), (now[1]+down-up)
       self.pcs[self.active_pc].target_dest = later
