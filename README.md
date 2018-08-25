@@ -2,9 +2,8 @@
 
 Python 2.7
 
-Run with "python src/candyrandy.py"
+Run with "./run.sh"
 
-click: move
-right click: attack
-tab: change pc
+WASD: move
+right click: spell
 scroll: change attack
