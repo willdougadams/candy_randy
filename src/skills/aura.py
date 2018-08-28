@@ -1,7 +1,9 @@
 import pygame
 import math
 
-class Aura():
+from skill import Skill
+
+class Aura(Skill):
   BLACK = (0, 0, 0)
   WHITE = (255, 255, 255)
   BLUE  = (0, 0, 255)
@@ -9,6 +11,7 @@ class Aura():
   RED = (255, 0, 0)
 
   def __init__(self, caster, screen, r=65):
+    Skill.__init__(self, caster, screen)
     self.fired = False
     self.target_dest = (50, 50)
     self.screen = screen

@@ -1,7 +1,9 @@
 import pygame
 import math
 
-class AOE():
+from skill import Skill
+
+class AOE(Skill):
   BLACK = (0, 0, 0)
   WHITE = (255, 255, 255)
   BLUE  = (0, 0, 255)
@@ -9,9 +11,11 @@ class AOE():
   RED = (255, 0, 0)
 
   def __init__(self, caster, screen, r=50):
+    Skill.__init__(self, caster, screen)
     self.fired = False
     self.target_dest = (50, 50)
     self.screen = screen
+    self.caster = caster
     self.center = (1, 1)
     self.r = r
     self.warmup_color = AOE.GREEN

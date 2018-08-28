@@ -1,7 +1,9 @@
 import pygame
 import math
 
-class Bolt():
+from skill import Skill
+
+class Bolt(Skill):
   BLACK = (0, 0, 0)
   WHITE = (255, 255, 255)
   BLUE  = (0, 0, 255)
@@ -9,6 +11,7 @@ class Bolt():
   RED = (255, 0, 0)
 
   def __init__(self, caster, screen, r=10):
+    Skill.__init__(self, caster, screen)
     self.fired = False
     self.target_dest = (0, 0)
     self.center = (0, 0)
