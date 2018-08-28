@@ -107,7 +107,7 @@ class PC():
     self.rect = self.image.get_rect()
 
     for skill in self.skills:
-      skill.update([], [], elapsed)
+      skill.update([], [], elapsed, {})
 
     for damage_type, surf in damage_maps.iteritems():
       damage_done = surf.get_at(tuple(map(int, self.center))).r * 255

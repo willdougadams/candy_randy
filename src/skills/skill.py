@@ -27,7 +27,7 @@ class Skill:
     self.damage_per_tick = 10
     self.active_countdown = float('inf')
 
-  def update(self, pcs, npcs, elapsed):
+  def update(self, pcs, npcs, elapsed, damage_maps):
     if self.cooldown_countdown > 0:
       self.cooldown_countdown -= 1
       return
@@ -49,8 +49,8 @@ class Skill:
 
     self.active_countdown -= 1
     if self.active_countdown < 0:
-        self.alive = False
-        return
+      self.alive = False
+      return
 
     for pc in pcs:
       if self.collide_point(pc.center) and pc is not self.caster:
@@ -59,6 +59,10 @@ class Skill:
     for npc in npcs:
       if self.collide_point(npc.center):
         npc.take_damage(self.damage_per_tick)
+
+    for damage_type, surf in damage_maps.iteritems():
+      center = (int(self.center[0]), int(self.center[1]))
+      pygame.draw.circle(self.screen, self.draw_color, center, self.r)
 
   def draw(self):
     center = (int(self.center[0]), int(self.center[1]))

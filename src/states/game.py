@@ -105,7 +105,7 @@ class Game(State):
       surf.fill(Game.BLACK)
 
     for a in self.active_skills:
-      a.update(self.pcs, self.npcs, elapsed)
+      a.update(self.pcs, self.npcs, elapsed, self.damage_maps)
 
     for p in self.pcs:
       p.pc_update(elapsed, self.damage_maps)
