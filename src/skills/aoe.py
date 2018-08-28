@@ -4,12 +4,6 @@ import math
 from skill import Skill
 
 class AOE(Skill):
-  BLACK = (0, 0, 0)
-  WHITE = (255, 255, 255)
-  BLUE  = (0, 0, 255)
-  GREEN = (0, 255, 0)
-  RED = (255, 0, 0)
-
   def __init__(self, caster, screen, r=50):
     Skill.__init__(self, caster, screen)
     self.fired = False
@@ -18,36 +12,13 @@ class AOE(Skill):
     self.caster = caster
     self.center = (1, 1)
     self.r = r
-    self.warmup_color = AOE.GREEN
-    self.active_color = AOE.BLACK
+    self.warmup_color = Skill.GREEN
+    self.active_color = Skill.BLACK
     self.draw_color = self.warmup_color
     self.cooldown_countdown = 120
     self.warmup_countdown = 120
     self.active_countdown = 120
     self.damage_per_tick = 1
-
-  def update(self, pcs, npcs, elasped):
-    if self.cooldown_countdown > 0:
-      self.cooldown_countdown -= 1
-
-    if not self.fired:
-      return
-
-    if self.warmup_countdown > 0:
-      self.warmup_countdown -= 1
-      if self.warmup_countdown == 0:
-        self.draw_color = self.active_color
-    else:
-      self.active_countdown -= 1
-      for pc in pcs:
-        if self.collide_point(pc.center):
-          pc.take_damage(self.damage_per_tick)
-      for npc in npcs:
-        if self.collide_point(npc.center):
-          npc.take_damage(self.damage_per_tick)
-
-  def draw(self):
-    pygame.draw.circle(self.screen, self.draw_color, self.center, int(self.r))
 
   '''
   AOE.fire() will return itself to indicate that it is available for use,
@@ -61,9 +32,3 @@ class AOE(Skill):
       return self
 
     return None
-
-  def collide_point(self, coord):
-    x1, y1 = self.center
-    x2, y2 = coord
-    dist = abs(math.hypot(x2 - x1, y2 - y1))
-    return dist < self.r

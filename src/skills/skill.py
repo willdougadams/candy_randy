@@ -22,6 +22,7 @@ class Skill:
     self.draw_color = Skill.GREEN
     self.warmup_color = Skill.GREEN
     self.active_color = Skill.BLACK
+    self.warmup_countdown = 10
     self.cooldown_countdown = 10
     self.damage_per_tick = 10
     self.active_countdown = float('inf')
@@ -34,6 +35,12 @@ class Skill:
     if not self.fired:
       return
 
+    current_x, current_y = self.center
+    new_x = current_x + (self.x_speed * elapsed)
+    new_y = current_y + (self.y_speed * elapsed)
+    new_coord = (new_x, new_y)
+    self.center = new_coord
+
     if self.warmup_countdown > 0:
       self.warmup_countdown -= 1
       if self.warmup_countdown == 0:
@@ -44,12 +51,6 @@ class Skill:
     if self.active_countdown < 0:
         self.alive = False
         return
-
-    current_x, current_y = self.center
-    new_x = current_x + (self.x_speed * elapsed)
-    new_y = current_y + (self.y_speed * elapsed)
-    new_coord = (new_x, new_y)
-    self.center = new_coord
 
     for pc in pcs:
       if self.collide_point(pc.center) and pc is not self.caster:

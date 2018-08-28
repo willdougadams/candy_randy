@@ -26,32 +26,6 @@ class Bolt(Skill):
     self.damage_per_tick = 10
     self.active_countdown = float('inf')
 
-  def update(self, pcs, npcs, elapsed):
-    if self.cooldown_countdown > 0:
-      self.cooldown_countdown -= 1
-      return
-
-    if not self.fired:
-      return
-
-    current_x, current_y = self.center
-    new_x = current_x + (self.x_speed * elapsed)
-    new_y = current_y + (self.y_speed * elapsed)
-    new_coord = (new_x, new_y)
-    self.center = new_coord
-
-    for pc in pcs:
-      if self.collide_point(pc.center) and pc is not self.caster:
-        pc.take_damage(self.damage_per_tick)
-
-    for npc in npcs:
-      if self.collide_point(npc.center):
-        npc.take_damage(self.damage_per_tick)
-
-  def draw(self):
-    center = (int(self.center[0]), int(self.center[1]))
-    pygame.draw.circle(self.screen, self.draw_color, center, self.r)
-
   '''
   AOE.fire() will return itself to indicate that it is available for use,
   otherwise None. This passes control of the Skill from the PC which created it
@@ -72,9 +46,3 @@ class Bolt(Skill):
       return self
     else:
       return None
-
-  def collide_point(self, coord):
-    x1, y1 = self.center
-    x2, y2 = coord
-    dist = abs(math.hypot(x2 - x1, y2 - y1))
-    return dist < self.r

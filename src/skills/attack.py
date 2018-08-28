@@ -26,31 +26,6 @@ class Attack(Skill):
     self.active_countdown = 250
     self.damage_per_tick = 20
 
-  def update(self, pcs, npcs, elapsed):
-    if self.cooldown_countdown > 0:
-      self.cooldown_countdown -= 1
-
-    if not self.fired:
-      return
-
-    if self.warmup_countdown > 0:
-      self.warmup_countdown -= 1
-      if self.warmup_countdown == 0:
-        self.draw_color = self.active_color
-    else:
-      self.center = self.caster.center
-      self.active_countdown -= 1
-      for pc in pcs:
-        if self.collide_point(pc.center) and pc is not self.caster:
-          pc.take_damage(self.damage_per_tick)
-      for npc in npcs:
-        if self.collide_point(npc.center):
-          npc.take_damage(self.damage_per_tick)
-
-  def draw(self):
-    center = (int(self.center[0]), int(self.center[1]))
-    pygame.draw.circle(self.screen, self.draw_color, center, self.r)
-
   '''
   Aura.fire() will return itself to indicate that it is available for use,
   otherwise None. This passes control of the Skill from the PC which created it
@@ -63,9 +38,3 @@ class Attack(Skill):
       return self
 
     return None
-
-  def collide_point(self, coord):
-    x1, y1 = self.center
-    x2, y2 = coord
-    dist = abs(math.hypot(x2 - x1, y2 - y1))
-    return dist < self.r
