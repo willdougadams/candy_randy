@@ -11,7 +11,7 @@ class NPC(PC):
     self.current_sprite_index = 0
     self.level = level
 
-  def npc_update(self, elapsed):
+  def npc_update(self, elapsed, damage_maps):
     if not self.alive:
       return
 

@@ -60,7 +60,7 @@ class PC():
     self.image.set_colorkey(PC.BLACK)
     self.step_time = 0
 
-  def pc_update(self, elapsed):
+  def pc_update(self, elapsed, damage_maps):
     if not self.alive:
       return
 
@@ -108,6 +108,10 @@ class PC():
 
     for skill in self.skills:
       skill.update([], [], elapsed)
+
+    for damage_type, surf in damage_maps.iteritems():
+      damage_done = surf.get_at(tuple(map(int, self.center))).r * 255
+      self.take_damage(damage_done)
 
   def draw(self):
     x, y = self.center

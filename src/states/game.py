@@ -14,6 +14,7 @@ from core.level import Level
 
 class Game(State):
   WHITE = (255, 255, 255)
+  BLACK = (0, 0, 0)
 
   def __init__(self, screen):
     self.screen = screen
@@ -22,6 +23,9 @@ class Game(State):
     self.buffer_size = 16383 # <-- max size
     self.buffer_size = 16383 / 5
     self.buffer_frame = pygame.Surface((self.buffer_size, self.buffer_size))
+    self.damage_maps = {}
+    self.damage_maps['normal'] = pygame.Surface((self.buffer_size, self.buffer_size))
+    self.damage_maps['tickleish'] = pygame.Surface((self.buffer_size, self.buffer_size))
     self.window_scale_factor = 2
     self.window_offset = (0, 0)
 
@@ -97,14 +101,17 @@ class Game(State):
     self.active_skills = [a for a in self.active_skills if a is not None]
     self.active_skills = [a for a in self.active_skills if a.active_countdown > 0]
 
-    for p in self.pcs:
-      p.pc_update(elapsed)
-
-    for n in self.npcs:
-      n.npc_update(elapsed)
+    for _, surf in self.damage_maps.iteritems():
+      surf.fill(Game.BLACK)
 
     for a in self.active_skills:
       a.update(self.pcs, self.npcs, elapsed)
+
+    for p in self.pcs:
+      p.pc_update(elapsed, self.damage_maps)
+
+    for n in self.npcs:
+      n.npc_update(elapsed, self.damage_maps)
 
   def draw(self):
     self.screen.fill(self.WHITE)
