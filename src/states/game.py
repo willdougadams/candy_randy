@@ -97,15 +97,14 @@ class Game(State):
 
     self.window_offset = get_new_offset(self)
     self.level.update(self.window_offset)
-
-    self.active_skills = [a for a in self.active_skills if a is not None and a.alive]
-    # self.active_skills = [a for a in self.active_skills if a.active_countdown > 0]
+    self.active_skills = filter(lambda x: x is not None and x.alive, self.active_skills)
 
     for _, surf in self.damage_maps.iteritems():
       surf.fill(Game.BLACK)
 
     for a in self.active_skills:
-      a.update(self.pcs, self.npcs, elapsed, self.damage_maps)
+      a.update(elapsed)
+      self.damage_maps = a.draw_damage(self.damage_maps)
 
     for p in self.pcs:
       p.pc_update(elapsed, self.damage_maps)

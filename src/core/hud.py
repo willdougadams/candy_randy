@@ -47,7 +47,7 @@ class HUD:
         if pc.active_skill == j:
           pygame.draw.circle(self.game.screen, HUD.HIGHLIGHT_SKILL_COLOR, (draw_x, draw_y), HUD.ACTIVE_SKILL_RADIUS)
 
-        if skill.cooldown_countdown == 0:
+        if skill.cooldown_countdown <= 0:
           pygame.draw.circle(self.game.screen, HUD.READY_COLOR, (draw_x, draw_y), HUD.METER_RADIUS)
         else:
           pygame.draw.circle(self.game.screen, HUD.CHARGING_COLOR, (draw_x, draw_y), HUD.METER_RADIUS)

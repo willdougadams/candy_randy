@@ -27,6 +27,8 @@ class PC():
     self.r = r
     self.width = int(self.attrib_dict["sprite_width"])
     self.height = int(self.attrib_dict["sprite_height"])
+    self.spritesheet_x = 0
+    self.spritesheet_y = 0
 
     self.alive_color = PC.BLUE
     self.dead_color = PC.BLACK
@@ -40,8 +42,9 @@ class PC():
     '''
     self.skills = []
     self.skill_types = [AOE, Bolt, Aura]
-    for skill_type in self.skill_types:
-      self.skills.append(skill_type(self, self.screen))
+    self.skill_files = ['AOE.skill', 'Bolt.skill', 'Aura.skill']
+    for i, skill_type in enumerate(self.skill_types):
+      self.skills.append(skill_type(self, self.screen, self.skill_files[i]))
 
     self.active_skill = 0
     self.health_points = int(self.attrib_dict["health"])
@@ -107,11 +110,11 @@ class PC():
     self.rect = self.image.get_rect()
 
     for skill in self.skills:
-      skill.update([], [], elapsed, {})
+      skill.update(elapsed)
 
     for damage_type, surf in damage_maps.iteritems():
-      damage_done = surf.get_at(tuple(map(int, self.center))).r * 255
-      self.take_damage(damage_done)
+      damage_done = surf.get_at(tuple(map(int, self.center))).r
+      self.take_damage(damage_done/elapsed)
 
   def draw(self):
     x, y = self.center
@@ -134,13 +137,15 @@ class PC():
   def fire(self, coord):
     ret_skill = self.skills[self.active_skill].fire(coord)
     if ret_skill is not None:
-      self.skills[self.active_skill] = self.skill_types[self.active_skill](self, self.screen)
+      config_file = self.skill_files[self.active_skill]
+      self.skills[self.active_skill] = self.skill_types[self.active_skill](self, self.screen, config_file)
     return ret_skill
 
   def attack(self):
     pass
 
   def take_damage(self, damage):
+    self.health_points -= damage
     if self.health_points <= 0:
       self.draw_color = self.dead_color
       self.image.blit(self.curr_sprite_sheet,
@@ -148,8 +153,6 @@ class PC():
                     (self.spritesheet_x, self.spritesheet_y, self.width, self.height)
                   )
       self.alive = False
-    else:
-      self.health_points -= damage
 
 
 def read_char_file(filename):

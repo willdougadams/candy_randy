@@ -42,3 +42,7 @@ class NPC(PC):
                     (0, 0),
                     (self.spritesheet_x, self.spritesheet_y, self.width, self.height)
                   )
+
+    for damage_type, surf in damage_maps.iteritems():
+      damage_done = surf.get_at(tuple(map(int, self.center))).r * elapsed
+      self.take_damage(damage_done)

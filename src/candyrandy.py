@@ -28,6 +28,7 @@ done = False
 
 def main():
   start = time.time()
+  time.sleep(0.001)
   end = time.time()
   while not done:
     elapsed = end - start

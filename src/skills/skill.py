@@ -1,35 +1,37 @@
 import pygame
 import math
 
-class Skill:
-  BLACK = (0, 0, 0)
-  WHITE = (255, 255, 255)
-  BLUE  = (0, 0, 255)
-  GREEN = (0, 255, 0)
-  RED = (255, 0, 0)
+from core.util import read_config
 
-  def __init__(self, caster, screen, r=10):
+class Skill:
+  BLACK = tuple(map(int, [0, 0, 0]))
+  WHITE = tuple(map(int, [255, 255, 255]))
+  BLUE  = tuple(map(int, [0, 0, 255]))
+  GREEN = tuple(map(int, [0, 255, 0]))
+  RED = tuple(map(int, [255, 0, 0]))
+
+  def __init__(self, caster, screen, skill_filename):
     self.fired = False
     self.alive = True
     self.target_dest = (0, 0)
-    self.center = (0, 0)
+    self.center = (float(0), float(0))
     self.screen = screen
     self.caster = caster
-    self.r = r
+    config = read_config('res/Skills/'+skill_filename)
+    self.r = float(config['radius'])
+    self.warmup_countdown = float(config['warmup_time'])
+    self.cooldown_countdown = float(config['cooldown_time'])
+    self.active_countdown = float(config['active_time'])
+    self.move_speed = float(config['move_speed'])
+    self.dps = float(config['dps'])
+    self.current_color = self.warmup_color = Skill.GREEN
+    self.active_color = (self.dps, float(0), float(0))
     self.x_speed = 0
     self.y_speed = 0
-    self.move_speed = 100
-    self.draw_color = Skill.GREEN
-    self.warmup_color = Skill.GREEN
-    self.active_color = Skill.BLACK
-    self.warmup_countdown = 10
-    self.cooldown_countdown = 10
-    self.damage_per_tick = 10
-    self.active_countdown = float('inf')
 
-  def update(self, pcs, npcs, elapsed, damage_maps):
-    if self.cooldown_countdown > 0:
-      self.cooldown_countdown -= 1
+  def update(self, elapsed):
+    if self.cooldown_countdown > float(0.0):
+      self.cooldown_countdown -= elapsed
       return
 
     if not self.fired:
@@ -42,39 +44,34 @@ class Skill:
     self.center = new_coord
 
     if self.warmup_countdown > 0:
-      self.warmup_countdown -= 1
-      if self.warmup_countdown == 0:
-        self.draw_color = self.active_color
+      self.warmup_countdown -= elapsed
+      if self.warmup_countdown <= 0:
+        self.current_color = self.active_color
       return
 
-    self.active_countdown -= 1
-    if self.active_countdown < 0:
+    self.active_countdown -= elapsed
+    if self.active_countdown <= 0:
       self.alive = False
       return
 
-    for pc in pcs:
-      if self.collide_point(pc.center) and pc is not self.caster:
-        pc.take_damage(self.damage_per_tick)
-
-    for npc in npcs:
-      if self.collide_point(npc.center):
-        npc.take_damage(self.damage_per_tick)
-
+  def draw_damage(self, damage_maps):
     for damage_type, surf in damage_maps.iteritems():
       center = (int(self.center[0]), int(self.center[1]))
-      pygame.draw.circle(self.screen, self.draw_color, center, self.r)
+      pygame.draw.circle(surf, self.current_color, center, int(self.r))
+
+    return damage_maps
 
   def draw(self):
     center = (int(self.center[0]), int(self.center[1]))
-    pygame.draw.circle(self.screen, self.draw_color, center, self.r)
+    pygame.draw.circle(self.screen, self.current_color, center, int(self.r))
 
   '''
-  AOE.fire() will return itself to indicate that it is available for use,
+  When implemented, Skill.fire() will return itself to indicate that it is available for use,
   otherwise None. This passes control of the Skill from the PC which created it
   to Game.active_skills[]
   '''
   def fire(self, position):
-    raise NotImplementedError("[!!] Skill with no firing method defined")
+    raise NotImplementedError("[!!] You must define this skill's fire() method")
 
   def collide_point(self, coord):
     x1, y1 = self.center
