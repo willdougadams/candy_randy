@@ -84,7 +84,7 @@ class Game(State):
         new_y = (mouse_position[1] / self.window_scale_factor + self.window_offset[1])
         window_mouse_pos = (new_x, new_y)
         if event.button == 1:
-          self.pcs[self.active_pc].target_dest = window_mouse_pos
+          self.active_skills.append(self.pcs[self.active_pc].fire_attack(window_mouse_pos))
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
           self.active_skills.append(self.pcs[self.active_pc].fire(window_mouse_pos))
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
@@ -106,15 +106,16 @@ class Game(State):
       a.update(elapsed)
       self.damage_maps = a.draw_damage(self.damage_maps)
 
+    for n in self.npcs:
+      n.npc_update(elapsed, self.damage_maps)
+      self.damage_maps = n.draw_damage_to_maps(self.damage_maps)
+
     for p in self.pcs:
       p.pc_update(elapsed, self.damage_maps)
 
-    for n in self.npcs:
-      n.npc_update(elapsed, self.damage_maps)
-
   def draw(self):
-    self.screen.fill(self.WHITE)
-    self.buffer_frame.fill(self.WHITE)
+    self.screen.fill(self.BLACK)
+    self.buffer_frame.fill(self.BLACK)
 
     self.level.draw()
 

@@ -9,3 +9,4 @@ corpse_position: 4, 1
 
 attack_range: 10
 attack_damage: 10
+attack_type: attack.skill

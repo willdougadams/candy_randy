@@ -6,3 +6,4 @@ sprite_width: 16
 sprite_height: 16
 spritesheet_position: 1 1
 corpse_position: 4, 1
+attack_type: attack.skill

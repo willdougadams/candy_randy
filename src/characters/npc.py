@@ -1,6 +1,10 @@
+import pygame
+
 from pc import PC
 from random import randint
 import math
+
+target_location = (0, 0)
 
 class NPC(PC):
   def __init__(self, coord, r, screen, npc_filename, level):
@@ -17,32 +21,30 @@ class NPC(PC):
 
     self.step += elapsed
     if self.step > 0.5:
-      self.current_sprite_index = (self.current_sprite_index + 1) %  2
+      self.current_sprite_index = (self.current_sprite_index + 1) % 2
       self.step = 0.0
 
     self.curr_sprite_sheet = self.sprite_sheets[self.current_sprite_index]
-
-    move_speed = self.move_speed * elapsed
-    seed = randint(1, 100)
-    x_pos = self.center[0]
-    y_pos = self.center[1]
-
-    if seed == 1:
-      x_pos += move_speed
-    elif seed == 2:
-      x_pos -= move_speed
-    elif seed == 3:
-      y_pos += move_speed
-    elif seed == 4:
-      y_pos -= move_speed
-
-    self.center = (x_pos, y_pos)
 
     self.image.blit(self.curr_sprite_sheet,
                     (0, 0),
                     (self.spritesheet_x, self.spritesheet_y, self.width, self.height)
                   )
 
+    #for damage_type, surf in damage_maps.iteritems():
+    #  pygame.draw.circle(surf, (0, 1, 0), self.center, self.width)
+
+    self.apply_damage(elapsed, damage_maps)
+
+  def apply_damage(self, elapsed, damage_maps):
+    # npcs take damage with red and do damage with green
     for damage_type, surf in damage_maps.iteritems():
-      damage_done = surf.get_at(tuple(map(int, self.center))).r * elapsed
+      damage_done = surf.get_at(tuple(map(int, self.center))).r
+      damage_done *= elapsed
       self.take_damage(damage_done)
+
+  def draw_damage_to_maps(self, damage_maps):
+    for damage_type, surf in damage_maps.iteritems():
+      pygame.draw.circle(surf, (0, 10, 0), self.center, self.width)
+
+    return damage_maps

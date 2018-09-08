@@ -24,7 +24,7 @@ class Skill:
     self.active_countdown = float(config['active_time'])
     self.move_speed = float(config['move_speed'])
     self.dps = float(config['dps'])
-    self.current_color = self.warmup_color = Skill.GREEN
+    self.current_color = self.warmup_color = Skill.BLUE
     self.active_color = (self.dps, float(0), float(0))
     self.x_speed = 0
     self.y_speed = 0

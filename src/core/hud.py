@@ -14,9 +14,14 @@ class HUD:
   def __init__(self, game):
     self.game = game
     self.screen_height = self.game.screen.get_height()
-
+    pygame.font.init()
+    self.font = pygame.font.SysFont('Comic Sans MS', 30)
 
   def draw(self):
+    health = str(self.game.pcs[self.game.active_pc].health_points)
+    health = self.font.render(health, False, (0, 0, 255))
+    self.game.screen.blit(health, (10, 10))
+
     draw_y = self.screen_height
 
     draw_x = HUD.COLUMN_SPACING
@@ -34,12 +39,6 @@ class HUD:
                         draw_y - (len(pc.skills) * HUD.SKILL_METER_SPACING * 2),
                         HUD.METER_RADIUS * 2,
                         len(pc.skills) * HUD.SKILL_METER_SPACING * 2))
-        
-        pygame.draw.circle(self.game.screen,
-                        HUD.HIGHLIGHT_SKILL_COLOR,
-                        (int(pc.center[0]), int(pc.center[1])),
-                        HUD.ACTIVE_SKILL_RADIUS,
-                        3)
 
       for j, skill in enumerate(pc.skills):
         draw_y -= HUD.SKILL_METER_SPACING

@@ -2,6 +2,7 @@ import pygame # pylint: disable=E1121
 from skills.aoe import AOE
 from skills.bolt import Bolt
 from skills.aura import Aura
+from skills.attack import Attack
 
 class PC():
 
@@ -33,7 +34,8 @@ class PC():
     self.alive_color = PC.BLUE
     self.dead_color = PC.BLACK
     self.draw_color = self.alive_color
-    self.move_speed = int(self.attrib_dict["move_speed"])
+    self.move_speed = int(self.attrib_dict['move_speed'])
+    self.attack = Attack(self, self.screen, 'Attack.skill')
     self.max_speed = 15
 
     '''
@@ -111,10 +113,8 @@ class PC():
 
     for skill in self.skills:
       skill.update(elapsed)
-
-    for damage_type, surf in damage_maps.iteritems():
-      damage_done = surf.get_at(tuple(map(int, self.center))).r
-      self.take_damage(damage_done/elapsed)
+    
+    self.apply_damage(damage_maps, elapsed)
 
   def draw(self):
     x, y = self.center
@@ -141,8 +141,18 @@ class PC():
       self.skills[self.active_skill] = self.skill_types[self.active_skill](self, self.screen, config_file)
     return ret_skill
 
-  def attack(self):
-    pass
+  def fire_attack(self, coord):
+    attack = self.attack.fire(coord)
+    if attack is not None:
+      self.attack = Attack(self, self.screen, self.attack_file)
+    return attack
+
+  def apply_damage(self, damage_maps, elapsed):
+    # pcs take damage with green and do damage with red
+    for damage_type, surf in damage_maps.iteritems():
+      damage_done = surf.get_at(tuple(map(int, self.center))).g
+      print damage_done
+      self.take_damage(damage_done*elapsed)
 
   def take_damage(self, damage):
     self.health_points -= damage
