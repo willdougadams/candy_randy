@@ -7,7 +7,7 @@ class Level():
     self.grid = []
     self.path_weight_grid = []
     self.grid_generated = False
-    self.rooms_amt = 6
+    self.rooms_amt = 3
     self.components_generated = 0
     self.components_total = self.rooms_amt * 3
     self.offset = (0, 0)
@@ -136,3 +136,49 @@ class Level():
 
   def get_progress(self):
     return self.components_generated / float(self.components_total)
+
+  def surf_to_grid(self, spot):
+    return spot[1]/self.tile_size, spot[0]/self.tile_size
+
+  def grid_to_surf(self, spot):
+    return (spot[1]+1)*self.tile_size-self.tile_size/2, (spot[0]+1)*self.tile_size-self.tile_size/2
+
+  def get_neighbors(self, spot):
+    n = []
+    n.append((spot[0], spot[1]+1))
+    n.append((spot[0], spot[1]-1))
+    n.append((spot[0]+1, spot[1]))
+    n.append((spot[0]-1, spot[1]))
+    return n
+
+  def get_path(self, start, end):
+    start = self.surf_to_grid(start)
+    end = self.surf_to_grid(end)
+
+    came_from = {}
+
+    search_queue = [start]
+    while search_queue:
+      search = search_queue.pop(0)
+      if search == end:
+        break
+      for n in self.get_neighbors(search):
+        if n in came_from:
+          continue
+        try:
+          tile = self.grid[n[0]][n[1]]
+          if tile in self.floor_tile_symbols:
+            came_from[n] = search
+            search_queue.append(n)
+        except IndexError:
+          pass
+
+    path = []
+    if end in came_from:
+      backtrack = end
+      while not backtrack == start:
+        path.append(self.grid_to_surf(backtrack))
+        backtrack = came_from[backtrack]
+      path.append(start)
+
+    return path

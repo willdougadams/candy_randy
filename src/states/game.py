@@ -2,6 +2,7 @@ import pygame
 from core import generate_level
 import random
 import threading
+import math
 
 from states.state import State
 from states.menu import Menu
@@ -46,13 +47,18 @@ class Game(State):
     self.level_w = self.level.get_w()
     self.level_h = self.level.get_h()
 
+    spots_taken = []
     for p in range(1):
-      spawn = generate_level.search_for_room(self.level.grid, random.randint(0, len(self.level.grid)-1), random.randint(0, len(self.level.grid)-1))
-      self.pcs.append(PC(tuple(map(lambda x: x*self.level.tile_size+1, spawn[::-1])), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
+      spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
+      spots_taken.append(spawn)
+      self.pcs.append(PC(tuple(map(lambda x: x*self.level.tile_size, spawn[::-1])), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
 
-    for n in range(15):
-      spawn = generate_level.search_for_room(self.level.grid, random.randint(0, len(self.level.grid)-1), random.randint(0, len(self.level.grid)-1))
-      self.npcs.append(NPC(tuple(map(lambda x: x*self.level.tile_size+1, spawn[::-1])), 10, self.buffer_frame, "res/npcs/beholder.npc", self.level))
+    for n in range(3):
+      spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
+      while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 20 for s in spots_taken):
+        spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
+      spots_taken.append(spawn)
+      self.npcs.append(NPC(tuple(map(lambda x: x*self.level.tile_size, spawn[::-1])), 10, self.buffer_frame, "res/npcs/slime.npc", self.level))
 
   def update(self, user_input, mouse_position, elapsed):
     pressed = pygame.key.get_pressed()
@@ -107,11 +113,13 @@ class Game(State):
       self.damage_maps = a.draw_damage(self.damage_maps)
 
     for n in self.npcs:
-      n.npc_update(elapsed, self.damage_maps)
+      new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
+      n.add_path(new_path)
+      n.update(elapsed, self.damage_maps)
       self.damage_maps = n.draw_damage_to_maps(self.damage_maps)
 
     for p in self.pcs:
-      p.pc_update(elapsed, self.damage_maps)
+      p.update(elapsed, self.damage_maps)
 
   def draw(self):
     self.screen.fill(self.BLACK)

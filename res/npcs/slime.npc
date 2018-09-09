@@ -1,4 +1,4 @@
-move_speed: 100
+move_speed: 25
 
 health: 89
 spritesheets: Slime0.png Slime1.png

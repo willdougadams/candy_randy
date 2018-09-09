@@ -4,6 +4,8 @@ from skills.bolt import Bolt
 from skills.aura import Aura
 from skills.attack import Attack
 
+from core.util import read_config
+
 class PC():
 
   BLACK = (0, 0, 0)
@@ -16,7 +18,7 @@ class PC():
   STEP_LENGTH = 10
 
   def __init__(self, coord, r, buffer_frame, filename, level):
-    self.attrib_dict = read_char_file(filename)
+    self.attrib_dict = read_config(filename)
     w, h = pygame.display.get_surface().get_size()
     self.center = coord
     self.target_dest = coord
@@ -65,10 +67,18 @@ class PC():
     self.image.set_colorkey(PC.BLACK)
     self.step_time = 0
 
-  def pc_update(self, elapsed, damage_maps):
+  def update(self, elapsed, damage_maps):
     if not self.alive:
       return
 
+    self.move(elapsed)
+    self.update_sprite(elapsed)
+    self.apply_damage(elapsed, damage_maps)
+
+    for skill in self.skills:
+      skill.update(elapsed)
+
+  def move(self, elapsed):
     x_pos = self.center[0]
     y_pos = self.center[1]
 
@@ -101,7 +111,8 @@ class PC():
     if stepping_onto in self.level.floor_tile_symbols:
       self.center = step
       self.location_grid_space = grid_step
-  
+
+  def update_sprite(self, elapsed):
     self.step_time += elapsed
     if self.step_time > 0.5:
       self.step = (self.step + 1) % 4
@@ -110,11 +121,6 @@ class PC():
     self.image.blit(self.curr_sprite_sheet, (0, 0), (self.step * 16, self.orientation * 16, 16, 16))
     self.image.set_colorkey(PC.BLACK)
     self.rect = self.image.get_rect()
-
-    for skill in self.skills:
-      skill.update(elapsed)
-    
-    self.apply_damage(damage_maps, elapsed)
 
   def draw(self):
     x, y = self.center
@@ -147,11 +153,16 @@ class PC():
       self.attack = Attack(self, self.screen, self.attack_file)
     return attack
 
-  def apply_damage(self, damage_maps, elapsed):
+  def apply_damage(self, elapsed, damage_maps):
     # pcs take damage with green and do damage with red
     for damage_type, surf in damage_maps.iteritems():
-      damage_done = surf.get_at(tuple(map(int, self.center))).g
-      self.take_damage(damage_done*elapsed)
+      damage_done = surf.get_at(self.get_int_location()).g
+      if damage_done > 0:
+        print damage_done, elapsed
+      damage_done *= elapsed
+      if damage_done > 0:
+        print damage_done
+      self.take_damage(damage_done)
 
   def take_damage(self, damage):
     self.health_points -= damage
@@ -163,7 +174,10 @@ class PC():
                   )
       self.alive = False
 
+  def get_int_location(self):
+    return tuple(map(int, self.center))
 
+'''
 def read_char_file(filename):
   attribute_dict = {}
   with open(filename) as fin:
@@ -180,3 +194,4 @@ def read_char_file(filename):
       attribute_dict[attribute] = attribute_dict[attribute][0]
 
   return attribute_dict
+'''
