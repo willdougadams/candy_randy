@@ -1,7 +1,8 @@
 import pygame
+from states.game import Game
 from states.state import State
 
-class Menu(State):
+class MainMenu(State):
   WHITE = (0, 255, 0)
   OTHER_COLOR = (255, 127, 255)
 
@@ -13,7 +14,7 @@ class Menu(State):
     self.bg_color = self.WHITE
     self.clock = pygame.time.Clock()
 
-    items = ('Quit', 'Return to Main Menu', 'Resume')
+    items = ('Start New Game', 'Quit')
     font_size = 30
     font_color = (255, 255, 255)
 
@@ -23,7 +24,7 @@ class Menu(State):
 
     self.items = []
     self.button_rects = []
-    self.highlighted_button = -1;
+    self.highlighted_button = -1
     for index, item in enumerate(items):
       label = self.font.render(item, 1, font_color)
 
@@ -49,12 +50,11 @@ class Menu(State):
           self.manager.go_back_state()
       if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
         if self.highlighted_button == 0:
+          game = Game(self.screen)
+          self.manager.go_to(game)
+        if self.highlighted_button == 1:
           print "Exiting..."
           exit()
-        if self.highlighted_button == 1:
-          self.manager.go_back_state(2)
-        if self.highlighted_button == 2:
-          self.manager.go_back_state()
 
     pygame.event.pump()
 

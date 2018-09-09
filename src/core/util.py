@@ -14,3 +14,11 @@ def read_config(filename):
       attribute_dict[attribute] = attribute_dict[attribute][0]
 
   return attribute_dict
+
+
+class colors():
+  BLACK = tuple(map(int, [0, 0, 0]))
+  WHITE = tuple(map(int, [255, 255, 255]))
+  BLUE  = tuple(map(int, [0, 0, 255]))
+  GREEN = tuple(map(int, [0, 255, 0]))
+  RED = tuple(map(int, [255, 0, 0]))

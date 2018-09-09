@@ -3,4 +3,4 @@ warmup_time:1.25
 cooldown_time:2
 active_time:7.5
 move_speed:0
-dps: 20
+dps: 200

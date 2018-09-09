@@ -16,7 +16,7 @@ class State:
     r = pygame.Rect(w/3, h/2, w/3, h/10)
     self.screen.fill((0, 0, 0))
 
-    font_size = 20
+    font_size = 15
     font_color = (255, 255, 255)
 
     self.font = pygame.font.SysFont("Courier", font_size)

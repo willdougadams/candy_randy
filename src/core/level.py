@@ -7,7 +7,7 @@ class Level():
     self.grid = []
     self.path_weight_grid = []
     self.grid_generated = False
-    self.rooms_amt = 2
+    self.rooms_amt = 6
     self.components_generated = 0
     self.components_total = self.rooms_amt * 3
     self.offset = (0, 0)

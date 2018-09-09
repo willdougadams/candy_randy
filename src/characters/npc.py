@@ -31,9 +31,6 @@ class NPC(PC):
                     (self.spritesheet_x, self.spritesheet_y, self.width, self.height)
                   )
 
-    #for damage_type, surf in damage_maps.iteritems():
-    #  pygame.draw.circle(surf, (0, 1, 0), self.center, self.width)
-
     self.apply_damage(elapsed, damage_maps)
 
   def apply_damage(self, elapsed, damage_maps):
@@ -44,7 +41,8 @@ class NPC(PC):
       self.take_damage(damage_done)
 
   def draw_damage_to_maps(self, damage_maps):
-    for damage_type, surf in damage_maps.iteritems():
-      pygame.draw.circle(surf, (0, 10, 0), self.center, self.width)
+    if self.alive:
+      for damage_type, surf in damage_maps.iteritems():
+        pygame.draw.circle(surf, (0, 10, 0), self.center, self.width)
 
     return damage_maps

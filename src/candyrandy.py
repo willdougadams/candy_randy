@@ -8,7 +8,8 @@
 
 import pygame
 import time
-from states.game import Game
+# from states.game import Game
+from states.main_menu import MainMenu
 from states.state_manager import StateManager
 
 pygame.init()
@@ -22,8 +23,8 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Candy Randy")
 clock = pygame.time.Clock()
 
-game = Game(screen)
-mr_manager = StateManager(game) # We just say manager
+main_menu = MainMenu(screen)
+mr_manager = StateManager(main_menu) # We just say manager
 done = False
 
 def main():
