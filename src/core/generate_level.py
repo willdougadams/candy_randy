@@ -134,10 +134,6 @@ def add_hallway(grid):
 
   room_to_add = search_for_room(unconnected, random.randint(0, len(grid)-1), random.randint(0, len(grid)-1))
 
-  if room_to_add is None:
-    print 'FATAL ERROR: cannot connect all rooms in level'
-    exit()
-
   for direction in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
     if scout(grid, room_to_add, direction):
       grid = print_hallway_to_map(grid, room_to_add, direction)

@@ -77,7 +77,7 @@ class Level():
     while not all_connected(grid):
       last_grid = grid[:]
       grid = add_hallway(grid)
-      if grid == last_grid:
+      if not grid == last_grid:
         self.components_generated += 1
     self.grid = grid#generate_level.generate(self.map_size)
 
@@ -160,8 +160,6 @@ class Level():
     search_queue = [start]
     while search_queue:
       search = search_queue.pop(0)
-      if search == end:
-        break
       for n in self.get_neighbors(search):
         if n in came_from:
           continue
@@ -172,6 +170,8 @@ class Level():
             search_queue.append(n)
         except IndexError:
           pass
+        if search == end:
+          break
 
     path = []
     if end in came_from:
@@ -179,6 +179,5 @@ class Level():
       while not backtrack == start:
         path.append(self.grid_to_surf(backtrack))
         backtrack = came_from[backtrack]
-      path.append(start)
 
-    return path
+    return path[::-1]
