@@ -1,4 +1,4 @@
-move_speed: 60
+move_speed: 100
 
 health: 89
 spritesheets: Paladin.png Paladin.png

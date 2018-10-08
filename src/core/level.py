@@ -7,13 +7,13 @@ class Level():
     self.grid = []
     self.path_weight_grid = []
     self.grid_generated = False
-    self.rooms_amt = 3
+    self.rooms_amt = 10
     self.components_generated = 0
     self.components_total = self.rooms_amt * 3
     self.offset = (0, 0)
     self.screen = screen
     self.tile_size = 16
-    self.map_size = 60
+    self.map_size = 120
     self.current_level = 1
     self.current_world = 0
 
@@ -77,9 +77,12 @@ class Level():
     while not all_connected(grid):
       last_grid = grid[:]
       grid = add_hallway(grid)
+      with open('bunk/map.map', 'w+') as fout:
+        for row in grid:
+          fout.write(''.join(row)+'\n')
       if not grid == last_grid:
         self.components_generated += 1
-    self.grid = grid#generate_level.generate(self.map_size)
+    self.grid = grid
 
     level_offset = (3 * self.tile_size * self.current_level)
     world_offset = (7 * self.tile_size * self.current_world)
