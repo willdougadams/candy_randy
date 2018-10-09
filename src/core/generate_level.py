@@ -41,7 +41,7 @@ def print_room_to_grid(grid, room, r, c):
 '''
 
 def spot_valid(grid, room, r, c):
-  if r+room.height >= len(grid)-ROOM_BUFFER or c+room.width>=len(grid[0])-ROOM_BUFFER:
+  if r+room.height >= len(grid)-(ROOM_BUFFER*2) or c+room.width>=len(grid[0])-(ROOM_BUFFER*2):
     return False
 
   for i in range(r, r+room.height+ROOM_BUFFER):
@@ -155,8 +155,8 @@ def add_hallway(grid):
   r, c = search_for_room(grid)
   unconnected = erase_space(copy.deepcopy(grid), r, c)
 
-  room_to_add = search_for_room(unconnected)
-  queue = [room_to_add]
+  r, c = search_for_room(unconnected)
+  queue = [(r, c)]
   "Starting search for hallway spot"
 
   checked = {}
@@ -166,7 +166,7 @@ def add_hallway(grid):
     print "checking", spot, 'for hallway potential\r',
 
     for direction in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
-      if scout(grid, room_to_add, direction):
+      if scout(grid, spot, direction):
         grid = print_hallway_to_map(grid, spot, direction)
         print 'hallway placed :thumbsup:'
         return grid
@@ -181,16 +181,23 @@ def add_hallway(grid):
   return grid
 
 def erase_space(grid, r, c):
-    grid[r][c] = " "
+    queue = [(r, c)]
+    visited = {}
+    visited[(r, c)] = True
+    print 'erasing space at', r, c
 
-    if r > 0 and grid[r-1][c] == ".":
-        grid = erase_space(grid, r-1, c)
-    if r < len(grid) - 1 and grid[r+1][c] == ".":
-        grid = erase_space(grid, r+1, c)
-    if c > 0 and grid[r][c-1] == ".":
-        grid = erase_space(grid, r, c-1)
-    if c < len(grid[0]) - 1 and grid[r][c+1] == ".":
-        grid = erase_space(grid, r, c+1)
+    while queue:
+      r, c = queue.pop(0)
+      print len(queue), r, c
+      grid[r][c] = ' '
+
+      neighbors = [(r+1, c), (r-1, c), (r, c+1), (r, c-1)]
+      neighbors = [x for x in neighbors if not x in visited]
+      neighbors = [x for x in neighbors if x[0]>=0 and x[0]<len(grid) and x[1]>=0 and x[1]<len(grid[0])]
+      neighbors = [x for x in neighbors if grid[x[0]][x[1]] == '.']
+      for n in neighbors:
+        visited[n] = True
+        queue.append(n)
 
     return grid
 

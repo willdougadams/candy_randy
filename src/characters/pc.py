@@ -87,7 +87,8 @@ class PC():
     x_dist = abs(x_pos - self.target_dest[0])
     y_dist = abs(y_pos - self.target_dest[1])
 
-    self.orientation = (0 if x_dist > 0 else 4)
+    self.orientation = (1 if y_dist > 0 else 2)
+    self.orientation = (0 if x_dist > 0 else 3)
 
     if x_dist < x_move_dist:
       x_move_dist = x_dist
