@@ -7,9 +7,9 @@ class Level():
     self.grid = []
     self.path_weight_grid = []
     self.grid_generated = False
-    self.rooms_amt = 5
+    self.rooms_amt = 9
     self.components_generated = 0
-    self.components_total = self.rooms_amt * 3
+    self.components_total = self.rooms_amt * 2
     self.offset = (0, 0)
     self.screen = screen
     self.tile_size = 16
@@ -77,11 +77,14 @@ class Level():
     while not all_connected(grid):
       last_grid = grid[:]
       grid = add_hallway(grid)
-      with open('bunk/map.map', 'w+') as fout:
-        for row in grid:
-          fout.write(''.join(row)+'\n')
       if not grid == last_grid:
         self.components_generated += 1
+
+    # grid = apply_walls(grid)
+    
+    with open('bunk/map.map', 'w+') as fout:
+        for row in grid:
+          fout.write(''.join(row)+'\n')
     self.grid = grid
 
     level_offset = (3 * self.tile_size * self.current_level)
@@ -163,7 +166,9 @@ class Level():
     search_queue = [start]
     while search_queue:
       search = search_queue.pop(0)
-      for n in self.get_neighbors(search):
+      neighbors = self.get_neighbors(search)
+      neighbors = filter(lambda x: all(m>=0 for m in x) and x[0]<len(self.grid)-1 and x[1]<len(self.grid[0])-1, neighbors)
+      for n in neighbors:
         if n in came_from:
           continue
         try:
@@ -182,5 +187,6 @@ class Level():
       while not backtrack == start:
         path.append(self.grid_to_surf(backtrack))
         backtrack = came_from[backtrack]
+      #path.append(self.grid_to_surf(backtrack))
 
     return path[::-1]

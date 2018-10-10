@@ -3,12 +3,11 @@ import pygame
 import copy
 import random
 
-ROOM_BUFFER = 3
+ROOM_BUFFER = 2
 
 def print_room_to_grid(grid, room, r, c):
   for row in range(-ROOM_BUFFER, room.height+ROOM_BUFFER):
     for col in range(-ROOM_BUFFER, room.width+ROOM_BUFFER):
-      # 'B' does not corresond to a tile, provides buffer
       grid[r+row][c+col] = 'B'
 
   for row in range(room.height-1):
@@ -16,30 +15,6 @@ def print_room_to_grid(grid, room, r, c):
       grid[r+row][c+col] = '.'
 
   return grid
-
-'''
-  for i in range(1, room.width):
-    grid[r][c+i] = '='
-    grid[r+1][c+i] = '-'
-    grid[r+room.height-1][c+i] = '='
-    grid[r+room.height-2][c+i] = '_'
-
-  for i in range(1, room.height-1):
-    grid[r+i][c] = '|'
-    grid[r+i][c+1] = ';'
-    grid[r+i][c+room.width-1] = '|'
-    grid[r+i][c+room.width-2] = ':'
-
-  grid[r][c] = '('
-  grid[r+1][c+1] = '{'
-  grid[r][c+room.width-1] = ')'
-  grid[r+1][c+room.width-2] = '}'
-
-  grid[r+room.height-1][c] = 'l'
-  grid[r+room.height-2][c+1] = '['
-  grid[r+room.height-1][c+room.width-1] = 'r'
-  grid[r+room.height-2][c+room.width-2] = ']'
-'''
 
 def spot_valid(grid, room, r, c):
   if r+room.height >= len(grid)-(ROOM_BUFFER*2) or c+room.width>=len(grid[0])-(ROOM_BUFFER*2):
@@ -194,11 +169,9 @@ def erase_space(grid, r, c):
     queue = [(r, c)]
     visited = {}
     visited[(r, c)] = True
-    print 'erasing space at', r, c
 
     while queue:
       r, c = queue.pop()
-      #print len(queue), r, c
       grid[r][c] = ' '
 
       neighbors = [(r+1, c), (r-1, c), (r, c+1), (r, c-1)]
@@ -217,3 +190,19 @@ def all_connected(grid):
       if grid[r][c] == '.':
         erased = erase_space(copy.deepcopy(grid), r, c)
         return not any(t == '.' for row in erased for t in row)
+
+def apply_walls(grid):
+  tile_lookup = {}
+  tile_lookup['.........'] = '.'
+  tile_lookup['BBB......'] = '-'
+  tile_lookup['......BBB'] = '_'
+  walls_to_apply = {}
+  for row in range(len(grid)):
+    for col in range(row):
+      patch = ''.join([''.join(r[col-1:col+2]) for r in grid[row-1:row+2]])
+      walls_to_apply[(row, col)] = tile_lookup[patch]
+
+  for spot, tile in walls_to_apply.iteritems():
+    grid[spot[0]][spot[1]] = tile
+
+  return grid
