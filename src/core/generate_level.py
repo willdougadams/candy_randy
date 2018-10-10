@@ -170,18 +170,15 @@ def add_hallway(grid):
 
   r, c = search_for_room(unconnected, start='random')
   queue = [(r, c)]
-  "Starting search for hallway spot"
 
   checked = {}
   while queue:
     spot = queue.pop() # ok fine its a stack
     checked[spot] = True
-    print "checking", spot, 'for hallway potential\r',
 
     for direction in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
       if scout(grid, spot, direction):
         grid = print_hallway_to_map(grid, spot, direction)
-        print 'hallway placed :thumbsup:'
         return grid
 
     neighbors = [(spot[0]-1, spot[1]), (spot[0]+1, spot[1]), (spot[0], spot[1]-1), (spot[0], spot[1]+1)]

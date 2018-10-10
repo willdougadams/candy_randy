@@ -58,7 +58,10 @@ class Game(State):
       while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 20 for s in spots_taken):
         spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
       spots_taken.append(spawn)
-      self.npcs.append(NPC(tuple(map(lambda x: x*self.level.tile_size, spawn[::-1])), 10, self.buffer_frame, "res/npcs/slime.npc", self.level))
+      n = NPC(tuple(map(lambda x: x*self.level.tile_size, spawn[::-1])), 10, self.buffer_frame, "res/npcs/slime.npc", self.level)
+      new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
+      n.add_path(new_path)
+      self.npcs.append(n)
 
   def update(self, user_input, mouse_position, elapsed):
     pressed = pygame.key.get_pressed()
