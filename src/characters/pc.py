@@ -87,9 +87,6 @@ class PC():
     x_dist = abs(x_pos - self.target_dest[0])
     y_dist = abs(y_pos - self.target_dest[1])
 
-    self.orientation = (1 if y_dist > 0 else 2)
-    self.orientation = (0 if x_dist > 0 else 3)
-
     if x_dist < x_move_dist:
       x_move_dist = x_dist
     if y_dist < y_move_dist:
@@ -106,6 +103,18 @@ class PC():
       y_pos += y_move_dist
 
     step = (x_pos, y_pos)
+    if not self.center[1] == y_pos:
+      if self.center[1] > y_pos:
+        self.orientation = 3
+      else:
+        self.orientation = 0
+    if not self.center[0] == x_pos:
+      if self.center[0] > x_pos:
+        self.orientation = 1
+      else:
+        self.orientation = 2
+
+
     grid_step = int(step[1]/self.level.tile_size), int(step[0]/self.level.tile_size)
 
     stepping_onto = self.level.grid[grid_step[0]][grid_step[1]]
