@@ -113,8 +113,9 @@ class Game(State):
       self.damage_maps = a.draw_damage(self.damage_maps)
 
     for n in self.npcs:
-      new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
-      n.add_path(new_path)
+      if len(n.path) < n.paths_original_length:
+        new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
+        n.add_path(new_path)
       n.update(elapsed, self.damage_maps)
       self.damage_maps = n.draw_damage_to_maps(self.damage_maps)
 

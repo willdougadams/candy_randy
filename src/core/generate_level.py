@@ -1,6 +1,7 @@
 import random
 import pygame
 import copy
+import random
 
 ROOM_BUFFER = 3
 
@@ -100,11 +101,21 @@ def print_hallway_to_map(grid, spot, direction):
 
   return grid
 
-def search_for_room(grid, r=None, c=None, target_tile='.'):
+def search_for_room(grid, r=None, c=None, target_tile='.', start=None):
   visited = {}
   if r is None:
-    r = len(grid)/2
-    c = len(grid[0])/2
+    r = random.randint(1, len(grid)-1)
+  if c is None:
+    c = random.randint(1, len(grid)-1)
+  if start is not None:
+    if start == 'random':
+      r = random.randint(1, len(grid)-1)
+      c = random.randint(1, len(grid)-1)
+    elif start == 'center':
+      r = len(grid)/2
+      c = len(grid)/2
+    else:
+      raise Exception('Unrecognized start for search: '+str(start))
   queue = [(r, c)]
   while queue:
     spot = queue.pop(0)
@@ -134,34 +145,36 @@ def search_for_room(grid, r=None, c=None, target_tile='.'):
         pass
 
 def scout(grid, spot, direction):
-  good_to_go = False
-  try:
-    # first detect edge of room
-    while grid[spot[0]][spot[1]] == '.':
-      spot = (spot[0]+direction[0], spot[1]+direction[1])
-
-    # then keep going, if new room detected return true, else false
-    while not grid[spot[0]][spot[1]] == '.':
-      spot = (spot[0]+direction[0], spot[1]+direction[1])
-
+  def increment_spot(spot):
     spot = (spot[0]+direction[0], spot[1]+direction[1])
-    good_to_go = (grid[spot[0]][spot[1]] == '.')
-  except IndexError:
-    return False
+    if any(s < 0 for s in [spot[0], spot[1]]) or spot[0] >= len(grid) or spot[1] >= len(grid[0]):
+      return ()
+    return spot
+
+  good_to_go = False
+  while spot and grid[spot[0]][spot[1]] == '.':
+    spot = increment_spot(spot)
+
+  while spot and not grid[spot[0]][spot[1]] == '.':
+    spot = increment_spot(spot)
+
+  if not spot:
+      return False
+  good_to_go = (grid[spot[0]][spot[1]] == '.')
 
   return good_to_go
 
 def add_hallway(grid):
-  r, c = search_for_room(grid)
+  r, c = search_for_room(grid, start='random')
   unconnected = erase_space(copy.deepcopy(grid), r, c)
 
-  r, c = search_for_room(unconnected)
+  r, c = search_for_room(unconnected, start='random')
   queue = [(r, c)]
   "Starting search for hallway spot"
 
   checked = {}
   while queue:
-    spot = queue.pop(0)
+    spot = queue.pop() # ok fine its a stack
     checked[spot] = True
     print "checking", spot, 'for hallway potential\r',
 
@@ -187,8 +200,8 @@ def erase_space(grid, r, c):
     print 'erasing space at', r, c
 
     while queue:
-      r, c = queue.pop(0)
-      print len(queue), r, c
+      r, c = queue.pop()
+      #print len(queue), r, c
       grid[r][c] = ' '
 
       neighbors = [(r+1, c), (r-1, c), (r, c+1), (r, c-1)]

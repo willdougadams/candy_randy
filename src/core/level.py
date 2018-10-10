@@ -7,13 +7,13 @@ class Level():
     self.grid = []
     self.path_weight_grid = []
     self.grid_generated = False
-    self.rooms_amt = 3
+    self.rooms_amt = 5
     self.components_generated = 0
     self.components_total = self.rooms_amt * 3
     self.offset = (0, 0)
     self.screen = screen
     self.tile_size = 16
-    self.map_size = 60
+    self.map_size = 240
     self.current_level = 1
     self.current_world = 0
 

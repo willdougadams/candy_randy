@@ -15,8 +15,10 @@ class NPC(PC):
     self.current_sprite_index = 0
     self.level = level
     self.path = []
+    self.paths_original_length = len(self.path)
 
   def add_path(self, new_path):
+    self.paths_original_length = len(new_path)
     if new_path:
       self.target_dest = new_path.pop(0)
     self.path = new_path
@@ -52,8 +54,9 @@ class NPC(PC):
         damage_done *= elapsed
         self.take_damage(damage_done)
       except IndexError as e:
-        print e
-        print 'NPC off map, apparently. location: {0}'.format(self.center)
+        pass
+        #print e
+        #print 'NPC off map, apparently. location: {0}'.format(self.center)
 
   def draw_damage_to_maps(self, damage_maps):
     if self.alive:

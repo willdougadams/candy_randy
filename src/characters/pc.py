@@ -158,11 +158,7 @@ class PC():
     # pcs take damage with green and do damage with red
     for damage_type, surf in damage_maps.iteritems():
       damage_done = surf.get_at(self.get_int_location()).g
-      if damage_done > 0:
-        print damage_done, elapsed
       damage_done *= elapsed
-      if damage_done > 0:
-        print damage_done
       self.take_damage(damage_done)
 
   def take_damage(self, damage):
