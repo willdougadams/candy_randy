@@ -7,7 +7,7 @@ class Level():
     self.grid = []
     self.path_weight_grid = []
     self.grid_generated = False
-    self.rooms_amt = 9
+    self.rooms_amt = 10
     self.components_generated = 0
     self.components_total = self.rooms_amt * 2
     self.offset = (0, 0)
@@ -143,7 +143,7 @@ class Level():
     return self.tilemap.get_size()[1]
 
   def get_progress(self):
-    return self.components_generated / float(self.components_total)
+    return min(0.9, self.components_generated / float(self.components_total))
 
   def surf_to_grid(self, spot):
     return spot[1]/self.tile_size, spot[0]/self.tile_size

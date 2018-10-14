@@ -47,6 +47,7 @@ class PC():
     self.skills = []
     self.skill_types = [AOE, Bolt, Aura]
     self.skill_files = ['AOE.skill', 'Bolt.skill', 'Aura.skill']
+    self.attack_file = 'Attack.skill'
     for i, skill_type in enumerate(self.skill_types):
       self.skills.append(skill_type(self, self.screen, self.skill_files[i]))
 
@@ -77,6 +78,8 @@ class PC():
 
     for skill in self.skills:
       skill.update(elapsed)
+    
+    self.attack.update(elapsed)
 
   def move(self, elapsed):
     x_pos = self.center[0]

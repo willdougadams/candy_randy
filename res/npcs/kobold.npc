@@ -4,8 +4,8 @@ health: 50
 spritesheets: Demon0.png Demon1.png
 sprite_width: 16
 sprite_height: 16
-spritesheet_position: 4 1
-corpse_position: 4, 1
+spritesheet_position: 0 4
+corpse_position: 4 1
 
 attack_range: 10
 attack_damage: 10

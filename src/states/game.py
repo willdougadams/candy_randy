@@ -59,12 +59,11 @@ class Game(State):
     for npc_file in os.listdir(npc_path):
       npc_types.append(npc_path+npc_file)
 
-    for n in range(len(npc_types)):
+    for n in range(len(npc_types)*2):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
-      #while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 20 for s in spots_taken):
-      #  spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
-      spots_taken.append(spawn)
-      n = NPC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, npc_types[n], self.level)
+      while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 20 for s in spots_taken):
+        spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
+      n = NPC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, npc_types[n%len(npc_types)], self.level)
       new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
       n.add_path(new_path)
       self.npcs.append(n)
@@ -86,20 +85,13 @@ class Game(State):
       if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_ESCAPE:
           self.manager.go_to(Menu(self.screen))
-        elif event.key == pygame.K_TAB:
-          self.active_pc = (self.active_pc + 1) % len(self.pcs)
-        elif event.key == pygame.K_1:
-          self.pcs[self.active_pc].active_skill = 0
-        elif event.key == pygame.K_2:
-          self.pcs[self.active_pc].active_skill = 1
-        elif event.key == pygame.K_3:
-          self.pcs[self.active_pc].active_skill = 2
       elif event.type == pygame.MOUSEBUTTONDOWN:
         new_x = (mouse_position[0] / self.window_scale_factor + self.window_offset[0])
         new_y = (mouse_position[1] / self.window_scale_factor + self.window_offset[1])
         window_mouse_pos = (new_x, new_y)
         if event.button == 1:
-          self.active_skills.append(self.pcs[self.active_pc].fire_attack(window_mouse_pos))
+          att = self.pcs[self.active_pc].fire_attack(window_mouse_pos)
+          self.active_skills.append(att)
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
           self.active_skills.append(self.pcs[self.active_pc].fire(window_mouse_pos))
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
@@ -122,7 +114,7 @@ class Game(State):
       self.damage_maps = a.draw_damage(self.damage_maps)
 
     for n in self.npcs:
-      if len(n.path) < n.paths_original_length/2:
+      if len(n.path) < n.paths_original_length/2 or len(n.path) < 2:
         new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
         n.add_path(new_path)
       n.update(elapsed, self.damage_maps)

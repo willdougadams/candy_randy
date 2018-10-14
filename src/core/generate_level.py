@@ -49,6 +49,8 @@ def place_room(grid, room):
       (r+1, c+1)
     ]
 
+    around = filter(lambda x: all(i>=0 for i in x), around)
+
     for direction in around:
       if direction in visited:
         continue
@@ -204,6 +206,8 @@ def apply_walls(grid):
   tile_lookup['.BB..B..B'] = '}'
 
   tile_lookup['BBB......'] = '-'
+  tile_lookup['BB.......'] = '-'
+  tile_lookup['.BB......'] = '-'
   tile_lookup['......BBB'] = '_'
 
   tile_lookup['BBBBBB...'] = '='
@@ -238,7 +242,11 @@ def apply_walls(grid):
   tile_lookup['BBB.BB...'] = 'l'
   
   tile_lookup['B.BB.BB.B'] = 'v'
+  tile_lookup['B.BB.B...'] = 'v'
+  tile_lookup['...B.BB.B'] = 'v'
   tile_lookup['BBB...BBB'] = 'h'
+  tile_lookup['.BB....BB'] = 'h'
+  tile_lookup['BB....BB.'] = 'h'
 
   walls_to_apply = {}
   for row in range(1, len(grid)-1):
@@ -247,10 +255,9 @@ def apply_walls(grid):
       for sub_row in grid[row-1:row+2]:
         for tile in sub_row[col-1:col+2]:
           patch += tile
-      try:
+      
+      if patch in tile_lookup:
         walls_to_apply[(row, col)] = tile_lookup[patch]
-      except KeyError:
-        pass
 
   for spot, tile in walls_to_apply.iteritems():
     grid[spot[0]][spot[1]] = tile

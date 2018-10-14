@@ -13,5 +13,3 @@ class Attack(Skill):
       self.center = position
       self.fired = True
       return self
-
-    return None
