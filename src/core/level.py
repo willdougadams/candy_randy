@@ -48,6 +48,8 @@ class Level():
     floor_tile_symbols["["] = "bottom_left"
     floor_tile_symbols["_"] = "bottom_center"
     floor_tile_symbols["]"] = "bottom_right"
+    floor_tile_symbols['h'] = 'hori_hallway'
+    floor_tile_symbols['v'] = 'vert_hallway'
     self.floor_tile_symbols = floor_tile_symbols
 
     wall_tile_symbols = {}
@@ -80,7 +82,7 @@ class Level():
       if not grid == last_grid:
         self.components_generated += 1
 
-    # grid = apply_walls(grid)
+    grid = apply_walls(grid)
     
     with open('bunk/map.map', 'w+') as fout:
         for row in grid:
