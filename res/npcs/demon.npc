@@ -1,7 +1,7 @@
-move_speed: 35
+move_speed: 25
 
-health: 89
-spritesheets: Slime0.png Slime1.png
+health: 150
+spritesheets: Demon0.png Demon1.png
 sprite_width: 16
 sprite_height: 16
 spritesheet_position: 1 1

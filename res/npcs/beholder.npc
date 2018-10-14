@@ -1,9 +1,9 @@
-move_speed: 100
+move_speed: 60
 
-health: 89
-spritesheets: Slime0.png Slime1.png
+health: 45
+spritesheets: Elemental0.png Elemental1.png
 sprite_width: 16
 sprite_height: 16
-spritesheet_position: 1 1
-corpse_position: 4, 1
+spritesheet_position: 2 5
+corpse_position: 4 1
 attack_type: attack.skill
