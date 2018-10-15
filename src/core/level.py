@@ -1,4 +1,5 @@
 import pygame
+import heapq
 import random
 from generate_level import *
 
@@ -16,6 +17,7 @@ class Level():
     self.map_size = 240
     self.current_level = 1
     self.current_world = 0
+    self.h_costs = [[0]*self.map_size for _ in range(self.map_size)]
 
     self.floor_tilesheet = pygame.image.load("res/DawnLike/Floor.png").convert()
     self.wall_tilesheet = pygame.image.load("res/DawnLike/Wall.png").convert()
@@ -151,6 +153,172 @@ class Level():
   def grid_to_surf(self, spot):
     return (spot[1]+1)*self.tile_size-self.tile_size/2, (spot[0]+1)*self.tile_size-self.tile_size/2
 
+  def manhattan_cost(self, start_pos):
+    start_row, start_col = start_pos
+    start_cost = 0
+    start = ((start_row, start_col), start_cost)
+    visited = {}
+    visited.add((start_row, start_col))
+    queue = [start]
+    costs = [[0]*len(self.grid) for _ in range(len(grid[0]))]
+
+    while queue:
+      (row, col), cost = queue.pop(0)
+      costs[row][col] = cost
+
+      neighbors = [
+        ((row+1, col), cost+10)
+        ((row-1, col), cost+10)
+        ((row, col+1), cost+10)
+        ((row, col-1), cost+10)
+
+        ((row+1, col+1), cost+14)
+        ((row+1, col-1), cost+14)
+        ((row-1, col+1), cost+14)
+        ((row-1, col-1), cost+14)
+      ]
+
+      neighbors = filter(lambda x: x[0][0]>=0 and x[0][1]>=0, neighbors)
+      neighbors = filter(lambda x: x[0][0]<len(self.grid) and x[0][1]<len(self.grid[0]), neighbors)
+      neighbors = filter(lambda x: x[0] not in visited, neighbors)
+      for n in neighbors:
+        visited.add((n[0], n[1]))
+        queue.append(n)
+
+    for row in costs:
+      print ''.join(list(map(str, row)))
+
+    return costs
+
+  def regenerate_h_costs(self, pc_pos):
+    self.h_costs = self.manhattan_cost(pc_pos)
+
+  def get_a_star_path(self, start, end):
+    g_cost = {}
+    f_cost = {}
+    g_cost[start] = 0
+    f_cost[start] = self.h_costs[start[0]][start[1]]
+
+    visited = set()
+    queue = set([start])
+    came_from = {}
+
+    while queue:
+      spot = None
+      node_f = None
+      for q in queue:
+        if spot is None or f_cost[q] < node_f:
+          node_f = f_cost[q]
+          spot = q
+
+      if spot == end:
+        print 'path found!  backtracking'
+        path = [spot]
+        while spot in came_from:
+          spot = came_from[spot]
+          path.append(self.grid_to_surf(spot))
+
+        return path[::-1]
+
+      queue.remove(spot)
+      visited.add(spot)
+
+      r, c = spot
+      neighbors = [
+        (r+1, c),
+        (r-1, c),
+        (r, c+1),
+        (r, c-1),
+
+        (r+1, c+1),
+        (r-1, c+1),
+        (r+1, c-1),
+        (r-1, c-1)
+      ]
+
+      neighbors = filter(lambda x: all(i>=0 for i in x), neighbors)
+      neighbors = filter(lambda x: all(i<len(self.grid) for i in x), neighbors)
+      neighbors = filter(lambda x: self.grid[x[0]][x[1]] in self.floor_tile_symbols, neighbors)
+
+      for n in neighbors:
+        if n in visited:
+          continue
+        move_cost = 10 if abs(spot[0]-n[0])+abs(spot[1]-n[1])==1 else 14
+        g = g_cost[spot] + move_cost
+
+        if n not in queue:
+          queue.add(n)
+        elif g >= g_cost[n]:
+          continue
+
+        came_from[n] = spot
+        g_cost[n] = g
+        h = self.h_costs[n[0]][n[1]]
+        f_cost[n] = g + h
+
+    raise RuntimeError('A* failed to find path :(')
+
+    '''
+      start_row, start_col = start
+      f_costs = [[float('inf')]*len(self.grid) for _ in range(len(self.grid[0]))]
+      g_costs = [[float('inf')]*len(self.grid) for _ in range(len(self.grid[0]))]
+      start_g = 0
+      start_f = self.h_costs[start_row][start_row] + start_g
+      came_from = {}
+      visited = set()
+
+      begin = (start_f, start_g, start)
+      queue = [begin]
+
+      while queue:
+        f, g, spot = heapq.heappop(queue)
+        r, c = spot
+        visited.add(spot)
+        f_costs[r][c] = f
+
+        if spot == end:
+          break
+
+        neighbors = [
+          (self.h_costs[r+1][c]+g+10, g+10, (r+1, c)),
+          (self.h_costs[r-1][c]+g+10, g+10, (r-1, c)),
+          (self.h_costs[r][c+1]+g+10, g+10, (r, c+1)),
+          (self.h_costs[r][c-1]+g+10, g+10, (r, c-1)),
+
+          (self.h_costs[r+1][c+1]+g+14, g+14, (r+1, c+1)),
+          (self.h_costs[r-1][c+1]+g+14, g+14, (r-1, c+1)),
+          (self.h_costs[r+1][c-1]+g+14, g+14, (r+1, c-1)),
+          (self.h_costs[r-1][c-1]+g+14, g+14, (r-1, c-1))
+        ]
+
+        neighbors = filter(lambda x: all(i>=0 for i in x[2]), neighbors)
+        neighbors = filter(lambda x: all(i<len(self.grid)-1 for i in x[2]), neighbors)
+        neighbors = filter(lambda x: self.grid[x[2][0]][x[2][1]] == '.', neighbors)
+
+        for n in neighbors:
+          print n
+          if n in visited:
+            continue
+          nf, ng, nspot = n
+
+          if n not in queue:
+            heapq.heappush(queue, n)
+          elif ng >= g_costs[nspot[0]][nspot[1]]:
+            continue
+
+          came_from[n] = spot
+          g_costs[nspot[0]][nspot[1]] = ng
+          f_costs[nspot[0]][nspot[1]] = nf
+
+      path = []
+      loc = end
+      while not loc == start:
+        path.appned(loc)
+        loc = came_from[loc]
+      return path
+    '''
+
+
   def get_neighbors(self, spot):
     n = []
     n.append((spot[0], spot[1]+1))
@@ -162,6 +330,7 @@ class Level():
   def get_path(self, start, end):
     start = self.surf_to_grid(start)
     end = self.surf_to_grid(end)
+    return self.get_a_star_path(start, end)
 
     came_from = {}
 
