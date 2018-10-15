@@ -30,6 +30,7 @@ class Game(State):
     self.damage_maps['tickleish'] = pygame.Surface((self.buffer_size, self.buffer_size))
     self.window_scale_factor = 2
     self.window_offset = (0, 0)
+    self.pc_grid_location = (0, 0)
 
     self.active_pc = 0
     self.active_skills = []
@@ -53,6 +54,8 @@ class Game(State):
       spawn = generate_level.search_for_room(self.level.grid, start='center')
       spots_taken.append(spawn)
       self.pcs.append(PC(tuple(map(lambda x: x*self.level.tile_size, spawn[::-1])), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
+    self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
+    self.level.regenerate_h_costs(self.pc_grid_location)
 
     npc_types = []
     npc_path = 'res/npcs/'
@@ -105,6 +108,10 @@ class Game(State):
     self.window_offset = get_new_offset(self)
     self.level.update(self.window_offset)
     self.active_skills = filter(lambda x: x is not None and x.alive, self.active_skills)
+
+    if not self.pcs[self.active_pc].location_grid_space == self.pc_grid_location:
+      self.level.regenerate_h_costs(self.pcs[self.active_pc].location_grid_space)
+      self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
 
     for _, surf in self.damage_maps.iteritems():
       surf.fill(Game.BLACK)

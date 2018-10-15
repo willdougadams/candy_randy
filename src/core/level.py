@@ -157,24 +157,24 @@ class Level():
     start_row, start_col = start_pos
     start_cost = 0
     start = ((start_row, start_col), start_cost)
-    visited = {}
+    visited = set()
     visited.add((start_row, start_col))
     queue = [start]
-    costs = [[0]*len(self.grid) for _ in range(len(grid[0]))]
+    costs = [[0]*len(self.grid) for _ in range(len(self.grid[0]))]
 
     while queue:
       (row, col), cost = queue.pop(0)
       costs[row][col] = cost
 
       neighbors = [
-        ((row+1, col), cost+10)
-        ((row-1, col), cost+10)
-        ((row, col+1), cost+10)
-        ((row, col-1), cost+10)
+        ((row+1, col), cost+10),
+        ((row-1, col), cost+10),
+        ((row, col+1), cost+10),
+        ((row, col-1), cost+10),
 
-        ((row+1, col+1), cost+14)
-        ((row+1, col-1), cost+14)
-        ((row-1, col+1), cost+14)
+        ((row+1, col+1), cost+14),
+        ((row+1, col-1), cost+14),
+        ((row-1, col+1), cost+14),
         ((row-1, col-1), cost+14)
       ]
 
@@ -182,21 +182,22 @@ class Level():
       neighbors = filter(lambda x: x[0][0]<len(self.grid) and x[0][1]<len(self.grid[0]), neighbors)
       neighbors = filter(lambda x: x[0] not in visited, neighbors)
       for n in neighbors:
-        visited.add((n[0], n[1]))
+        visited.add(n[0])
         queue.append(n)
-
-    for row in costs:
-      print ''.join(list(map(str, row)))
 
     return costs
 
   def regenerate_h_costs(self, pc_pos):
     self.h_costs = self.manhattan_cost(pc_pos)
 
-  def get_a_star_path(self, start, end):
+  def get_path(self, start, end):
+    start = self.surf_to_grid(start)
+    end = self.surf_to_grid(end)
+    # A* directly ripped off from rosetta code
     g_cost = {}
     f_cost = {}
     g_cost[start] = 0
+    print len(self.h_costs), len(self.h_costs[0]), start
     f_cost[start] = self.h_costs[start[0]][start[1]]
 
     visited = set()
@@ -257,107 +258,3 @@ class Level():
         f_cost[n] = g + h
 
     raise RuntimeError('A* failed to find path :(')
-
-    '''
-      start_row, start_col = start
-      f_costs = [[float('inf')]*len(self.grid) for _ in range(len(self.grid[0]))]
-      g_costs = [[float('inf')]*len(self.grid) for _ in range(len(self.grid[0]))]
-      start_g = 0
-      start_f = self.h_costs[start_row][start_row] + start_g
-      came_from = {}
-      visited = set()
-
-      begin = (start_f, start_g, start)
-      queue = [begin]
-
-      while queue:
-        f, g, spot = heapq.heappop(queue)
-        r, c = spot
-        visited.add(spot)
-        f_costs[r][c] = f
-
-        if spot == end:
-          break
-
-        neighbors = [
-          (self.h_costs[r+1][c]+g+10, g+10, (r+1, c)),
-          (self.h_costs[r-1][c]+g+10, g+10, (r-1, c)),
-          (self.h_costs[r][c+1]+g+10, g+10, (r, c+1)),
-          (self.h_costs[r][c-1]+g+10, g+10, (r, c-1)),
-
-          (self.h_costs[r+1][c+1]+g+14, g+14, (r+1, c+1)),
-          (self.h_costs[r-1][c+1]+g+14, g+14, (r-1, c+1)),
-          (self.h_costs[r+1][c-1]+g+14, g+14, (r+1, c-1)),
-          (self.h_costs[r-1][c-1]+g+14, g+14, (r-1, c-1))
-        ]
-
-        neighbors = filter(lambda x: all(i>=0 for i in x[2]), neighbors)
-        neighbors = filter(lambda x: all(i<len(self.grid)-1 for i in x[2]), neighbors)
-        neighbors = filter(lambda x: self.grid[x[2][0]][x[2][1]] == '.', neighbors)
-
-        for n in neighbors:
-          print n
-          if n in visited:
-            continue
-          nf, ng, nspot = n
-
-          if n not in queue:
-            heapq.heappush(queue, n)
-          elif ng >= g_costs[nspot[0]][nspot[1]]:
-            continue
-
-          came_from[n] = spot
-          g_costs[nspot[0]][nspot[1]] = ng
-          f_costs[nspot[0]][nspot[1]] = nf
-
-      path = []
-      loc = end
-      while not loc == start:
-        path.appned(loc)
-        loc = came_from[loc]
-      return path
-    '''
-
-
-  def get_neighbors(self, spot):
-    n = []
-    n.append((spot[0], spot[1]+1))
-    n.append((spot[0], spot[1]-1))
-    n.append((spot[0]+1, spot[1]))
-    n.append((spot[0]-1, spot[1]))
-    return n
-
-  def get_path(self, start, end):
-    start = self.surf_to_grid(start)
-    end = self.surf_to_grid(end)
-    return self.get_a_star_path(start, end)
-
-    came_from = {}
-
-    search_queue = [start]
-    while search_queue:
-      search = search_queue.pop(0)
-      neighbors = self.get_neighbors(search)
-      neighbors = filter(lambda x: all(m>=0 for m in x) and x[0]<len(self.grid)-1 and x[1]<len(self.grid[0])-1, neighbors)
-      for n in neighbors:
-        if n in came_from:
-          continue
-        try:
-          tile = self.grid[n[0]][n[1]]
-          if tile in self.floor_tile_symbols:
-            came_from[n] = search
-            search_queue.append(n)
-        except IndexError:
-          pass
-        if search == end:
-          break
-
-    path = []
-    if end in came_from:
-      backtrack = end
-      while not backtrack == start:
-        path.append(self.grid_to_surf(backtrack))
-        backtrack = came_from[backtrack]
-      #path.append(self.grid_to_surf(backtrack))
-
-    return path[::-1]

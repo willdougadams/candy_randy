@@ -75,6 +75,7 @@ class PC():
     self.move(elapsed)
     self.update_sprite(elapsed)
     self.apply_damage(elapsed, damage_maps)
+    self.location_grid_space = self.center[1]/len(self.level.grid), self.center[0]/len(self.level.grid[0])
 
     for skill in self.skills:
       skill.update(elapsed)
