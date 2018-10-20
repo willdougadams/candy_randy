@@ -197,7 +197,6 @@ class Level():
     g_cost = {}
     f_cost = {}
     g_cost[start] = 0
-    print len(self.h_costs), len(self.h_costs[0]), start
     f_cost[start] = self.h_costs[start[0]][start[1]]
 
     visited = set()
@@ -213,7 +212,6 @@ class Level():
           spot = q
 
       if spot == end:
-        print 'path found!  backtracking'
         path = [spot]
         while spot in came_from:
           spot = came_from[spot]
