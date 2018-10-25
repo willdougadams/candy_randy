@@ -85,7 +85,7 @@ class Level():
         self.components_generated += 1
 
     grid = apply_walls(grid)
-    
+
     with open('bunk/map.map', 'w+') as fout:
         for row in grid:
           fout.write(''.join(row)+'\n')
@@ -213,10 +213,10 @@ class Level():
 
       if spot == end:
         path = [spot]
-        while spot in came_from:
+        while not spot == start:
           spot = came_from[spot]
           path.append(self.grid_to_surf(spot))
-
+        path.append(self.grid_to_surf(spot))
         return path[::-1]
 
       queue.remove(spot)

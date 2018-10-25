@@ -79,7 +79,7 @@ class PC():
 
     for skill in self.skills:
       skill.update(elapsed)
-    
+
     self.attack.update(elapsed)
 
   def move(self, elapsed):
@@ -95,6 +95,10 @@ class PC():
       x_move_dist = x_dist
     if y_dist < y_move_dist:
       y_move_dist = y_dist
+
+    if y_dist == 0 and x_dist == 0:
+      self.step = 0
+      self.step_time = 0.0
 
     if x_pos > self.target_dest[0]:
       x_pos -= x_move_dist
@@ -117,7 +121,6 @@ class PC():
         self.orientation = 1
       else:
         self.orientation = 2
-
 
     grid_step = int(step[1]/self.level.tile_size), int(step[0]/self.level.tile_size)
 
@@ -186,22 +189,3 @@ class PC():
 
   def get_int_location(self):
     return tuple(map(int, self.center))
-
-'''
-def read_char_file(filename):
-  attribute_dict = {}
-  with open(filename) as fin:
-    lines = fin.readlines()
-
-  for line in lines:
-    if (not line.strip()) or line[0] == "#":
-      continue
-
-    attribute = line.split(":")[0]
-    value = line.split(":")[1]
-    attribute_dict[attribute] = (value if len(value.split()) == 1 else value.split())
-    if len(attribute_dict[attribute]) == 1:
-      attribute_dict[attribute] = attribute_dict[attribute][0]
-
-  return attribute_dict
-'''
