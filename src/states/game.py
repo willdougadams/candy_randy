@@ -7,6 +7,7 @@ import os
 
 from states.state import State
 from states.menu import Menu
+from states.win_screen import WinScreen
 from characters.pc import PC
 from characters.npc import NPC
 from skills.aoe import AOE
@@ -18,7 +19,7 @@ class Game(State):
   WHITE = (255, 255, 255)
   BLACK = (0, 0, 0)
 
-  def __init__(self, screen):
+  def __init__(self, screen, level=1, world=0):
     self.screen = screen
     self.screen_w = self.screen.get_size()[0]
     self.screen_h = self.screen.get_size()[1]
@@ -31,6 +32,8 @@ class Game(State):
     self.window_scale_factor = 2
     self.window_offset = (0, 0)
     self.pc_grid_location = (0, 0)
+    self.current_level = level
+    self.current_world = world
 
     self.active_pc = 0
     self.active_skills = []
@@ -40,7 +43,7 @@ class Game(State):
     self.npcs = []
 
     self.hud = HUD(self)
-    self.level = Level(self.buffer_frame)
+    self.level = Level(self.buffer_frame, self.current_level, self.current_world)
     gen_thread = threading.Thread(target=self.level.generate_grid)
     gen_thread.start()
     while not self.level.grid_generated:
@@ -62,7 +65,7 @@ class Game(State):
     for npc_file in os.listdir(npc_path):
       npc_types.append(npc_path+npc_file)
 
-    for n in range(len(npc_types)*2):
+    for n in range(len(npc_types)):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
       while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 20 for s in spots_taken):
         spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
@@ -87,7 +90,7 @@ class Game(State):
     for event in user_input:
       if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_ESCAPE:
-          self.manager.go_to(Menu(self.screen))
+          self.manager.go_to(Menu(self.screen, ('Quit', 'Main Menu', 'resume Game')))
       elif event.type == pygame.MOUSEBUTTONDOWN:
         new_x = (mouse_position[0] / self.window_scale_factor + self.window_offset[0])
         new_y = (mouse_position[1] / self.window_scale_factor + self.window_offset[1])
@@ -129,6 +132,12 @@ class Game(State):
 
     for p in self.pcs:
       p.update(elapsed, self.damage_maps)
+
+    if all(not n.alive for n in self.npcs):
+      if self.current_level >= 1 or self.current_world >= 2:
+        self.manager.go_to(WinScreen(self.screen, ("Congrats you win")))
+      else:
+        self.__init__(self.screen, self.current_level+1, self.current_world)
 
   def draw(self):
     self.screen.fill(self.BLACK)

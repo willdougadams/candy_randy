@@ -4,19 +4,19 @@ import random
 from generate_level import *
 
 class Level():
-  def __init__(self, screen):
+  def __init__(self, screen, level, world):
     self.grid = []
     self.path_weight_grid = []
     self.grid_generated = False
-    self.rooms_amt = 10
+    self.rooms_amt = 3
     self.components_generated = 0
-    self.components_total = self.rooms_amt * 2
+    self.components_total = self.rooms_amt
     self.offset = (0, 0)
     self.screen = screen
     self.tile_size = 16
     self.map_size = 240
-    self.current_level = 1
-    self.current_world = 0
+    self.current_level = level
+    self.current_world = world
     self.h_costs = [[0]*self.map_size for _ in range(self.map_size)]
 
     self.floor_tilesheet = pygame.image.load("res/DawnLike/Floor.png").convert()

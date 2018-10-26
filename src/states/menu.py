@@ -5,7 +5,7 @@ class Menu(State):
   WHITE = (0, 255, 0)
   OTHER_COLOR = (255, 127, 255)
 
-  def __init__(self, screen):
+  def __init__(self, screen, items):
     self.screen = screen
     self.scr_width = self.screen.get_rect().width
     self.scr_height = self.screen.get_rect().height
@@ -13,7 +13,6 @@ class Menu(State):
     self.bg_color = self.WHITE
     self.clock = pygame.time.Clock()
 
-    items = ('Quit', 'Return to Main Menu', 'Resume')
     font_size = 30
     font_color = (255, 255, 255)
 
@@ -23,7 +22,7 @@ class Menu(State):
 
     self.items = []
     self.button_rects = []
-    self.highlighted_button = -1;
+    self.highlighted_button = -1
     for index, item in enumerate(items):
       label = self.font.render(item, 1, font_color)
 
@@ -43,6 +42,11 @@ class Menu(State):
       if button.collidepoint(mouse_position):
         self.highlighted_button = i
 
+    self.check_input(user_input)
+    pygame.event.pump()
+
+
+  def check_input(self, user_input):
     for event in user_input:
       if event.type == pygame.KEYDOWN: # key inputs
         if event.key == pygame.K_m:
@@ -55,8 +59,6 @@ class Menu(State):
           self.manager.go_back_state(2)
         if self.highlighted_button == 2:
           self.manager.go_back_state()
-
-    pygame.event.pump()
 
   def draw(self):
     self.screen.fill(self.WHITE)
