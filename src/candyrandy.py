@@ -6,12 +6,16 @@
 ###
 '''
 
+import logging
 import pygame
 import time
-# from states.game import Game
 from states.main_menu import MainMenu
 from states.state_manager import StateManager
 
+log_format = '%(levelname)s %(asctime)s - %(message)s'
+logging.basicConfig(filename='log.txt', level=logging.DEBUG, format=log_format, filemode='w')
+
+logging.info('Initializing pygame...')
 pygame.init()
 
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h

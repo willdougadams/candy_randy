@@ -4,6 +4,7 @@ import random
 import threading
 import math
 import os
+import logging
 
 from states.state import State
 from states.menu import Menu
@@ -13,6 +14,7 @@ from characters.npc import NPC
 from skills.aoe import AOE
 from core.hud import HUD
 from core.level import Level
+from items.item import Item
 
 
 class Game(State):
@@ -20,6 +22,7 @@ class Game(State):
   BLACK = (0, 0, 0)
 
   def __init__(self, screen, level=1, world=0):
+    logging.info('Initializing Game...')
     self.screen = screen
     self.screen_w = self.screen.get_size()[0]
     self.screen_h = self.screen.get_size()[1]
@@ -41,6 +44,7 @@ class Game(State):
 
     self.pcs = []
     self.npcs = []
+    self.items = []
 
     self.hud = HUD(self)
     self.level = Level(self.buffer_frame, self.current_level, self.current_world)
@@ -51,6 +55,10 @@ class Game(State):
       self.draw_loading_screen(self.level.get_progress(), msg=str_grid)
     self.level_w = self.level.get_w()
     self.level_h = self.level.get_h()
+
+    spawn = generate_level.search_for_room(self.level.grid, start='center')
+    spawn = self.level.grid_to_surf(spawn)
+    self.items.append(Item('dagger.item', spawn))
 
     spots_taken = []
     for p in range(1):
@@ -153,6 +161,9 @@ class Game(State):
 
     for p in self.pcs:
       p.draw()
+
+    for i in self.items:
+      i.draw(self.buffer_frame)
 
     scale_factor = self.window_scale_factor
     w, h = self.screen.get_size()

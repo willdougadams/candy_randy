@@ -1,8 +1,10 @@
 import pygame # pylint: disable=E1121
+import logging
 from skills.aoe import AOE
 from skills.bolt import Bolt
 from skills.aura import Aura
 from skills.attack import Attack
+from items.inventory import Inventory
 
 from core.util import read_config
 
@@ -55,6 +57,7 @@ class PC():
     self.health_points = int(self.attrib_dict["health"])
     self.alive = True
 
+    self.inventory = Inventory()
     self.sprite_sheets = []
     for sheetname in self.attrib_dict["spritesheets"]:
       self.sprite_sheets.append(pygame.image.load("res/DawnLike/" + sheetname).convert())
@@ -69,6 +72,7 @@ class PC():
     self.step_time = 0
 
   def update(self, elapsed, damage_maps):
+    logging.info('Update Character {0}'.format(type(self)))
     if not self.alive:
       return
 

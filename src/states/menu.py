@@ -1,4 +1,5 @@
 import pygame
+import logging
 from states.state import State
 
 class Menu(State):
@@ -6,6 +7,7 @@ class Menu(State):
   OTHER_COLOR = (255, 127, 255)
 
   def __init__(self, screen, items):
+    logging.info('Initializing Menu...')
     self.screen = screen
     self.scr_width = self.screen.get_rect().width
     self.scr_height = self.screen.get_rect().height
@@ -53,7 +55,7 @@ class Menu(State):
           self.manager.go_back_state()
       if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
         if self.highlighted_button == 0:
-          print "Exiting..."
+          logging.info("Exiting...")
           exit()
         if self.highlighted_button == 1:
           self.manager.go_back_state(2)

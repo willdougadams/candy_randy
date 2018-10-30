@@ -7,8 +7,8 @@ def read_config(filename):
     if (not line.strip()) or line[0] == "#":
       continue
 
-    attribute = line.split(":")[0]
-    value = line.split(":")[1]
+    attribute = line.split(":")[0].strip()
+    value = line.split(":")[1].strip()
     attribute_dict[attribute] = (value if len(value.split()) == 1 else value.split())
     if len(attribute_dict[attribute]) == 1:
       attribute_dict[attribute] = attribute_dict[attribute][0]
