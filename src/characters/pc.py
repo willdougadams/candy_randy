@@ -6,15 +6,9 @@ from skills.aura import Aura
 from skills.attack import Attack
 from items.inventory import Inventory
 
-from core.util import read_config
+from core.util import read_config, colors
 
 class PC():
-
-  BLACK = (0, 0, 0)
-  WHITE = (255, 255, 255)
-  BLUE  = (0, 0, 255)
-  GREEN = (0, 255, 0)
-  RED = (255, 0, 0)
 
   MAX_HEALTH = 100
   STEP_LENGTH = 10
@@ -34,8 +28,8 @@ class PC():
     self.spritesheet_x = 0
     self.spritesheet_y = 0
 
-    self.alive_color = PC.BLUE
-    self.dead_color = PC.BLACK
+    self.alive_color = colors.BLUE
+    self.dead_color = colors.BLACK
     self.draw_color = self.alive_color
     self.move_speed = int(self.attrib_dict['move_speed'])
     self.attack = Attack(self, 'Attack.skill')
@@ -67,7 +61,7 @@ class PC():
                       (0, 0),
                       (0, 0, self.width, self.height)
                     )
-    self.image.set_colorkey(PC.BLACK)
+    self.image.set_colorkey(colors.BLACK)
     self.step_time = 0
 
   def update(self, elapsed, damage_maps):
@@ -139,7 +133,7 @@ class PC():
       self.step_time = 0.0
 
     self.image.blit(self.curr_sprite_sheet, (0, 0), (self.step * 16, self.orientation * 16, 16, 16))
-    self.image.set_colorkey(PC.BLACK)
+    self.image.set_colorkey(colors.BLACK)
     self.rect = self.image.get_rect()
 
   def draw(self, screen):

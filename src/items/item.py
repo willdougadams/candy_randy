@@ -1,6 +1,6 @@
 import pygame
 
-from core.util import read_config
+from core.util import read_config, colors
 
 class Item:
   def __init__(self, item_file, location):
@@ -12,6 +12,7 @@ class Item:
     self.value = config['value']
     self.width = self.height = 16
     self.image = pygame.Surface((self.width, self.height)).convert()
+    self.image.set_colorkey(colors.BLACK)
     item_sheet = pygame.image.load("res/DawnLike/" + config['spritesheet']).convert()
     x, y = tuple(map(int, config['spritesheet_location']))
     self.image.blit(item_sheet, (0, 0), (x*self.width, y*self.height, self.width, self.height))
@@ -24,7 +25,7 @@ class Item:
   def draw(self, screen):
     x = self.location[0]
     y = self.location[1]
-    screen.blit(self.image, (x - self.width, y - self.height), (0, 0, self.width, self.height))
+    screen.blit(self.image, (x - self.width/2, y - self.height/2), (0, 0, self.width, self.height))
 
   def use(self):
     if self.uses > 0:

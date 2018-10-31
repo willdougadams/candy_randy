@@ -86,9 +86,6 @@ class Level():
 
     grid = apply_walls(grid)
 
-    with open('bunk/map.map', 'w+') as fout:
-        for row in grid:
-          fout.write(''.join(row)+'\n')
     self.grid = grid
 
     level_offset = (3 * self.tile_size * self.current_level)
