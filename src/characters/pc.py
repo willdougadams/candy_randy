@@ -24,7 +24,6 @@ class PC():
     w, h = pygame.display.get_surface().get_size()
     self.center = coord
     self.target_dest = coord
-    self.screen = buffer_frame
     self.level = level
     self.orientation = 0
     self.step = 0
@@ -39,7 +38,7 @@ class PC():
     self.dead_color = PC.BLACK
     self.draw_color = self.alive_color
     self.move_speed = int(self.attrib_dict['move_speed'])
-    self.attack = Attack(self, self.screen, 'Attack.skill')
+    self.attack = Attack(self, 'Attack.skill')
     self.max_speed = 15
 
     '''
@@ -51,7 +50,7 @@ class PC():
     self.skill_files = ['AOE.skill', 'Bolt.skill', 'Aura.skill']
     self.attack_file = 'Attack.skill'
     for i, skill_type in enumerate(self.skill_types):
-      self.skills.append(skill_type(self, self.screen, self.skill_files[i]))
+      self.skills.append(skill_type(self, self.skill_files[i]))
 
     self.active_skill = 0
     self.health_points = int(self.attrib_dict["health"])
@@ -143,13 +142,13 @@ class PC():
     self.image.set_colorkey(PC.BLACK)
     self.rect = self.image.get_rect()
 
-  def draw(self):
+  def draw(self, screen):
     x, y = self.center
     x = int(x)
     y = int(y)
 
     if self.alive:
-      self.screen.blit(self.image, (x - self.width/2, y - self.height/2), (0, 0, self.width, self.height))
+      screen.blit(self.image, (x - self.width/2, y - self.height/2), (0, 0, self.width, self.height))
 
   '''
   PC.fire() calls the Skill.fire() method of the currently selected skill,
@@ -165,13 +164,13 @@ class PC():
     ret_skill = self.skills[self.active_skill].fire(coord)
     if ret_skill is not None:
       config_file = self.skill_files[self.active_skill]
-      self.skills[self.active_skill] = self.skill_types[self.active_skill](self, self.screen, config_file)
+      self.skills[self.active_skill] = self.skill_types[self.active_skill](self, config_file)
     return ret_skill
 
   def fire_attack(self, coord):
     attack = self.attack.fire(coord)
     if attack is not None:
-      self.attack = Attack(self, self.screen, self.attack_file)
+      self.attack = Attack(self, self.attack_file)
     return attack
 
   def apply_damage(self, elapsed, damage_maps):

@@ -154,13 +154,13 @@ class Game(State):
     self.level.draw()
 
     for a in self.active_skills:
-      a.draw()
+      a.draw(self.buffer_frame)
 
     for n in self.npcs:
-      n.draw()
+      n.draw(self.buffer_frame)
 
     for p in self.pcs:
-      p.draw()
+      p.draw(self.buffer_frame)
 
     for i in self.items:
       i.draw(self.buffer_frame)

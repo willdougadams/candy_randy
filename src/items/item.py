@@ -11,8 +11,8 @@ class Item:
     self.weight = config['weight']
     self.value = config['value']
     self.width = self.height = 16
-    self.image = pygame.Surface((self.width, self.height))
-    item_sheet = pygame.image.load("res/DawnLike/" + config['spritesheet']).convert_alpha()
+    self.image = pygame.Surface((self.width, self.height)).convert()
+    item_sheet = pygame.image.load("res/DawnLike/" + config['spritesheet']).convert()
     x, y = tuple(map(int, config['spritesheet_location']))
     self.image.blit(item_sheet, (0, 0), (x*self.width, y*self.height, self.width, self.height))
 

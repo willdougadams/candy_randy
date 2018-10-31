@@ -10,12 +10,12 @@ class Skill:
   GREEN = tuple(map(int, [0, 255, 0]))
   RED = tuple(map(int, [255, 0, 0]))
 
-  def __init__(self, caster, screen, skill_filename):
+  def __init__(self, caster, skill_filename):
     self.fired = False
     self.alive = True
     self.target_dest = (0, 0)
     self.center = (float(0), float(0))
-    self.screen = screen
+    # self.screen = screen
     self.caster = caster
     config = read_config('res/Skills/'+skill_filename)
     self.r = float(config['radius'])
@@ -61,9 +61,9 @@ class Skill:
 
     return damage_maps
 
-  def draw(self):
+  def draw(self, screen):
     center = (int(self.center[0]), int(self.center[1]))
-    pygame.draw.circle(self.screen, self.current_color, center, int(self.r))
+    pygame.draw.circle(screen, self.current_color, center, int(self.r))
 
   '''
   When implemented, Skill.fire() will return itself to indicate that it is available for use,
