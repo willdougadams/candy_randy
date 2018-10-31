@@ -1,4 +1,5 @@
 res/wulax/
 src/example/
+bunk/
 ../*.pyc
 log.txt
