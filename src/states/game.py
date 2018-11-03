@@ -9,6 +9,7 @@ import logging
 from states.state import State
 from states.menu import Menu
 from states.win_screen import WinScreen
+from states.lose_screen import LoseScreen
 from characters.pc import PC
 from characters.npc import NPC
 from skills.aoe import AOE
@@ -83,6 +84,75 @@ class Game(State):
       self.npcs.append(n)
 
   def update(self, user_input, mouse_position, elapsed):
+    self.handle_input(user_input, mouse_position)
+
+    self.window_offset = get_new_offset(self)
+    self.level.update(self.window_offset)
+    self.active_skills = filter(lambda x: x is not None and x.alive, self.active_skills)
+
+    if not self.pcs[self.active_pc].location_grid_space == self.pc_grid_location:
+      self.level.regenerate_h_costs(self.pcs[self.active_pc].location_grid_space)
+      self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
+
+    for _, surf in self.damage_maps.iteritems():
+      surf.fill(Game.BLACK)
+
+    for a in self.active_skills:
+      a.update(elapsed)
+      self.damage_maps = a.draw_damage(self.damage_maps)
+
+    for n in self.npcs:
+      if len(n.path) < n.paths_original_length/2 or len(n.path) < 2:
+        new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
+        n.add_path(new_path)
+      n.update(elapsed, self.damage_maps)
+      self.damage_maps = n.draw_damage_to_maps(self.damage_maps)
+
+    for p in self.pcs:
+      p.update(elapsed, self.damage_maps)
+
+    # Win Condition
+    if all(not n.alive for n in self.npcs):
+      if self.current_level >= 1 or self.current_world >= 2:
+        self.manager.go_to(WinScreen(self.screen, ("Congrats you win")))
+      else:
+        self.__init__(self.screen, self.current_level+1, self.current_world)
+
+    # Lose condition
+    if all(not p.alive for p in self.pcs):
+      self.manager.go_to(LoseScreen(self.screen, ("Ur Ded, Try Again?", "Quit")))
+
+
+  def draw(self):
+    self.screen.fill(self.BLACK)
+    self.buffer_frame.fill(self.BLACK)
+
+    self.level.draw()
+
+    for a in self.active_skills:
+      a.draw(self.buffer_frame)
+
+    for n in self.npcs:
+      n.draw(self.buffer_frame)
+
+    for p in self.pcs:
+      p.draw(self.buffer_frame)
+
+    for i in self.items:
+      i.draw(self.buffer_frame)
+
+    scale_factor = self.window_scale_factor
+    w, h = self.screen.get_size()
+    frame = pygame.Surface((w, h))
+    frame.blit(self.buffer_frame, (0, 0), (self.level.offset[0], self.level.offset[1], w, h))
+    frame = pygame.transform.scale(frame, (w*scale_factor, h*scale_factor))
+    self.screen.blit(frame, (0, 0))
+
+    self.hud.draw()
+
+    pygame.display.flip()
+
+  def handle_input(self, user_input, mouse_position):
     pressed = pygame.key.get_pressed()
     step_dist = 3
     up = pressed[pygame.K_w] * step_dist
@@ -114,67 +184,6 @@ class Game(State):
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
           skills_amt = len(self.pcs[self.active_pc].skills)
           self.pcs[self.active_pc].active_skill = (self.pcs[self.active_pc].active_skill - 1) % skills_amt
-
-
-    self.window_offset = get_new_offset(self)
-    self.level.update(self.window_offset)
-    self.active_skills = filter(lambda x: x is not None and x.alive, self.active_skills)
-
-    if not self.pcs[self.active_pc].location_grid_space == self.pc_grid_location:
-      self.level.regenerate_h_costs(self.pcs[self.active_pc].location_grid_space)
-      self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
-
-    for _, surf in self.damage_maps.iteritems():
-      surf.fill(Game.BLACK)
-
-    for a in self.active_skills:
-      a.update(elapsed)
-      self.damage_maps = a.draw_damage(self.damage_maps)
-
-    for n in self.npcs:
-      if len(n.path) < n.paths_original_length/2 or len(n.path) < 2:
-        new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
-        n.add_path(new_path)
-      n.update(elapsed, self.damage_maps)
-      self.damage_maps = n.draw_damage_to_maps(self.damage_maps)
-
-    for p in self.pcs:
-      p.update(elapsed, self.damage_maps)
-
-    if all(not n.alive for n in self.npcs):
-      if self.current_level >= 1 or self.current_world >= 2:
-        self.manager.go_to(WinScreen(self.screen, ("Congrats you win")))
-      else:
-        self.__init__(self.screen, self.current_level+1, self.current_world)
-
-  def draw(self):
-    self.screen.fill(self.BLACK)
-    self.buffer_frame.fill(self.BLACK)
-
-    self.level.draw()
-
-    for a in self.active_skills:
-      a.draw(self.buffer_frame)
-
-    for n in self.npcs:
-      n.draw(self.buffer_frame)
-
-    for p in self.pcs:
-      p.draw(self.buffer_frame)
-
-    for i in self.items:
-      i.draw(self.buffer_frame)
-
-    scale_factor = self.window_scale_factor
-    w, h = self.screen.get_size()
-    frame = pygame.Surface((w, h))
-    frame.blit(self.buffer_frame, (0, 0), (self.level.offset[0], self.level.offset[1], w, h))
-    frame = pygame.transform.scale(frame, (w*scale_factor, h*scale_factor))
-    self.screen.blit(frame, (0, 0))
-
-    self.hud.draw()
-
-    pygame.display.flip()
 
 def get_new_offset(game):
     half_w = (game.screen_w/(2*game.window_scale_factor))

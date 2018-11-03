@@ -1,15 +1,9 @@
 import pygame
 import math
 
-from core.util import read_config
+from core.util import read_config, colors
 
 class Skill:
-  BLACK = tuple(map(int, [0, 0, 0]))
-  WHITE = tuple(map(int, [255, 255, 255]))
-  BLUE  = tuple(map(int, [0, 0, 255]))
-  GREEN = tuple(map(int, [0, 255, 0]))
-  RED = tuple(map(int, [255, 0, 0]))
-
   def __init__(self, caster, skill_filename):
     self.fired = False
     self.alive = True
@@ -24,7 +18,7 @@ class Skill:
     self.active_countdown = float(config['active_time'])
     self.move_speed = float(config['move_speed'])
     self.dps = float(config['dps'])
-    self.current_color = self.warmup_color = Skill.BLUE
+    self.current_color = self.warmup_color = colors.BLUE
     self.active_color = (self.dps, float(0), float(0))
     self.x_speed = 0
     self.y_speed = 0
