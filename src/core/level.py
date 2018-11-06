@@ -3,6 +3,8 @@ import heapq
 import random
 from generate_level import *
 
+from core.util import colors
+
 class Level():
   def __init__(self, screen, level, world):
     self.grid = []
@@ -126,6 +128,11 @@ class Level():
             tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
             self.tilemap.blit(self.wall_tilesheet, map_location, tile_rect)
 
+    for i in range(len(self.grid)):
+      for j in range(len(self.grid[i])):
+        r = pygame.Rect(i*self.tile_size, j*self.tile_size, self.tile_size, self.tile_size)
+        pygame.draw.rect(self.tilemap, colors.PINK, r, 1)
+
     self.grid_generated = True
 
   def update(self, new_offset):
@@ -187,9 +194,9 @@ class Level():
   def regenerate_h_costs(self, pc_pos):
     self.h_costs = self.manhattan_cost(pc_pos)
 
-  def get_path(self, start, end):
-    start = self.surf_to_grid(start)
-    end = self.surf_to_grid(end)
+  def get_path(self, surf_start, surf_end):
+    start = self.surf_to_grid(surf_start)
+    end = self.surf_to_grid(surf_end)
     # A* directly ripped off from rosetta code
     g_cost = {}
     f_cost = {}
@@ -213,7 +220,7 @@ class Level():
         while not spot == start:
           spot = came_from[spot]
           path.append(self.grid_to_surf(spot))
-        path.append(self.grid_to_surf(spot))
+        path.append(surf_start)
         return path[::-1]
 
       queue.remove(spot)
@@ -227,8 +234,8 @@ class Level():
         (r, c-1),
 
         (r+1, c+1),
-        (r-1, c+1),
         (r+1, c-1),
+        (r-1, c+1),
         (r-1, c-1)
       ]
 

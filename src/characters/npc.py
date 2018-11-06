@@ -26,11 +26,9 @@ class NPC(PC):
   def update(self, elapsed, damage_maps):
     PC.update(self, elapsed, damage_maps)
 
-    if math.hypot(self.center[0]-self.target_dest[0], self.center[1]-self.target_dest[1]) < self.width/2:
-      if self.path:
+    if math.hypot(self.center[0]-self.target_dest[0], self.center[1]-self.target_dest[1]) < 1:
+      if len(self.path) > 1:
         self.target_dest = self.path.pop(0)
-      else:
-        self.target_dest = self.center
 
 
   def update_sprite(self, elapsed):

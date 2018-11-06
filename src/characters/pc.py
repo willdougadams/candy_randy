@@ -137,11 +137,12 @@ class PC():
     self.rect = self.image.get_rect()
 
   def draw(self, screen):
-    x, y = self.center
+    x, y = self.center[0]-self.height/2, self.center[1]-self.width/2
     x = int(x)
     y = int(y)
 
     if self.alive:
+      tile = self.level.surf_to_grid((x, y))
       screen.blit(self.image, (x - self.width/2, y - self.height/2), (0, 0, self.width, self.height))
 
   '''

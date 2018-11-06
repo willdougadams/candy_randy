@@ -22,3 +22,4 @@ class colors():
   BLUE  = tuple(map(int, [0, 0, 255]))
   GREEN = tuple(map(int, [0, 255, 0]))
   RED = tuple(map(int, [255, 0, 0]))
+  PINK = tuple(map(int, [250, 5, 250]))
