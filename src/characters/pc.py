@@ -128,7 +128,7 @@ class PC():
 
   def update_sprite(self, elapsed):
     self.step_time += elapsed
-    if self.step_time > 0.5:
+    if self.step_time > 0.25:
       self.step = (self.step + 1) % 4
       self.step_time = 0.0
 
@@ -137,13 +137,15 @@ class PC():
     self.rect = self.image.get_rect()
 
   def draw(self, screen):
-    x, y = self.center[0]-self.height/2, self.center[1]-self.width/2
+    if not self.alive:
+      return
+
+    x, y = self.center[0]+self.height/2, self.center[1]+self.width/2
     x = int(x)
     y = int(y)
+    screen.blit(self.image, self.center, (0, 0, self.width, self.height))
+    pygame.draw.circle(screen, colors.GREEN, (x, y), 2)
 
-    if self.alive:
-      tile = self.level.surf_to_grid((x, y))
-      screen.blit(self.image, (x - self.width/2, y - self.height/2), (0, 0, self.width, self.height))
 
   '''
   PC.fire() calls the Skill.fire() method of the currently selected skill,

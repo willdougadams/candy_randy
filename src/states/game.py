@@ -24,6 +24,7 @@ class Game(State):
 
   def __init__(self, screen, level=1, world=0):
     logging.info('Initializing Game...')
+    self.ticks = 0
     self.screen = screen
     self.screen_w = self.screen.get_size()[0]
     self.screen_h = self.screen.get_size()[1]
@@ -74,7 +75,7 @@ class Game(State):
     for npc_file in os.listdir(npc_path):
       npc_types.append(npc_path+npc_file)
 
-    for n in range(len(npc_types)):
+    for n in range(2):#len(npc_types)):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
       while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 20 for s in spots_taken):
         spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
@@ -84,6 +85,7 @@ class Game(State):
       self.npcs.append(n)
 
   def update(self, user_input, mouse_position, elapsed):
+    self.ticks += 1
     self.handle_input(user_input, mouse_position)
 
     self.window_offset = get_new_offset(self)
@@ -101,12 +103,17 @@ class Game(State):
       a.update(elapsed)
       self.damage_maps = a.draw_damage(self.damage_maps)
 
+    # self.npcs = filter(lambda x: x.alive, self.npcs)
     for n in self.npcs:
-      if len(n.path) < n.paths_original_length/2 or len(n.path) < 2:
-        new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
-        n.add_path(new_path)
       n.update(elapsed, self.damage_maps)
       self.damage_maps = n.draw_damage_to_maps(self.damage_maps)
+
+
+    if (self.ticks+1 / 10) % len(self.npcs) > (self.ticks / 10) % len(self.npcs):
+      n = self.npcs[(self.ticks/10)%len(self.npcs)]
+      new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
+      print self.level.surf_to_grid(n.get_int_location()), new_path[-1], self.level.surf_to_grid(self.pcs[self.active_pc].get_int_location())
+      n.add_path(new_path)
 
     for p in self.pcs:
       p.update(elapsed, self.damage_maps)

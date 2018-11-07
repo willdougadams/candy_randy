@@ -24,20 +24,23 @@ class NPC(PC):
     self.path = new_path
 
   def update(self, elapsed, damage_maps):
+    if not self.alive:
+      return
     PC.update(self, elapsed, damage_maps)
 
-    if math.hypot(self.center[0]-self.target_dest[0], self.center[1]-self.target_dest[1]) < 1:
-      if len(self.path) > 1:
+    if math.hypot(self.center[0]-self.target_dest[0], self.center[1]-self.target_dest[1]) < self.height/2:
+      if len(self.path) > 0:
         self.target_dest = self.path.pop(0)
 
 
   def update_sprite(self, elapsed):
     self.step += elapsed
-    if self.step > 0.5:
+    if self.step > 0.3:
       self.current_sprite_index = (self.current_sprite_index + 1) % 2
       self.step = 0.0
 
     self.curr_sprite_sheet = self.sprite_sheets[self.current_sprite_index]
+
 
     self.image.blit(self.curr_sprite_sheet,
                     (0, 0),

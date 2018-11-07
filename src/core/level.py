@@ -220,7 +220,7 @@ class Level():
         while not spot == start:
           spot = came_from[spot]
           path.append(self.grid_to_surf(spot))
-        path.append(surf_start)
+        path.append(self.grid_to_surf(spot))
         return path[::-1]
 
       queue.remove(spot)
@@ -231,12 +231,7 @@ class Level():
         (r+1, c),
         (r-1, c),
         (r, c+1),
-        (r, c-1),
-
-        (r+1, c+1),
-        (r+1, c-1),
-        (r-1, c+1),
-        (r-1, c-1)
+        (r, c-1)
       ]
 
       neighbors = filter(lambda x: all(i>=0 for i in x), neighbors)
