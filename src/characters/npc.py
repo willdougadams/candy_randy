@@ -28,7 +28,7 @@ class NPC(PC):
       return
     PC.update(self, elapsed, damage_maps)
 
-    if math.hypot(self.center[0]-self.target_dest[0], self.center[1]-self.target_dest[1]) < self.height/2:
+    if math.hypot(self.center[0]-self.target_dest[0], self.center[1]-self.target_dest[1]) < self.height/4:
       if len(self.path) > 0:
         self.target_dest = self.path.pop(0)
 

@@ -155,7 +155,8 @@ class Level():
     return spot[1]/self.tile_size, spot[0]/self.tile_size
 
   def grid_to_surf(self, spot):
-    return (spot[1]+1)*self.tile_size-self.tile_size/2, (spot[0]+1)*self.tile_size-self.tile_size/2
+    return (spot[1]*self.tile_size)+self.tile_size/2, (spot[0]*self.tile_size)+self.tile_size/2
+    #return ((spot[1]+1)*self.tile_size)+self.tile_size/2, ((spot[0]+1)*self.tile_size)+self.tile_size/2
 
   def manhattan_cost(self, start_pos):
     start_row, start_col = start_pos
@@ -216,7 +217,8 @@ class Level():
           spot = q
 
       if spot == end:
-        path = [spot]
+        #path = [spot]
+        path = []
         while not spot == start:
           spot = came_from[spot]
           path.append(self.grid_to_surf(spot))
@@ -231,7 +233,12 @@ class Level():
         (r+1, c),
         (r-1, c),
         (r, c+1),
-        (r, c-1)
+        (r, c-1),
+
+        (r+1, c-1),
+        (r-1, c-1),
+        (r+1, c+1),
+        (r-1, c+1)
       ]
 
       neighbors = filter(lambda x: all(i>=0 for i in x), neighbors)

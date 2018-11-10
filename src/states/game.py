@@ -39,6 +39,7 @@ class Game(State):
     self.pc_grid_location = (0, 0)
     self.current_level = level
     self.current_world = world
+    self.pathfinding_index = 0
 
     self.active_pc = 0
     self.active_skills = []
@@ -103,17 +104,16 @@ class Game(State):
       a.update(elapsed)
       self.damage_maps = a.draw_damage(self.damage_maps)
 
-    # self.npcs = filter(lambda x: x.alive, self.npcs)
     for n in self.npcs:
       n.update(elapsed, self.damage_maps)
       self.damage_maps = n.draw_damage_to_maps(self.damage_maps)
 
-
-    if (self.ticks+1 / 10) % len(self.npcs) > (self.ticks / 10) % len(self.npcs):
-      n = self.npcs[(self.ticks/10)%len(self.npcs)]
+    path_timer = 25
+    if (self.ticks+1)/path_timer > self.ticks/path_timer:
+      n = self.npcs[self.pathfinding_index]
       new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
-      print self.level.surf_to_grid(n.get_int_location()), new_path[-1], self.level.surf_to_grid(self.pcs[self.active_pc].get_int_location())
       n.add_path(new_path)
+      self.pathfinding_index = (self.pathfinding_index+1)%len(self.npcs)
 
     for p in self.pcs:
       p.update(elapsed, self.damage_maps)
@@ -175,7 +175,7 @@ class Game(State):
     for event in user_input:
       if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_ESCAPE:
-          self.manager.go_to(Menu(self.screen, ('Quit', 'Main Menu', 'resume Game')))
+          self.manager.go_to(Menu(self.screen, ('Quit', 'Main Menu', 'Resume Game')))
       elif event.type == pygame.MOUSEBUTTONDOWN:
         new_x = (mouse_position[0] / self.window_scale_factor + self.window_offset[0])
         new_y = (mouse_position[1] / self.window_scale_factor + self.window_offset[1])
@@ -200,3 +200,5 @@ def get_new_offset(game):
     new_y = game.pcs[game.active_pc].center[1] - half_h
 
     return (new_x, new_y)
+
+
