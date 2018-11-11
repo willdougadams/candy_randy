@@ -143,6 +143,7 @@ class Game(State):
       n.draw(self.buffer_frame)
 
     for p in self.pcs:
+      self.level.highlight_tile(self.buffer_frame, p.center)
       p.draw(self.buffer_frame)
 
     for i in self.items:

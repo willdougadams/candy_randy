@@ -142,6 +142,11 @@ class Level():
     size = self.screen.get_size()
     self.screen.blit(self.tilemap, (0, 0), (0, 0, size[0], size[1]))
 
+  def highlight_tile(self, screen, location):
+    tile = self.surf_to_grid(location)
+    tile_x, tile_y = tuple(map(lambda x: x-self.tile_size/2, self.grid_to_surf(tile)))
+    pygame.draw.rect(screen, colors.PINK, pygame.Rect(tile_x, tile_y, self.tile_size, self.tile_size))
+
   def get_w(self):
     return self.tilemap.get_size()[0]
 
@@ -149,14 +154,15 @@ class Level():
     return self.tilemap.get_size()[1]
 
   def get_progress(self):
-    return min(0.9, self.components_generated / float(self.components_total))
+    return min(0.99, self.components_generated / float(self.components_total))
 
   def surf_to_grid(self, spot):
+    """ returns the top right coner of the tile this spot is in """
     return spot[1]/self.tile_size, spot[0]/self.tile_size
 
   def grid_to_surf(self, spot):
+    """ returns the surface location in the middle of the tile """
     return (spot[1]*self.tile_size)+self.tile_size/2, (spot[0]*self.tile_size)+self.tile_size/2
-    #return ((spot[1]+1)*self.tile_size)+self.tile_size/2, ((spot[0]+1)*self.tile_size)+self.tile_size/2
 
   def manhattan_cost(self, start_pos):
     start_row, start_col = start_pos
@@ -217,12 +223,12 @@ class Level():
           spot = q
 
       if spot == end:
-        #path = [spot]
-        path = []
+        path = [surf_end]
         while not spot == start:
           spot = came_from[spot]
           path.append(self.grid_to_surf(spot))
         path.append(self.grid_to_surf(spot))
+
         return path[::-1]
 
       queue.remove(spot)
