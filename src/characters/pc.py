@@ -119,12 +119,17 @@ class PC():
       else:
         self.orientation = 2
 
-    grid_step = int(step[1]/self.level.tile_size), int(step[0]/self.level.tile_size)
-
+    grid_step = tuple(map(lambda x: int(x), self.level.surf_to_grid(step)))
     stepping_onto = self.level.grid[grid_step[0]][grid_step[1]]
     if stepping_onto in self.level.floor_tile_symbols:
       self.center = step
       self.location_grid_space = grid_step
+    else:
+      x = self.center[0] - x_pos
+      y = self.center[1] - y_pos
+
+      self.center = (x_pos+x, y_pos+y)
+      self.location_grid_space = tuple(map(lambda x: int(x), self.level.surf_to_grid(step)))
 
   def update_sprite(self, elapsed):
     self.step_time += elapsed
@@ -140,11 +145,11 @@ class PC():
     if not self.alive:
       return
 
-    x, y = self.center[0]+self.height/2, self.center[1]+self.width/2
+    x, y = self.center[0]-self.height/2, self.center[1]-self.width/2
     x = int(x)
     y = int(y)
-    screen.blit(self.image, self.center, (0, 0, self.width, self.height))
-    pygame.draw.circle(screen, colors.GREEN, (x, y), 2)
+    screen.blit(self.image, (x, y), (0, 0, self.width, self.height))
+    pygame.draw.circle(screen, colors.GREEN, self.get_int_location(), 2)
 
 
   '''

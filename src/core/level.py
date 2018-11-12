@@ -157,7 +157,7 @@ class Level():
     return min(0.99, self.components_generated / float(self.components_total))
 
   def surf_to_grid(self, spot):
-    """ returns the top right coner of the tile this spot is in """
+    """ returns the top right coner or center of the tile this spot is in """
     return spot[1]/self.tile_size, spot[0]/self.tile_size
 
   def grid_to_surf(self, spot):
