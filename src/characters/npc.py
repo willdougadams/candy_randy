@@ -55,8 +55,8 @@ class NPC(PC):
         damage_done *= elapsed
         self.take_damage(damage_done)
       except IndexError as e:
-        print e
-        print 'NPC off map, apparently. location: {0}'.format(self.center)
+        logging.warn('NPC off map, apparently. location: {0}'.format(self.center))
+        logging.warn(str(e))
 
   def draw_damage_to_maps(self, damage_maps):
     if self.alive:

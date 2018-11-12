@@ -1,0 +1,6 @@
+radius:35
+warmup_time:0.001
+cooldown_time:0.25
+active_time:0.25
+move_speed:0
+dps:200

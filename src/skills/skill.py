@@ -9,7 +9,6 @@ class Skill:
     self.alive = True
     self.target_dest = (0, 0)
     self.center = (float(0), float(0))
-    # self.screen = screen
     self.caster = caster
     config = read_config('res/Skills/'+skill_filename)
     self.r = float(config['radius'])

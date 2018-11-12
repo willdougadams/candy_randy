@@ -27,3 +27,10 @@ class Gear:
     self.items[slot] = None
     return item
 
+  def get_reach(self):
+    left = 25
+    if self.items['left_hand'] is not None:
+      left = self.items['left_hand'].length
+
+    return left
+

@@ -3,8 +3,9 @@ import logging
 from skills.aoe import AOE
 from skills.bolt import Bolt
 from skills.aura import Aura
-from skills.attack import Attack
+from skills.swing import Swing
 from items.inventory import Inventory
+from items.gear import Gear
 
 from core.util import read_config, colors
 
@@ -27,12 +28,13 @@ class PC():
     self.height = int(self.attrib_dict["sprite_height"])
     self.spritesheet_x = 0
     self.spritesheet_y = 0
+    self.gear = Gear()
 
     self.alive_color = colors.BLUE
     self.dead_color = colors.BLACK
     self.draw_color = self.alive_color
     self.move_speed = int(self.attrib_dict['move_speed'])
-    self.attack = Attack(self, 'Attack.skill')
+    self.attack = Swing(self, 'Swing.skill', self.gear.get_reach())
     self.max_speed = 15
 
     '''
@@ -42,7 +44,7 @@ class PC():
     self.skills = []
     self.skill_types = [AOE, Bolt, Aura]
     self.skill_files = ['AOE.skill', 'Bolt.skill', 'Aura.skill']
-    self.attack_file = 'Attack.skill'
+    self.attack_file = 'Swing.skill'
     for i, skill_type in enumerate(self.skill_types):
       self.skills.append(skill_type(self, self.skill_files[i]))
 
@@ -65,7 +67,7 @@ class PC():
     self.step_time = 0
 
   def update(self, elapsed, damage_maps):
-    logging.info('Update Character {0}'.format(type(self)))
+    logging.debug('Update Character {0}'.format(type(self)))
     if not self.alive:
       return
 
@@ -172,7 +174,7 @@ class PC():
   def fire_attack(self, coord):
     attack = self.attack.fire(coord)
     if attack is not None:
-      self.attack = Attack(self, self.attack_file)
+      self.attack = Swing(self, self.attack_file, self.gear.get_reach())
     return attack
 
   def apply_damage(self, elapsed, damage_maps):
