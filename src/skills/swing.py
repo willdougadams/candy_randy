@@ -28,6 +28,10 @@ class Swing(Skill):
 
   def draw(self, screen):
     start, end = self.direction_dict[self.caster.orientation]
+    mid = (start+end)/2
+
+    w, h = self.image.get_size()
+    screen.blit(self.image, (self.center[0], self.center[1]))#, (self.center[0], self.center[1], w, h))
     pygame.draw.arc(
                 screen,
                 self.current_color,

@@ -6,6 +6,7 @@ uses: -1
 weight: 3
 value: 25
 length: 15
+equip_slot: left_hand
 
 spritesheet: ShortWep.png
 spritesheet_location: 0 0

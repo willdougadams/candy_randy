@@ -33,7 +33,7 @@ class Game(State):
     self.buffer_frame = pygame.Surface((self.buffer_size, self.buffer_size))
     self.damage_maps = {}
     self.damage_maps['normal'] = pygame.Surface((self.buffer_size, self.buffer_size))
-    self.damage_maps['tickleish'] = pygame.Surface((self.buffer_size, self.buffer_size))
+    self.damage_maps['frost'] = pygame.Surface((self.buffer_size, self.buffer_size))
     self.window_scale_factor = 2
     self.window_offset = (0, 0)
     self.pc_grid_location = (0, 0)
@@ -78,7 +78,7 @@ class Game(State):
 
     for n in range(len(npc_types)):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
-      while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 20 for s in spots_taken):
+      while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 10 for s in spots_taken):
         spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
       n = NPC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, npc_types[n%len(npc_types)], self.level)
       new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
@@ -116,6 +116,10 @@ class Game(State):
       self.pathfinding_index = (self.pathfinding_index+1)%len(self.npcs)
 
     for p in self.pcs:
+      for i in self.items[:]:
+        if math.hypot(p.center[1]-i.location[1], p.center[0]-i.location[0]) < self.pcs[self.active_pc].collection_radius:
+          self.pcs[self.active_pc].pick_up(i)
+          self.items.remove(i)
       p.update(elapsed, self.damage_maps)
 
     # Win Condition
@@ -136,9 +140,6 @@ class Game(State):
 
     self.level.draw()
 
-    for a in self.active_skills:
-      a.draw(self.buffer_frame)
-
     for n in self.npcs:
       n.draw(self.buffer_frame)
 
@@ -147,6 +148,9 @@ class Game(State):
 
     for i in self.items:
       i.draw(self.buffer_frame)
+
+    for a in self.active_skills:
+      a.draw(self.buffer_frame)
 
     scale_factor = self.window_scale_factor
     w, h = self.screen.get_size()

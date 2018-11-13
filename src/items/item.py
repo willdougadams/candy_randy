@@ -8,10 +8,10 @@ class Item:
     self.durability = 100
     self.location = location #tuple(map(int, config['location']))
     self.uses = int(config['uses'])
-    self.gear_slot = config['gear_slot']
-    self.weight = config['weight']
-    self.value = config['value']
-    self.length = config['length']
+    self.equip_slot = config['equip_slot']
+    self.weight = int(config['weight'])
+    self.value = int(config['value'])
+    self.length = int(config['length'])
     self.width = self.height = 16
     self.image = pygame.Surface((self.width, self.height)).convert()
     self.image.set_colorkey(colors.BLACK)

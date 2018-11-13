@@ -1,4 +1,4 @@
-import pygame # pylint: disable=E1121
+import pygame
 import logging
 from skills.aoe import AOE
 from skills.bolt import Bolt
@@ -28,6 +28,7 @@ class PC():
     self.height = int(self.attrib_dict["sprite_height"])
     self.spritesheet_x = 0
     self.spritesheet_y = 0
+    self.collection_radius = 15
     self.gear = Gear()
 
     self.alive_color = colors.BLUE
@@ -35,6 +36,7 @@ class PC():
     self.draw_color = self.alive_color
     self.move_speed = int(self.attrib_dict['move_speed'])
     self.attack = Swing(self, 'Swing.skill', self.gear.get_reach())
+    self.attack.set_image(self.gear.get_attack_image())
     self.max_speed = 15
 
     '''
@@ -175,6 +177,8 @@ class PC():
     attack = self.attack.fire(coord)
     if attack is not None:
       self.attack = Swing(self, self.attack_file, self.gear.get_reach())
+      self.attack.set_image(self.gear.get_attack_image())
+
     return attack
 
   def apply_damage(self, elapsed, damage_maps):
@@ -193,6 +197,12 @@ class PC():
                     (self.spritesheet_x, self.spritesheet_y, self.width, self.height)
                   )
       self.alive = False
+
+  def pick_up(self, item):
+    if self.gear.items[item.equip_slot] is None:
+      self.gear.equip(item)
+    else:
+      self.inventory.add_item(item)
 
   def get_int_location(self):
     return tuple(map(int, self.center))

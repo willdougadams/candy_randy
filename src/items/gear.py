@@ -1,4 +1,7 @@
+import pygame
 import logging
+
+from core.util import colors
 
 class Gear:
   def __init__(self):
@@ -18,8 +21,8 @@ class Gear:
     Takes an item and assigns it to its gearslot,
     returning the item it replaces, if any
     """
-    swapped = self.items[item.gear_slot]
-    self.items[item.gear_slot] = item
+    swapped = self.items[item.equip_slot]
+    self.items[item.equip_slot] = item
     return swapped
 
   def unequip(self, slot):
@@ -34,3 +37,16 @@ class Gear:
 
     return left
 
+  def get_attack_image(self):
+    if self.items['left_hand'] is None:
+      fist = pygame.Surface((20, 10))
+      fist.fill(colors.BLUE)
+      return fist
+    else:
+      img = self.items['left_hand'].image
+      img = pygame.transform.rotate(img, 315)
+      w, h = img.get_size()
+      full_surface = pygame.Surface((w, h*2)).convert()
+      full_surface.blit(img, (0, 0))
+      full_surface.set_colorkey(colors.BLACK)
+      return full_surface
