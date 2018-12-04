@@ -22,7 +22,7 @@ class PC():
     self.level = level
     self.orientation = 0
     self.step = 0
-    self.location_grid_space = self.center[1]/len(self.level.grid), self.center[0]/len(self.level.grid[0])
+    self.location_grid_space = int(self.center[1]/len(self.level.grid)), int(self.center[0]/len(self.level.grid[0]))
     self.r = r
     self.width = int(self.attrib_dict["sprite_width"])
     self.height = int(self.attrib_dict["sprite_height"])
@@ -68,15 +68,19 @@ class PC():
     self.image.set_colorkey(colors.BLACK)
     self.step_time = 0
 
+  def __str__(self):
+    rep = "\n\tlocation: {0}\n\thealth_points: {1}".format(self.location_grid_space, self.health_points)
+    return rep
+
   def update(self, elapsed, damage_maps):
-    logging.debug('Update Character {0}'.format(type(self)))
+    logging.debug('Update Character: {0}'.format(str(self)))
     if not self.alive:
       return
 
     self.move(elapsed)
     self.update_sprite(elapsed)
     self.apply_damage(elapsed, damage_maps)
-    self.location_grid_space = self.center[1]/len(self.level.grid), self.center[0]/len(self.level.grid[0])
+    self.location_grid_space = int(self.center[1]/len(self.level.grid)), int(self.center[0]/len(self.level.grid[0]))
 
     for skill in self.skills:
       skill.update(elapsed)

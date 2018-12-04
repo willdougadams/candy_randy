@@ -1,6 +1,7 @@
 import pygame
 import heapq
 import random
+import logging
 from generate_level import *
 
 from core.util import colors
@@ -175,6 +176,7 @@ class Level():
 
     while queue:
       (row, col), cost = queue.pop(0)
+      row, col = int(row), int(col)
       costs[row][col] = cost
 
       neighbors = [
@@ -199,11 +201,13 @@ class Level():
     return costs
 
   def regenerate_h_costs(self, pc_pos):
+    logging.debug('Regenerating H costs for manhattan...')
     self.h_costs = self.manhattan_cost(pc_pos)
 
   def get_path(self, surf_start, surf_end):
     start = self.surf_to_grid(surf_start)
     end = self.surf_to_grid(surf_end)
+    logging.debug('calculating path from {0} to {1}...'.format(start, end))
     # A* directly ripped off from rosetta code
     g_cost = {}
     f_cost = {}
