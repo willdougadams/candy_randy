@@ -46,7 +46,9 @@ class Gear:
       img = self.items['left_hand'].image
       img = pygame.transform.rotate(img, 315)
       w, h = img.get_size()
-      full_surface = pygame.Surface((w, h*2)).convert()
+      full_surface = pygame.Surface((w, h)).convert()
       full_surface.blit(img, (0, 0))
+      if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+        pygame.draw.rect(full_surface, colors.PINK, (0, 0, full_surface.get_width()-1, full_surface.get_height()-1), 1)
       full_surface.set_colorkey(colors.BLACK)
       return full_surface

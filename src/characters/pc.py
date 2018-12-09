@@ -3,7 +3,7 @@ import logging
 from skills.aoe import AOE
 from skills.bolt import Bolt
 from skills.aura import Aura
-from skills.swing import Swing
+from skills.jab import Jab
 from items.inventory import Inventory
 from items.gear import Gear
 
@@ -35,7 +35,7 @@ class PC():
     self.dead_color = colors.BLACK
     self.draw_color = self.alive_color
     self.move_speed = int(self.attrib_dict['move_speed'])
-    self.attack = Swing(self, 'Swing.skill', self.gear.get_reach())
+    self.attack = Jab(self, 'Swing.skill', self.gear.get_reach())
     self.attack.set_image(self.gear.get_attack_image())
     self.max_speed = 15
 
@@ -180,8 +180,8 @@ class PC():
   def fire_attack(self, coord):
     attack = self.attack.fire(coord)
     if attack is not None:
-      self.attack = Swing(self, self.attack_file, self.gear.get_reach())
-      self.attack.set_image(self.gear.get_attack_image())
+      self.attack = Jab(self, self.attack_file, self.gear.get_reach())
+      self.attack.set_image(self.gear.get_attack_image()) 
 
     return attack
 
