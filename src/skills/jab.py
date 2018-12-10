@@ -78,9 +78,10 @@ class Jab(Skill):
     return damage_maps
 
   def set_image(self, new_image):
+    # TODO: figure out right appears futher than left
     self.image = new_image
     self.direction_offsets = {
-      0:(-self.image.get_width()*0.2, self.image.get_height()*0.6),
+      0:(0, self.image.get_height()*0.6),
       1:(-self.image.get_width()*0.8, 0),
       2:(self.image.get_width()*0.8, 0),
       3:(0, -self.image.get_height()*0.8)

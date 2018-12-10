@@ -9,11 +9,15 @@
 import logging
 import pygame
 import time
+import sys
 from states.main_menu import MainMenu
 from states.state_manager import StateManager
 
 log_format = '%(levelname)s %(asctime)s - %(message)s'
-logging.basicConfig(filename='log.txt', level=logging.INFO, format=log_format, filemode='w')
+log_level = logging.INFO
+if '--debug' in sys.argv:
+  log_level = logging.DEBUG
+logging.basicConfig(filename='log.txt', level=log_level, format=log_format, filemode='w')
 
 logging.info('Initializing pygame...')
 pygame.init()
@@ -24,7 +28,7 @@ HEIGHT = 800 # int(WIDTH * 0.80)
 size = (WIDTH, HEIGHT)
 
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Candy Randy")
+pygame.display.set_caption("Dungeon Crawler - The Game")
 clock = pygame.time.Clock()
 
 main_menu = MainMenu(screen)

@@ -1,3 +1,5 @@
+import pygame
+
 def read_config(filename):
   attribute_dict = {}
   with open(filename) as fin:
@@ -15,7 +17,6 @@ def read_config(filename):
 
   return attribute_dict
 
-
 class colors():
   BLACK = tuple(map(int, [0, 0, 0]))
   WHITE = tuple(map(int, [255, 255, 255]))
@@ -23,3 +24,31 @@ class colors():
   GREEN = tuple(map(int, [0, 255, 0]))
   RED = tuple(map(int, [255, 0, 0]))
   PINK = tuple(map(int, [250, 5, 250]))
+
+def trim_image(image):
+  mask = image.get_colorkey()
+  min_x = image.get_width()
+  min_y = image.get_height()
+  max_x = 0
+  max_y = 0
+
+  for y in range(image.get_height()):
+    for x in range(image.get_width()):
+      if not image.get_at((x, y)) == mask:
+        if x < min_x:
+          min_x = x
+        elif x > max_x:
+          max_x = x
+
+        if y < min_y:
+          min_y = y
+        elif y > max_y:
+          max_y = y
+
+  height = max_y - min_y
+  width = max_x - min_x
+
+  cropped = pygame.Surface((width, height))
+  cropped.blit(image, (0, 0), (min_x, min_y, max_x, max_y))
+
+  return cropped

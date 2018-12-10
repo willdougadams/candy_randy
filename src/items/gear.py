@@ -1,7 +1,7 @@
 import pygame
 import logging
 
-from core.util import colors
+from core.util import colors, trim_image
 
 class Gear:
   def __init__(self):
@@ -45,10 +45,8 @@ class Gear:
     else:
       img = self.items['left_hand'].image
       img = pygame.transform.rotate(img, 315)
-      w, h = img.get_size()
-      full_surface = pygame.Surface((w, h)).convert()
-      full_surface.blit(img, (0, 0))
+      img = trim_image(img)
+      img.set_colorkey(colors.BLACK)
       if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-        pygame.draw.rect(full_surface, colors.PINK, (0, 0, full_surface.get_width()-1, full_surface.get_height()-1), 1)
-      full_surface.set_colorkey(colors.BLACK)
-      return full_surface
+        pygame.draw.rect(img, colors.PINK, (0, 0, img.get_width()-1, img.get_height()-1), 1)
+      return img

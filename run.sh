@@ -1,4 +1,9 @@
 #!/bin/sh
 
 # the -B option prevents python bytecode files from being written
-python -B src/candyrandy.py
+if [["$@" == "--debug"]]
+then
+    python -B src/candyrandy.py --debug
+else
+    python -B src/candyrandy.py
+fi
