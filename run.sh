@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 # the -B option prevents python bytecode files from being written
-if [["$@" == "--debug"]]
+if [ "-d" == "$@" ]
 then
     python -B src/candyrandy.py --debug
 else

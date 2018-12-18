@@ -1,6 +1,9 @@
 import pygame
 import logging
 
+from skills.jab import Jab
+from skills.swing import Swing
+
 from core.util import colors, trim_image
 
 class Gear:
@@ -38,15 +41,26 @@ class Gear:
     return left
 
   def get_attack_image(self):
-    if self.items['left_hand'] is None:
+    if self.items['right_hand'] is None:
       fist = pygame.Surface((20, 10))
       fist.fill(colors.BLUE)
       return fist
     else:
-      img = self.items['left_hand'].image
+      img = self.items['right_hand'].image
       img = pygame.transform.rotate(img, 315)
       img = trim_image(img)
       img.set_colorkey(colors.BLACK)
       if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-        pygame.draw.rect(img, colors.PINK, (0, 0, img.get_width()-1, img.get_height()-1), 1)
+        pygame.draw.rect(img, colors.PINK, (0, 0, img.get_width()-1, img.get_height()-1), 2)
       return img
+
+  def get_attack(self, caster):
+    item = self.items['right_hand']
+    if item == None:
+      return Jab(caster, 'Swing.skill', self.get_reach())
+
+    t = item.get_attack_type()
+    if t == 'jab':
+      return Jab(caster, item.attack_file, self.get_reach())
+    else:
+      return Attack(caster, item.attack_file, self.get_reach())

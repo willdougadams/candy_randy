@@ -82,7 +82,7 @@ class Jab(Skill):
     self.image = new_image
     self.direction_offsets = {
       0:(0, self.image.get_height()*0.6),
-      1:(-self.image.get_width()*0.8, 0),
-      2:(self.image.get_width()*0.8, 0),
+      1:(-self.image.get_width(), self.image.get_height()*0.5),
+      2:(self.image.get_width(), self.image.get_height()*0.5),
       3:(0, -self.image.get_height()*0.8)
     }

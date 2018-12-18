@@ -34,7 +34,7 @@ class Game(State):
     self.damage_maps = {}
     self.damage_maps['normal'] = pygame.Surface((self.buffer_size, self.buffer_size))
     self.damage_maps['frost'] = pygame.Surface((self.buffer_size, self.buffer_size))
-    self.window_scale_factor = 2
+    self.window_scale_factor = 3
     self.window_offset = (0, 0)
     self.pc_grid_location = (0, 0)
     self.current_level = level
@@ -65,22 +65,25 @@ class Game(State):
     '''
     spots_taken = []
 
+    '''
     spawn = generate_level.search_for_room(self.level.grid, start='random')
     while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 10 for s in spots_taken):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
     spots_taken.append(spawn)
     spawn = self.level.grid_to_surf(spawn)
     self.items.append(Item('dagger.item', spawn))
+    '''
 
     '''
     place pcs
     '''
     for p in range(1):
-      spawn = generate_level.search_for_room(self.level.grid, start='center')
+      spawn = generate_level.search_for_room(self.level.grid, start='random')
       while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 10 for s in spots_taken):
         spawn = generate_level.search_for_room(self.level.grid, start='random')
       spots_taken.append(spawn)
-      self.pcs.append(PC(tuple(map(lambda x: x*self.level.tile_size, spawn[::-1])), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
+      self.pcs.append(PC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
+      self.items.append(Item('res/items/dagger.item', self.level.grid_to_surf(spawn))) # Give each a weapon
     self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
     self.level.regenerate_h_costs(self.pc_grid_location)
 
@@ -92,7 +95,7 @@ class Game(State):
     for npc_file in os.listdir(npc_path):
       npc_types.append(npc_path+npc_file)
 
-    for n in range(len(npc_types)):
+    for n in range(len(npc_types)/2):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
       while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 10 for s in spots_taken):
         spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))

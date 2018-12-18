@@ -4,7 +4,8 @@ from core.util import read_config, colors
 
 class Item:
   def __init__(self, item_file, location):
-    config = read_config('res/items/'+item_file)
+    config = read_config(item_file)
+    self.item_file = item_file
     self.durability = 100
     self.location = location #tuple(map(int, config['location']))
     self.uses = int(config['uses'])
@@ -13,6 +14,7 @@ class Item:
     self.value = int(config['value'])
     self.length = int(config['length'])
     self.width = self.height = 16
+    self.attack_type = config['attack_type']
     self.image = pygame.Surface((self.width, self.height)).convert()
     self.image.set_colorkey(colors.BLACK)
     item_sheet = pygame.image.load("res/DawnLike/" + config['spritesheet']).convert()

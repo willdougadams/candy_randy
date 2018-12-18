@@ -180,10 +180,13 @@ class PC():
   def fire_attack(self, coord):
     attack = self.attack.fire(coord)
     if attack is not None:
-      self.attack = Jab(self, self.attack_file, self.gear.get_reach())
-      self.attack.set_image(self.gear.get_attack_image()) 
+      self.set_attack(self.gear.get_attack(self))
 
     return attack
+
+  def set_attack(self, attack):
+    self.attack = attack
+    self.attack.set_image(self.gear.get_attack_image())
 
   def apply_damage(self, elapsed, damage_maps):
     # pcs take damage with green and do damage with red
@@ -205,6 +208,7 @@ class PC():
   def pick_up(self, item):
     if self.gear.items[item.equip_slot] is None:
       self.gear.equip(item)
+      self.attack = self.gear.get_attack(self)
     else:
       self.inventory.add_item(item)
 
