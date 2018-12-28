@@ -2,9 +2,10 @@ import pygame
 import math
 
 from skill import Skill
+from attack import Attack
 from core.util import colors
 
-class Swing(Skill):
+class Swing(Attack):
   def __init__(self, caster, skill_filename, reach):
     Skill.__init__(self, caster, skill_filename)
     self.r = reach
@@ -20,11 +21,6 @@ class Swing(Skill):
     Skill.update(self, elapsed)
     self.center = self.caster.center
     self.height = self.width = 16
-
-  def fire(self, position):
-    if self.cooldown_countdown <= 0 and not self.fired:
-      self.fired = True
-      return self
 
   def draw(self, screen):
     start, end = self.direction_dict[self.caster.orientation]

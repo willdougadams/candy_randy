@@ -1,13 +1,15 @@
+import sys
 import pygame
 import math
 import logging
 
 from skill import Skill
+from attack import Attack
 from core.util import colors
 
-class Jab(Skill):
+class Jab(Attack):
   def __init__(self, caster, skill_filename, reach):
-    Skill.__init__(self, caster, skill_filename)
+    Attack.__init__(self, caster, skill_filename)
     self.r = reach
     self.direction_dict_rad = {
       0: (math.radians(250), math.radians(290)),
@@ -30,14 +32,9 @@ class Jab(Skill):
     self.image = None
 
   def update(self, elapsed):
-    Skill.update(self, elapsed)
+    Attack.update(self, elapsed)
     self.center = self.caster.center
     self.height = self.width = 16
-
-  def fire(self, position):
-    if self.cooldown_countdown <= 0 and not self.fired:
-      self.fired = True
-      return self
 
   def draw(self, screen):
     if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
@@ -66,6 +63,7 @@ class Jab(Skill):
     start, end = self.direction_dict_rad[self.caster.orientation]
     for damage_type, surf in damage_maps.iteritems():
       center = (int(self.center[0]), int(self.center[1]))
+      print '--->', self.current_color
       pygame.draw.arc(
                 surf,
                 self.current_color,

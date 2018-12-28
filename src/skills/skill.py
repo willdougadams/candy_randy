@@ -10,11 +10,13 @@ class Skill:
     self.target_dest = (0, 0)
     self.center = (float(0), float(0))
     self.caster = caster
-    config = read_config('res/Skills/'+skill_filename)
+    config = read_config(skill_filename)
     self.r = float(config['radius'])
+
     self.warmup_countdown = float(config['warmup_time'])
     self.cooldown_countdown = float(config['cooldown_time'])
     self.active_countdown = float(config['active_time'])
+
     self.move_speed = float(config['move_speed'])
     self.dps = float(config['dps'])
     self.current_color = self.warmup_color = colors.BLUE

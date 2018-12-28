@@ -1,6 +1,11 @@
 import pygame
 
+CONFIGS = {}
+
 def read_config(filename):
+  if filename in CONFIGS:
+    return CONFIGS[filename]
+
   attribute_dict = {}
   with open(filename) as fin:
     lines = fin.readlines()
@@ -15,6 +20,7 @@ def read_config(filename):
     if len(attribute_dict[attribute]) == 1:
       attribute_dict[attribute] = attribute_dict[attribute][0]
 
+  CONFIGS[filename] = attribute_dict
   return attribute_dict
 
 class colors():

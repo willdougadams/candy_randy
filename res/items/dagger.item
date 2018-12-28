@@ -5,8 +5,8 @@ damage_normal: 500
 uses: -1
 weight: 3
 value: 25
-length: 15
-equip_slot: left_hand
+radius: 15
+equip_slot: hand
 attack_type: jab
 
 spritesheet: ShortWep.png

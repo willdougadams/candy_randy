@@ -35,7 +35,7 @@ class PC():
     self.dead_color = colors.BLACK
     self.draw_color = self.alive_color
     self.move_speed = int(self.attrib_dict['move_speed'])
-    self.attack = Jab(self, 'Swing.skill', self.gear.get_reach())
+    self.attack = Jab(self, 'res/Skills/Swing.skill', self.gear.get_reach())
     self.attack.set_image(self.gear.get_attack_image())
     self.max_speed = 15
 
@@ -45,8 +45,8 @@ class PC():
     '''
     self.skills = []
     self.skill_types = [AOE, Bolt, Aura]
-    self.skill_files = ['AOE.skill', 'Bolt.skill', 'Aura.skill']
-    self.attack_file = 'Swing.skill'
+    self.skill_files = ['res/Skills/AOE.skill', 'res/Skills/Bolt.skill', 'res/Skills/Aura.skill']
+    self.attack_file = 'res/Skills/Swing.skill'
     for i, skill_type in enumerate(self.skill_types):
       self.skills.append(skill_type(self, self.skill_files[i]))
 
@@ -159,7 +159,6 @@ class PC():
     screen.blit(self.image, (x, y), (0, 0, self.width, self.height))
     pygame.draw.circle(screen, colors.GREEN, self.get_int_location(), 2)
 
-
   '''
   PC.fire() calls the Skill.fire() method of the currently selected skill,
   which will return the fired skill object if the skill is available, otherwise
@@ -178,7 +177,9 @@ class PC():
     return ret_skill
 
   def fire_attack(self, coord):
-    attack = self.attack.fire(coord)
+    dps = self.gear.get_dps()
+    attack = self.attack.fire(coord, dps)
+    
     if attack is not None:
       self.set_attack(self.gear.get_attack(self))
 
@@ -206,6 +207,9 @@ class PC():
       self.alive = False
 
   def pick_up(self, item):
+    if item.equip_slot == 'hand':
+      item.equip_slot = 'right_hand'
+
     if self.gear.items[item.equip_slot] is None:
       self.gear.equip(item)
       self.attack = self.gear.get_attack(self)

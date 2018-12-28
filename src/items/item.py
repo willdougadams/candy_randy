@@ -12,7 +12,7 @@ class Item:
     self.equip_slot = config['equip_slot']
     self.weight = int(config['weight'])
     self.value = int(config['value'])
-    self.length = int(config['length'])
+    self.radius = int(config['radius'])
     self.width = self.height = 16
     self.attack_type = config['attack_type']
     self.image = pygame.Surface((self.width, self.height)).convert()
@@ -36,3 +36,13 @@ class Item:
       self.uses -= 1
     else:
       return False
+
+  def get_attack_type(self):
+    return self.attack_type
+
+  def get_item_file(self):
+    return self.item_file
+
+  def get_damages(self):
+    return self.damages
+

@@ -24,6 +24,7 @@ class Gear:
     Takes an item and assigns it to its gearslot,
     returning the item it replaces, if any
     """
+    logging.info("Equiping {0}...".format(item))
     swapped = self.items[item.equip_slot]
     self.items[item.equip_slot] = item
     return swapped
@@ -34,15 +35,15 @@ class Gear:
     return item
 
   def get_reach(self):
-    left = 25
-    if self.items['left_hand'] is not None:
-      left = self.items['left_hand'].length
+    r = 25
+    if self.items['right_hand'] is not None:
+      r = self.items['right_hand'].radius
 
-    return left
+    return r
 
   def get_attack_image(self):
     if self.items['right_hand'] is None:
-      fist = pygame.Surface((20, 10))
+      fist = pygame.Surface((10, 20))
       fist.fill(colors.BLUE)
       return fist
     else:
@@ -57,10 +58,17 @@ class Gear:
   def get_attack(self, caster):
     item = self.items['right_hand']
     if item == None:
-      return Jab(caster, 'Swing.skill', self.get_reach())
+      return Jab(caster, 'res/Skill/Swing.skill', self.get_reach())
 
     t = item.get_attack_type()
     if t == 'jab':
-      return Jab(caster, item.attack_file, self.get_reach())
+      return Jab(caster, item.get_item_file(), self.get_reach())
     else:
-      return Attack(caster, item.attack_file, self.get_reach())
+      return Attack(caster, item.get_item_file(), self.get_reach())
+
+  def get_dps(self):
+    item = self.items['right_hand']
+    if item == None:
+      return {'normal':20}
+
+    return item.get_damages()
