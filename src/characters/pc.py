@@ -83,8 +83,9 @@ class PC():
     self.apply_damage(elapsed, damage_maps)
     new_grid_loc = self.level.surf_to_grid(self.center)#int(self.center[1]/len(self.level.grid)), int(self.center[0]/len(self.level.grid[0]))
     if not new_grid_loc == self.location_grid_space:
+      print 'fffffffffffffff'
       self.location_grid_space = new_grid_loc
-      self.visible_tiles = self.level.get_fov(self.location_grid_space, self.orientation)
+      #self.visible_tiles = self.level.get_fov(self.location_grid_space, self.orientation)
 
     for skill in self.skills:
       skill.update(elapsed)
@@ -119,7 +120,6 @@ class PC():
     elif y_pos < self.target_dest[1]:
       y_pos += y_move_dist
 
-    step = (x_pos, y_pos)
     if not self.center[1] == y_pos:
       if self.center[1] > y_pos:
         self.orientation = 3
@@ -131,17 +131,20 @@ class PC():
       else:
         self.orientation = 2
 
-    grid_step = tuple(map(lambda x: int(x), self.level.surf_to_grid(step)))
+    step = (x_pos, y_pos)
+    grid_step = self.level.surf_to_grid(step)
     stepping_onto = self.level.grid[grid_step[0]][grid_step[1]]
     if stepping_onto in self.level.floor_tile_symbols:
       self.center = step
       self.location_grid_space = grid_step
+    '''
     else:
       x = self.center[0] - x_pos
       y = self.center[1] - y_pos
 
       self.center = (x_pos+x, y_pos+y)
-      self.location_grid_space = tuple(map(lambda x: int(x), self.level.surf_to_grid(step)))
+      self.location_grid_space = self.level.surf_to_grid(step)
+    '''
 
   def update_sprite(self, elapsed):
     self.step_time += elapsed

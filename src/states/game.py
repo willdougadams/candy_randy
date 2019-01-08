@@ -35,7 +35,7 @@ class Game(State):
     self.damage_maps = {}
     self.damage_maps['normal'] = pygame.Surface((self.buffer_size, self.buffer_size))
     self.damage_maps['frost'] = pygame.Surface((self.buffer_size, self.buffer_size))
-    self.window_scale_factor = 1
+    self.window_scale_factor = 2
     self.window_offset = (0, 0)
     self.pc_grid_location = (0, 0)
     self.current_level = level
@@ -102,7 +102,7 @@ class Game(State):
         spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
       spots_taken.append(spawn)
       n = NPC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, npc_types[n%len(npc_types)], self.level)
-      new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
+      new_path = self.level.get_path(n.location_grid_space, self.pcs[self.active_pc].location_grid_space)
       n.add_path(new_path)
       self.npcs.append(n)
 
