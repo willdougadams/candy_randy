@@ -128,10 +128,11 @@ class Level():
             tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
             self.tilemap.blit(self.wall_tilesheet, map_location, tile_rect)
 
-    #for i in range(len(self.grid)):
-    #  for j in range(len(self.grid[i])):
-    #    r = pygame.Rect(i*self.tile_size, j*self.tile_size, self.tile_size, self.tile_size)
-    #    pygame.draw.rect(self.tilemap, colors.PINK, r, 1)
+    if logging.getLogger().getEffectiveLevel() ==logging.debug:
+      for i in range(len(self.grid)):
+        for j in range(len(self.grid[i])):
+          r = pygame.Rect(i*self.tile_size, j*self.tile_size, self.tile_size, self.tile_size)
+          pygame.draw.rect(self.tilemap, colors.PINK, r, 1)
 
     self.grid_generated = True
 

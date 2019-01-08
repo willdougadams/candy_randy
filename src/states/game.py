@@ -102,7 +102,7 @@ class Game(State):
         spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
       spots_taken.append(spawn)
       n = NPC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, npc_types[n%len(npc_types)], self.level)
-      new_path = self.level.get_path(n.location_grid_space, self.pcs[self.active_pc].location_grid_space)
+      new_path = self.level.get_path(n.center, self.pcs[self.active_pc].center)
       n.add_path(new_path)
       self.npcs.append(n)
 
@@ -132,7 +132,7 @@ class Game(State):
     path_timer = 10
     if (self.ticks+1)/path_timer > self.ticks/path_timer:
       n = self.npcs[self.pathfinding_index]
-      new_path = self.level.get_path(n.location_grid_space, self.pcs[self.active_pc].location_grid_space)
+      new_path = self.level.get_path(n.center, self.pcs[self.active_pc].center)
       n.add_path(new_path)
       self.pathfinding_index = (self.pathfinding_index+1)%len(self.npcs)
 
@@ -176,9 +176,6 @@ class Game(State):
 
     for a in self.active_skills:
       a.draw(self.buffer_frame)
-
-    #w, h = self.buffer_frame.get_size()
-    #pygame.draw.rect(self.buffer_frame, colors.PINK, pygame.Rect(0, 0, w, h))
 
     scale_factor = self.window_scale_factor
     w, h = self.screen.get_size()
