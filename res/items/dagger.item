@@ -1,6 +1,6 @@
 location: 100 100
 gear_slot: hand
-damage_normal: 500
+damage_normal: 250
 # damage_gravity: 50
 uses: -1
 weight: 3

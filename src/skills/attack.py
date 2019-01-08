@@ -30,9 +30,9 @@ class Attack(Skill):
     self.center = self.caster.center
 
   def fire(self, position, dps):
-    damages = list(dps.values())
+    damages = [v for _, v in dps.iteritems()]
     damage = sum(damages) / len(damages)
-    self.dps = damage
+    self.set_dps(damage)
     if self.cooldown_countdown <= 0 and not self.fired:
       self.center = position
       self.fired = True

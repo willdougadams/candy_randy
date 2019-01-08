@@ -1,5 +1,6 @@
 import pygame
 from core import generate_level
+from core.util import colors
 import random
 import threading
 import math
@@ -34,7 +35,7 @@ class Game(State):
     self.damage_maps = {}
     self.damage_maps['normal'] = pygame.Surface((self.buffer_size, self.buffer_size))
     self.damage_maps['frost'] = pygame.Surface((self.buffer_size, self.buffer_size))
-    self.window_scale_factor = 3
+    self.window_scale_factor = 1
     self.window_offset = (0, 0)
     self.pc_grid_location = (0, 0)
     self.current_level = level
@@ -50,7 +51,7 @@ class Game(State):
     self.items = []
 
     self.hud = HUD(self)
-    self.level = Level(self.buffer_frame, self.current_level, self.current_world)
+    self.level = Level(self.current_level, self.current_world)
     gen_thread = threading.Thread(target=self.level.generate_grid)
     gen_thread.start()
     while not self.level.grid_generated:
@@ -131,7 +132,7 @@ class Game(State):
     path_timer = 10
     if (self.ticks+1)/path_timer > self.ticks/path_timer:
       n = self.npcs[self.pathfinding_index]
-      new_path = self.level.get_path(n.get_int_location(), self.pcs[self.active_pc].get_int_location())
+      new_path = self.level.get_path(n.location_grid_space, self.pcs[self.active_pc].location_grid_space)
       n.add_path(new_path)
       self.pathfinding_index = (self.pathfinding_index+1)%len(self.npcs)
 
@@ -158,12 +159,16 @@ class Game(State):
     self.screen.fill(self.BLACK)
     self.buffer_frame.fill(self.BLACK)
 
-    self.level.draw()
+    self.level.draw(self.buffer_frame)
+    for l in self.pcs[self.active_pc].visible_tiles:
+      self.level.highlight_tile(self.buffer_frame, l)
 
     for n in self.npcs:
+      self.level.highlight_tile(self.buffer_frame, n.location_grid_space)
       n.draw(self.buffer_frame)
 
     for p in self.pcs:
+      self.level.highlight_tile(self.buffer_frame, p.location_grid_space)
       p.draw(self.buffer_frame)
 
     for i in self.items:
@@ -171,6 +176,9 @@ class Game(State):
 
     for a in self.active_skills:
       a.draw(self.buffer_frame)
+
+    #w, h = self.buffer_frame.get_size()
+    #pygame.draw.rect(self.buffer_frame, colors.PINK, pygame.Rect(0, 0, w, h))
 
     scale_factor = self.window_scale_factor
     w, h = self.screen.get_size()

@@ -3,7 +3,6 @@ import pygame
 import math
 import logging
 
-from skill import Skill
 from attack import Attack
 from core.util import colors
 
@@ -63,7 +62,6 @@ class Jab(Attack):
     start, end = self.direction_dict_rad[self.caster.orientation]
     for damage_type, surf in damage_maps.iteritems():
       center = (int(self.center[0]), int(self.center[1]))
-      print '--->', self.current_color
       pygame.draw.arc(
                 surf,
                 self.current_color,
@@ -76,7 +74,7 @@ class Jab(Attack):
     return damage_maps
 
   def set_image(self, new_image):
-    # TODO: figure out right appears futher than left
+    # TODO: figure out why right appears futher than left
     self.image = new_image
     self.direction_offsets = {
       0:(0, self.image.get_height()*0.6),

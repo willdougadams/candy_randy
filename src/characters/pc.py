@@ -22,7 +22,8 @@ class PC():
     self.level = level
     self.orientation = 0
     self.step = 0
-    self.location_grid_space = int(self.center[1]/len(self.level.grid)), int(self.center[0]/len(self.level.grid[0]))
+    self.location_grid_space = self.level.surf_to_grid(self.center)#int(self.center[1]/len(self.level.grid)), int(self.center[0]/len(self.level.grid[0]))
+    self.visible_tiles = self.level.get_fov(self.location_grid_space, self.orientation)
     self.r = r
     self.width = int(self.attrib_dict["sprite_width"])
     self.height = int(self.attrib_dict["sprite_height"])
@@ -80,7 +81,10 @@ class PC():
     self.move(elapsed)
     self.update_sprite(elapsed)
     self.apply_damage(elapsed, damage_maps)
-    self.location_grid_space = int(self.center[1]/len(self.level.grid)), int(self.center[0]/len(self.level.grid[0]))
+    new_grid_loc = self.level.surf_to_grid(self.center)#int(self.center[1]/len(self.level.grid)), int(self.center[0]/len(self.level.grid[0]))
+    if not new_grid_loc == self.location_grid_space:
+      self.location_grid_space = new_grid_loc
+      self.visible_tiles = self.level.get_fov(self.location_grid_space, self.orientation)
 
     for skill in self.skills:
       skill.update(elapsed)

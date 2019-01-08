@@ -1,9 +1,6 @@
-#!/bin/bash
+#! /bin/sh -
 
-# the -B option prevents python bytecode files from being written
-if [ "-d" == "$@" ]
-then
-    python -B src/candyrandy.py --debug
-else
-    python -B src/candyrandy.py
-fi
+# idiomatic parameter and option handling in sh
+python -B src/candyrandy.py
+
+exit 0

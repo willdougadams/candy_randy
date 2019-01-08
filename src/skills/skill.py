@@ -73,3 +73,8 @@ class Skill:
     x2, y2 = coord
     dist = abs(math.hypot(x2 - x1, y2 - y1))
     return dist < self.r
+
+  def set_dps(self, n):
+    n = max([n, 0])
+    self.dps = n
+    self.active_color = (n, 0, 0)

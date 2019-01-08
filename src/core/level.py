@@ -7,7 +7,7 @@ from generate_level import *
 from core.util import colors
 
 class Level():
-  def __init__(self, screen, level, world):
+  def __init__(self, level, world):
     self.grid = []
     self.path_weight_grid = []
     self.grid_generated = False
@@ -15,7 +15,6 @@ class Level():
     self.components_generated = 0
     self.components_total = self.rooms_amt
     self.offset = (0, 0)
-    self.screen = screen
     self.tile_size = 16
     self.map_size = 240
     self.current_level = level
@@ -101,52 +100,57 @@ class Level():
         tileset_x = 0
         tileset_y = 0
         if tile in self.floor_tile_symbols:
-          tileset_x = self.floor_tile_offsets[self.floor_tile_symbols[tile]][0] * self.tile_size
-          tileset_y = self.floor_tile_offsets[self.floor_tile_symbols[tile]][1] * self.tile_size
+          tileset_x = self.floor_tile_offsets[self.floor_tile_symbols[tile]][1] * self.tile_size
+          tileset_y = self.floor_tile_offsets[self.floor_tile_symbols[tile]][0] * self.tile_size
           tile_x = tileset_x + world_offset
           tile_y = tileset_y + level_offset
-          map_location = (x * self.tile_size, y * self.tile_size)
+          map_location = self.grid_to_surf((y, x))#(x * self.tile_size, y * self.tile_size)
           tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
           self.tilemap.blit(self.floor_tilesheet, map_location, tile_rect)
         elif tile in self.wall_tile_symbols:
           if tile == '/':
             tile = '|'
-            tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
-            tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
+            tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
+            tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
             tile_x = tileset_x + world_offset
             tile_y = tileset_y + level_offset
-            map_location = (x * self.tile_size, y * self.tile_size)
+            map_location = self.grid_to_surf((y, x))#(x * self.tile_size, y * self.tile_size)
             tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
             tile_surface = pygame.Surface((self.tile_size, self.tile_size))
             tile_surface.blit(self.wall_tilesheet, (0, 0), tile_rect)
             self.tilemap.blit(pygame.transform.flip(tile_surface, True, False), map_location, (0, 0, self.tile_size, self.tile_size))
           else:
-            tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
-            tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
+            tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
+            tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
             tile_x = tileset_x + world_offset
             tile_y = tileset_y + level_offset
-            map_location = (x * self.tile_size, y * self.tile_size)
+            map_location = self.grid_to_surf((y, x))#(x * self.tile_size, y * self.tile_size)
             tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
             self.tilemap.blit(self.wall_tilesheet, map_location, tile_rect)
 
-    for i in range(len(self.grid)):
-      for j in range(len(self.grid[i])):
-        r = pygame.Rect(i*self.tile_size, j*self.tile_size, self.tile_size, self.tile_size)
-        pygame.draw.rect(self.tilemap, colors.PINK, r, 1)
+    #for i in range(len(self.grid)):
+    #  for j in range(len(self.grid[i])):
+    #    r = pygame.Rect(i*self.tile_size, j*self.tile_size, self.tile_size, self.tile_size)
+    #    pygame.draw.rect(self.tilemap, colors.PINK, r, 1)
 
     self.grid_generated = True
 
   def update(self, new_offset):
     self.offset = new_offset
 
-  def draw(self):
-    size = self.screen.get_size()
-    self.screen.blit(self.tilemap, (0, 0), (0, 0, size[0], size[1]))
+  def draw(self, screen):
+    size = screen.get_size()
+    screen.blit(self.tilemap, (0, 0), (0, 0, size[0], size[1]))
 
   def highlight_tile(self, screen, location):
-    tile = self.surf_to_grid(location)
-    tile_x, tile_y = tuple(map(lambda x: x-self.tile_size/2, self.grid_to_surf(tile)))
-    pygame.draw.rect(screen, colors.PINK, pygame.Rect(tile_x, tile_y, self.tile_size, self.tile_size))
+    w, h = screen.get_size()
+    tile_x, tile_y = tuple(map(lambda x: self.tile_size*x, location))
+    pygame.draw.rect(
+                      screen,
+                      colors.PINK,
+                      pygame.Rect(tile_x, tile_y, self.tile_size, self.tile_size),
+                      2
+                    )
 
   def get_w(self):
     return self.tilemap.get_size()[0]
@@ -159,18 +163,18 @@ class Level():
 
   def surf_to_grid(self, spot):
     """ returns the top right coner or center of the tile this spot is in """
-    return spot[1]/self.tile_size, spot[0]/self.tile_size
+    return int(spot[0])/self.tile_size, int(spot[1])/self.tile_size
 
   def grid_to_surf(self, spot):
     """ returns the surface location in the middle of the tile """
-    return (spot[1]*self.tile_size)+self.tile_size/2, (spot[0]*self.tile_size)+self.tile_size/2
+    return (spot[0]*self.tile_size)+self.tile_size/2, (spot[1]*self.tile_size)+self.tile_size/2
 
   def manhattan_cost(self, start_pos):
     start_row, start_col = start_pos
     start_cost = 0
     start = ((start_row, start_col), start_cost)
     visited = set()
-    visited.add((start_row, start_col))
+    visited.add((start_row, start_col))  
     queue = [start]
     costs = [[0]*len(self.grid) for _ in range(len(self.grid[0]))]
 
@@ -271,4 +275,36 @@ class Level():
         h = self.h_costs[n[0]][n[1]]
         f_cost[n] = g + h
 
-    raise RuntimeError('A* failed to find path :(')
+    return []#raise RuntimeError('A* failed to find path :(')
+
+  def get_fov(self, location, orientation, dist=6):
+    if dist <= 0:
+      return []
+
+    fov = [location]
+    orientation_offsets = {
+      0: [( 1, -1), ( 1,  0), ( 1,  1)],
+      1: [(-1, -1), ( 0, -1), ( 1, -1)],
+      2: [( 1, -1), ( 1,  0), ( 1,  1)],
+      3: [(-1, -1), (-1,  0), (-1,  1)]
+    }
+
+
+    for o in orientation_offsets[orientation]:
+      neighb = location[0]+o[0], location[1]+o[1]
+
+      if self.grid[neighb[0]][neighb[1]] in self.floor_tile_symbols:
+        fov.append(neighb)
+      else:
+        fov.append(neighb)
+        fov.extend(self.get_fov(neighb, orientation, dist-1))
+
+    return list(set(fov))
+
+
+
+
+
+
+
+
