@@ -298,10 +298,8 @@ class Level():
       neighb = location[0]+o[0], location[1]+o[1]
 
       if self.grid[neighb[0]][neighb[1]] in self.floor_tile_symbols:
-        fov.append(neighb)
-      else:
-        fov.append(neighb)
         fov.extend(self.get_fov(neighb, orientation, dist-1))
+      fov.append(neighb)
 
     return list(set(fov))
 

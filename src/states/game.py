@@ -115,7 +115,7 @@ class Game(State):
     self.active_skills = filter(lambda x: x is not None and x.alive, self.active_skills)
 
     if not self.pcs[self.active_pc].location_grid_space == self.pc_grid_location:
-      self.level.regenerate_h_costs(self.pcs[self.active_pc].location_grid_space)
+      self.level.regenerate_h_costs(self.level.surf_to_grid(self.pcs[self.active_pc].center))
       self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
 
     for _, surf in self.damage_maps.iteritems():
