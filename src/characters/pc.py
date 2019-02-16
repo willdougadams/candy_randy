@@ -30,6 +30,7 @@ class PC():
     self.spritesheet_x = 0
     self.spritesheet_y = 0
     self.collection_radius = 15
+    self.moved = True
     self.gear = Gear()
 
     self.alive_color = colors.BLUE
@@ -81,11 +82,6 @@ class PC():
     self.move(elapsed)
     self.update_sprite(elapsed)
     self.apply_damage(elapsed, damage_maps)
-    new_grid_loc = self.level.surf_to_grid(self.center)#int(self.center[1]/len(self.level.grid)), int(self.center[0]/len(self.level.grid[0]))
-    if not new_grid_loc == self.location_grid_space:
-      print 'fffffffffffffff'
-      self.location_grid_space = new_grid_loc
-      #self.visible_tiles = self.level.get_fov(self.location_grid_space, self.orientation)
 
     for skill in self.skills:
       skill.update(elapsed)
@@ -93,6 +89,9 @@ class PC():
     self.attack.update(elapsed)
 
   def move(self, elapsed):
+    if not self.moved:
+      return
+      
     x_pos = self.center[0]
     y_pos = self.center[1]
 
@@ -136,7 +135,10 @@ class PC():
     stepping_onto = self.level.grid[grid_step[0]][grid_step[1]]
     if stepping_onto in self.level.floor_tile_symbols:
       self.center = step
-      self.location_grid_space = grid_step
+      if not self.location_grid_space == grid_step:
+        print self.location_grid_space, grid_step
+        self.location_grid_space = grid_step
+        self.visible_tiles = self.level.get_fov(self.location_grid_space, self.orientation)
     '''
     else:
       x = self.center[0] - x_pos

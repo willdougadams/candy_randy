@@ -196,10 +196,14 @@ class Game(State):
     down = pressed[pygame.K_s] * step_dist
     right = pressed[pygame.K_d] * step_dist
 
-    if any([up, down, left, right]):
+    if any(map(lambda x: x > 0, [up, down, left, right])):
       now = self.pcs[self.active_pc].center
       later = (now[0]+right-left), (now[1]+down-up)
-      self.pcs[self.active_pc].target_dest = later
+      if not now == later:
+        self.pcs[self.active_pc].target_dest = later
+        self.pcs[self.active_pc].moved = True
+      else:
+        self.pcs[self.active_pc].moved = False
 
     for event in user_input:
       if event.type == pygame.KEYDOWN:

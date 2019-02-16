@@ -287,12 +287,11 @@ class Level():
 
     fov = [location]
     orientation_offsets = {
-      0: [( 1, -1), ( 1,  0), ( 1,  1)],
-      1: [(-1, -1), ( 0, -1), ( 1, -1)],
+      0: [(-1,  1), ( 0,  1), ( 1,  1)],
+      1: [(-1, -1), (-1,  0), (-1,  1)],
       2: [( 1, -1), ( 1,  0), ( 1,  1)],
-      3: [(-1, -1), (-1,  0), (-1,  1)]
+      3: [(-1, -1), ( 0, -1), ( 1, -1)]
     }
-
 
     for o in orientation_offsets[orientation]:
       neighb = location[0]+o[0], location[1]+o[1]
