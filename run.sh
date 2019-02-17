@@ -1,5 +1,4 @@
 #! /bin/sh -
 
-python -B src/candyrandy.py
-
+python -B src/candyrandy.py --debug
 exit 0

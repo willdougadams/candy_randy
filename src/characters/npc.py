@@ -2,13 +2,15 @@ import pygame
 
 from pc import PC
 from random import randint
+from characters.character import Character
+
 import math
 
 target_location = (0, 0)
 
-class NPC(PC):
+class NPC(Character):
   def __init__(self, coord, r, screen, npc_filename, level):
-    PC.__init__(self, coord, r, screen, npc_filename, level)
+    Character.__init__(self, coord, r, screen, npc_filename, level)
     self.spritesheet_x = self.width * int(self.attrib_dict["spritesheet_position"][0])
     self.spritesheet_y = self.height * int(self.attrib_dict["spritesheet_position"][1])
     self.step = 0.0
@@ -26,7 +28,7 @@ class NPC(PC):
   def update(self, elapsed, damage_maps):
     if not self.alive:
       return
-    PC.update(self, elapsed, damage_maps)
+    Character.update(self, elapsed, damage_maps)
 
     if math.hypot(self.center[0]-self.target_dest[0], self.center[1]-self.target_dest[1]) < self.height/4:
       if len(self.path) > 0:
