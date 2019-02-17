@@ -138,8 +138,9 @@ class Level():
 
     for i, row in enumerate(self.grid):
       for j, cell in enumerate(row):
-        h = self.manhattan_cost((i, j))
-        self.h_cost_lookup[(i, j)] = h
+        if grid[i][j] in self.floor_tile_symbols:
+          h = self.manhattan_cost((i, j))
+          self.h_cost_lookup[(i, j)] = h
 
     self.obscured_tilemap = self.tilemap.copy()
     self.obscured_tilemap.set_alpha(156)

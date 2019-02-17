@@ -66,14 +66,13 @@ class Game(State):
     '''
     spots_taken = []
 
-    '''
+    
     spawn = generate_level.search_for_room(self.level.grid, start='random')
     while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 10 for s in spots_taken):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
     spots_taken.append(spawn)
     spawn = self.level.grid_to_surf(spawn)
-    self.items.append(Item('dagger.item', spawn))
-    '''
+    self.items.append(Item('res/items/dagger.item', spawn))
 
     '''
     place pcs
@@ -84,7 +83,7 @@ class Game(State):
         spawn = generate_level.search_for_room(self.level.grid, start='random')
       spots_taken.append(spawn)
       self.pcs.append(PC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
-      self.items.append(Item('res/items/dagger.item', self.level.grid_to_surf(spawn))) # Give each a weapon
+      #self.items.append(Item('res/items/dagger.item', self.level.grid_to_surf(spawn))) # Give each a weapon
     self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
     self.level.regenerate_h_costs(self.pc_grid_location)
 

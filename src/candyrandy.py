@@ -6,6 +6,7 @@
 ###
 '''
 
+import traceback
 import logging
 import pygame
 import time
@@ -50,7 +51,7 @@ def main():
       mr_manager.state.draw()
     except Exception as e:
       logging.critical(e)
-      exit()
+      logging.critical(traceback.format_exc())
     end = time.time()
   pygame.quit()
 
