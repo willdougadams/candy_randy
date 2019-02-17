@@ -130,9 +130,7 @@ class Character:
     if stepping_onto in self.level.floor_tile_symbols:
       self.center = step
       if not self.location_grid_space == grid_step:
-        print self.location_grid_space, grid_step
         self.location_grid_space = grid_step
-        self.level.regenerate_h_costs(self.level.surf_to_grid(self.center))
         self.refresh_fov()
     '''
     else:
