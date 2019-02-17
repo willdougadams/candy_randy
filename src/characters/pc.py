@@ -7,7 +7,7 @@ from skills.jab import Jab
 from items.inventory import Inventory
 from items.gear import Gear
 
-from core.util import read_config, colors
+from core.util import read_config, colors, RUNTIME_LOG_LEVEL
 
 class PC():
 
@@ -167,7 +167,8 @@ class PC():
     x = int(x)
     y = int(y)
     screen.blit(self.image, (x, y), (0, 0, self.width, self.height))
-    pygame.draw.circle(screen, colors.GREEN, self.get_int_location(), 2)
+    if RUNTIME_LOG_LEVEL <= logging.DEBUG:
+      pygame.draw.circle(screen, colors.GREEN, self.get_int_location(), 2)
 
   '''
   PC.fire() calls the Skill.fire() method of the currently selected skill,

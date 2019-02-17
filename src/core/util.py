@@ -1,6 +1,9 @@
 import pygame
+import logging
 
 CONFIGS = {}
+
+RUNTIME_LOG_LEVEL = logging.getLogger().getEffectiveLevel()
 
 def read_config(filename):
   if filename in CONFIGS:

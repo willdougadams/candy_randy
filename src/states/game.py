@@ -16,6 +16,7 @@ from characters.npc import NPC
 from skills.aoe import AOE
 from core.hud import HUD
 from core.level import Level
+from core.util import RUNTIME_LOG_LEVEL
 from items.item import Item
 
 
@@ -37,7 +38,6 @@ class Game(State):
     self.damage_maps['frost'] = pygame.Surface((self.buffer_size, self.buffer_size))
     self.window_scale_factor = 2
     self.window_offset = (0, 0)
-    self.pc_grid_location = (0, 0)
     self.current_level = level
     self.current_world = world
     self.pathfinding_index = 0
@@ -83,9 +83,6 @@ class Game(State):
         spawn = generate_level.search_for_room(self.level.grid, start='random')
       spots_taken.append(spawn)
       self.pcs.append(PC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, "res/pcs/Knight.pc", self.level))
-      #self.items.append(Item('res/items/dagger.item', self.level.grid_to_surf(spawn))) # Give each a weapon
-    self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
-    self.level.regenerate_h_costs(self.pc_grid_location)
 
     '''
     place_npcs
@@ -112,10 +109,6 @@ class Game(State):
     self.window_offset = get_new_offset(self)
     self.level.update(self.window_offset)
     self.active_skills = filter(lambda x: x is not None and x.alive, self.active_skills)
-
-    if not self.pcs[self.active_pc].location_grid_space == self.pc_grid_location:
-      #self.level.regenerate_h_costs(self.level.surf_to_grid(self.pcs[self.active_pc].center))
-      self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
 
     for _, surf in self.damage_maps.iteritems():
       surf.fill(Game.BLACK)
@@ -159,15 +152,18 @@ class Game(State):
     self.buffer_frame.fill(self.BLACK)
 
     self.level.draw(self.buffer_frame, self.pcs[self.active_pc].visible_tiles)
-    for l in self.pcs[self.active_pc].visible_tiles:
-      self.level.highlight_tile(self.buffer_frame, l)
+    if RUNTIME_LOG_LEVEL <= logging.DEBUG:
+      for l in self.pcs[self.active_pc].visible_tiles:
+        self.level.highlight_tile(self.buffer_frame, l)
 
     for n in self.npcs:
-      self.level.highlight_tile(self.buffer_frame, n.location_grid_space)
+      if RUNTIME_LOG_LEVEL <= logging.DEBUG:
+        self.level.highlight_tile(self.buffer_frame, n.location_grid_space)
       n.draw(self.buffer_frame)
 
     for p in self.pcs:
-      self.level.highlight_tile(self.buffer_frame, p.location_grid_space)
+      if RUNTIME_LOG_LEVEL <= logging.DEBUG:
+        self.level.highlight_tile(self.buffer_frame, p.location_grid_space)
       p.draw(self.buffer_frame)
 
     for i in self.items:
