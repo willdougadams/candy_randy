@@ -1,6 +1,5 @@
 #! /bin/sh -
 
-# idiomatic parameter and option handling in sh
-python -B src/candyrandy.py
+python -B src/candyrandy.py --debug
 
 exit 0

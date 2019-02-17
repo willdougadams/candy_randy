@@ -11,14 +11,15 @@ class Level():
     self.grid = []
     self.path_weight_grid = []
     self.grid_generated = False
-    self.rooms_amt = 8
+    self.rooms_amt = 5
     self.components_generated = 0
     self.components_total = self.rooms_amt
     self.offset = (0, 0)
     self.tile_size = 16
-    self.map_size = 240
+    self.map_size = 50
     self.current_level = level
     self.current_world = world
+    self.h_cost_lookup = {}
     self.h_costs = [[0]*self.map_size for _ in range(self.map_size)]
 
     self.floor_tilesheet = pygame.image.load("res/DawnLike/Floor.png").convert()
@@ -67,13 +68,14 @@ class Level():
 
     self.tilemap_size = self.map_size * self.tile_size
     self.tilemap = pygame.surface.Surface((self.tilemap_size, self.tilemap_size))
+    self.obscured_tilemap = None
 
   def generate_grid(self):
     grid = [[" "]*self.map_size for _ in range(self.map_size)]
     self.grid = grid
 
-    room_min_size = 10
-    room_max_size = 25
+    room_min_size = 3
+    room_max_size = 8
     rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(self.rooms_amt)]
 
     for room in rooms:
@@ -134,14 +136,26 @@ class Level():
           r = pygame.Rect(i*self.tile_size, j*self.tile_size, self.tile_size, self.tile_size)
           pygame.draw.rect(self.tilemap, colors.PINK, r, 1)
 
+    for i, row in enumerate(self.grid):
+      for j, cell in enumerate(row):
+        h = self.manhattan_cost((i, j))
+        self.h_cost_lookup[(i, j)] = h
+
+    self.obscured_tilemap = self.tilemap.copy()
+    self.obscured_tilemap.set_alpha(156)
+
     self.grid_generated = True
 
   def update(self, new_offset):
     self.offset = new_offset
 
-  def draw(self, screen):
+  def draw(self, screen, visible):
     size = screen.get_size()
-    screen.blit(self.tilemap, (0, 0), (0, 0, size[0], size[1]))
+    screen.blit(self.obscured_tilemap, (0, 0), (0, 0, size[0], size[1]))
+
+    for t in visible:
+      x, y = self.surf_to_tile(t)
+      screen.blit(self.tilemap, (x, y), (x, y, self.tile_size, self.tile_size))
 
   def highlight_tile(self, screen, location):
     w, h = screen.get_size()
@@ -172,8 +186,10 @@ class Level():
   def grid_to_surf(self, spot):
     """ returns the surface location in the middle of the tile """
     return (spot[0]*self.tile_size)+self.tile_size/2, (spot[1]*self.tile_size)+self.tile_size/2
+  
 
   def manhattan_cost(self, start_pos):
+    logging.debug("generating manhatten cost for {0}".format(start_pos))
     start_row, start_col = start_pos
     start_cost = 0
     start = ((start_row, start_col), start_cost)
@@ -210,7 +226,8 @@ class Level():
 
   def regenerate_h_costs(self, pc_pos):
     logging.debug('Regenerating H costs for manhattan...')
-    self.h_costs = self.manhattan_cost(pc_pos)
+    #self.h_costs = self.manhattan_cost(pc_pos)
+    self.h_costs = self.h_cost_lookup[(pc_pos[0], pc_pos[1])]
 
   def get_path(self, surf_start, surf_end):
     start = self.surf_to_grid(surf_start)

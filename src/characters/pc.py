@@ -91,7 +91,7 @@ class PC():
   def move(self, elapsed):
     if not self.moved:
       return
-      
+
     x_pos = self.center[0]
     y_pos = self.center[1]
 
@@ -138,7 +138,8 @@ class PC():
       if not self.location_grid_space == grid_step:
         print self.location_grid_space, grid_step
         self.location_grid_space = grid_step
-        self.visible_tiles = self.level.get_fov(self.location_grid_space, self.orientation)
+        self.level.regenerate_h_costs(self.level.surf_to_grid(self.center))
+        self.refresh_fov()
     '''
     else:
       x = self.center[0] - x_pos
@@ -227,3 +228,7 @@ class PC():
 
   def get_int_location(self):
     return tuple(map(int, self.center))
+
+  def refresh_fov(self):
+    self.visible_tiles = self.level.get_fov(self.location_grid_space, self.orientation)
+

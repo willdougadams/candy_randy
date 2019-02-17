@@ -96,7 +96,7 @@ class Game(State):
     for npc_file in os.listdir(npc_path):
       npc_types.append(npc_path+npc_file)
 
-    for n in range(len(npc_types)/2):
+    for n in range(1):#len(npc_types)/2):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
       while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 10 for s in spots_taken):
         spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
@@ -115,7 +115,7 @@ class Game(State):
     self.active_skills = filter(lambda x: x is not None and x.alive, self.active_skills)
 
     if not self.pcs[self.active_pc].location_grid_space == self.pc_grid_location:
-      self.level.regenerate_h_costs(self.level.surf_to_grid(self.pcs[self.active_pc].center))
+      #self.level.regenerate_h_costs(self.level.surf_to_grid(self.pcs[self.active_pc].center))
       self.pc_grid_location = self.pcs[self.active_pc].location_grid_space
 
     for _, surf in self.damage_maps.iteritems():
@@ -159,7 +159,7 @@ class Game(State):
     self.screen.fill(self.BLACK)
     self.buffer_frame.fill(self.BLACK)
 
-    self.level.draw(self.buffer_frame)
+    self.level.draw(self.buffer_frame, self.pcs[self.active_pc].visible_tiles)
     for l in self.pcs[self.active_pc].visible_tiles:
       self.level.highlight_tile(self.buffer_frame, l)
 
@@ -196,14 +196,17 @@ class Game(State):
     down = pressed[pygame.K_s] * step_dist
     right = pressed[pygame.K_d] * step_dist
 
-    if any(map(lambda x: x > 0, [up, down, left, right])):
+    if any(map(lambda x: not x == 0, [up, down, left, right])):
+      self.pcs[self.active_pc].moved = True
       now = self.pcs[self.active_pc].center
       later = (now[0]+right-left), (now[1]+down-up)
       if not now == later:
         self.pcs[self.active_pc].target_dest = later
-        self.pcs[self.active_pc].moved = True
+        self.pcs[self.active_pc].refresh_fov()
       else:
         self.pcs[self.active_pc].moved = False
+    else:
+      self.pcs[self.active_pc].moved = False
 
     for event in user_input:
       if event.type == pygame.KEYDOWN:

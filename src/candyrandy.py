@@ -45,9 +45,12 @@ def main():
     user_input = pygame.event.get()
     mouse_position = pygame.mouse.get_pos()
 
-    mr_manager.state.update(user_input, mouse_position, elapsed)
-    mr_manager.state.draw()
-
+    try:
+      mr_manager.state.update(user_input, mouse_position, elapsed)
+      mr_manager.state.draw()
+    except Exception as e:
+      logging.critical(e)
+      exit()
     end = time.time()
   pygame.quit()
 
