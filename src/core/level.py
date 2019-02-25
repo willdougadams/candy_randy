@@ -51,12 +51,10 @@ class Level():
       if not grid == last_grid:
         self.components_generated += 1
 
-    #grid = apply_walls(grid)
-
     self.grid = grid
 
-    level_offset = (3 * self.tile_size * self.current_level)
-    world_offset = (7 * self.tile_size * self.current_world)
+    level_offset = (3 * self.current_level) * self.tile_size
+    world_offset = (7 * self.current_world) * self.tile_size 
     self.tilemap.fill((0, 0, 0))
     for y, row in enumerate(self.grid):
       for x, tile in enumerate(row):
@@ -73,6 +71,7 @@ class Level():
           tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
           self.tilemap.blit(self.floor_tilesheet, map_location, tile_rect)
         elif tile in self.wall_tile_symbols:
+          '''
           if tile == '/':
             tile = '|'
             tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
@@ -85,19 +84,14 @@ class Level():
             tile_surface.blit(self.wall_tilesheet, (0, 0), tile_rect)
             self.tilemap.blit(pygame.transform.flip(tile_surface, True, False), map_location, (0, 0, self.tile_size, self.tile_size))
           else:
-            tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
-            tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
-            tile_x = tileset_x + world_offset
-            tile_y = tileset_y + level_offset
-            map_location = self.surf_to_tile((y, x))#(x * self.tile_size, y * self.tile_size)
-            tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
-            self.tilemap.blit(self.wall_tilesheet, map_location, tile_rect)
-
-    if logging.getLogger().getEffectiveLevel() ==logging.debug:
-      for i in range(len(self.grid)):
-        for j in range(len(self.grid[i])):
-          r = pygame.Rect(i*self.tile_size, j*self.tile_size, self.tile_size, self.tile_size)
-          pygame.draw.rect(self.tilemap, colors.PINK, r, 1)
+          '''
+          tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
+          tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
+          tile_x = tileset_x + world_offset
+          tile_y = tileset_y + level_offset
+          map_location = self.surf_to_tile((y, x))#(x * self.tile_size, y * self.tile_size)
+          tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
+          self.tilemap.blit(self.wall_tilesheet, map_location, tile_rect)
 
     for i, row in enumerate(self.grid):
       for j, cell in enumerate(row):

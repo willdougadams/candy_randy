@@ -54,16 +54,31 @@ def print_room_to_grid(grid, room, r, c):
 
   for row in range(room.height-1):
     grid[r+row][c-1] = '|'
+    grid[r+row][c] = ';'
     grid[r+row][c+room.width-1] = '|'
+    grid[r+row][c+room.width-2] = ':'
 
   for col in range(room.width-1):
     grid[r-1][c+col] = '='
+    grid[r][c+col] = '-'
     grid[r+room.height-1][c+col] = '='
+    grid[r+room.height-2][c+col] = '_'
 
+  # top left corner
   grid[r-1][c-1] = '('
+  grid[r][c] = '{'
+
+  # bottom left corner
   grid[r-1][c+room.width-1] = ')'
+  grid[r][c+room.width-2] = '}'
+
+  # top right corner
   grid[r+room.height-1][c-1] = 'l'
+  grid[r+room.height-2][c] = '['
+
+  # bottom right corner
   grid[r+room.height-1][c+room.width-1] = 'r'
+  grid[r+room.height-2][c+room.width-2] = ']'
 
   return grid
 
@@ -116,20 +131,21 @@ def place_room(grid, room):
   return grid
 
 def print_hallway_to_map(grid, spot, direction):
-  while grid[spot[0]][spot[1]] == '.':
+  floor_tile = 'h'
+  if direction in set([(1, 0), (-1, 0)]):
+    floor_tile = 'v'
+
+  while grid[spot[0]][spot[1]] in floor_tile_symbols:
     spot = (spot[0]+direction[0], spot[1]+direction[1])
 
   # then keep going, if new room detected return true, else false
-  while not grid[spot[0]][spot[1]] == '.':
-    grid[spot[0]][spot[1]] = '.'
+  while not grid[spot[0]][spot[1]] in floor_tile_symbols:
+    grid[spot[0]][spot[1]] = floor_tile
     spot = (spot[0]+direction[0], spot[1]+direction[1])
-
-  #spot = (spot[0]+direction[0], spot[1]+direction[1])
-  #grid[spot[0]][spot[1]] = '.'
 
   return grid
 
-def search_for_room(grid, r=None, c=None, target_tile='.', start=None):
+def search_for_room(grid, r=None, c=None, start=None):
   visited = {}
   if r is None:
     r = random.randint(1, len(grid)-1)
@@ -147,7 +163,7 @@ def search_for_room(grid, r=None, c=None, target_tile='.', start=None):
   queue = [(r, c)]
   while queue:
     spot = queue.pop(0)
-    if grid[spot[0]][spot[1]] == target_tile:
+    if grid[spot[0]][spot[1]] in floor_tile_symbols:
       return spot
 
     visited[spot] = True
@@ -182,15 +198,15 @@ def scout(grid, spot, direction):
     return spot
 
   good_to_go = False
-  while spot and grid[spot[0]][spot[1]] == '.':
+  while spot and grid[spot[0]][spot[1]] in floor_tile_symbols:
     spot = increment_spot(spot)
 
-  while spot and not grid[spot[0]][spot[1]] == '.':
+  while spot and not grid[spot[0]][spot[1]] in floor_tile_symbols:
     spot = increment_spot(spot)
 
   if not spot:
       return False
-  good_to_go = (grid[spot[0]][spot[1]] == '.')
+  good_to_go = (grid[spot[0]][spot[1]] in floor_tile_symbols)
 
   return good_to_go
 
@@ -232,7 +248,7 @@ def erase_space(grid, r, c):
       neighbors = [(r+1, c), (r-1, c), (r, c+1), (r, c-1)]
       neighbors = [x for x in neighbors if not x in visited]
       neighbors = [x for x in neighbors if x[0]>=0 and x[0]<len(grid) and x[1]>=0 and x[1]<len(grid[0])]
-      neighbors = [x for x in neighbors if grid[x[0]][x[1]] == '.']
+      neighbors = [x for x in neighbors if grid[x[0]][x[1]] in floor_tile_symbols]
       for n in neighbors:
         visited[n] = True
         queue.append(n)

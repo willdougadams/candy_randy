@@ -24,7 +24,7 @@ class Game(State):
   WHITE = (255, 255, 255)
   BLACK = (0, 0, 0)
 
-  def __init__(self, screen, level=1, world=0):
+  def __init__(self, screen, level=3, world=0):
     logging.info('Initializing Game...')
     self.ticks = 0
     self.screen = screen
@@ -66,7 +66,6 @@ class Game(State):
     '''
     spots_taken = []
 
-    
     spawn = generate_level.search_for_room(self.level.grid, start='random')
     while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 10 for s in spots_taken):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
@@ -92,7 +91,7 @@ class Game(State):
     for npc_file in os.listdir(npc_path):
       npc_types.append(npc_path+npc_file)
 
-    for n in range(1):#len(npc_types)/2):
+    for n in range(5):#len(npc_types)/2):
       spawn = generate_level.search_for_room(self.level.grid, start='random')
       while any(math.hypot(s[0]-spawn[0], s[1]-spawn[1]) < 10 for s in spots_taken):
         spawn = generate_level.search_for_room(self.level.grid, random.randint(1, len(self.level.grid)-2), random.randint(1, len(self.level.grid)-2))
@@ -100,7 +99,7 @@ class Game(State):
       n = NPC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, npc_types[n%len(npc_types)], self.level)
       new_path = self.level.get_path(n.center, self.pcs[self.active_pc].center)
       n.add_path(new_path)
-      self.npcs.append(n)
+      #self.npcs.append(n)
 
   def update(self, user_input, mouse_position, elapsed):
     self.ticks += 1
@@ -135,12 +134,14 @@ class Game(State):
           self.items.remove(i)
       p.update(elapsed, self.damage_maps)
 
+    '''
     # Win Condition
     if all(not n.alive for n in self.npcs):
       if self.current_level >= 3 or self.current_world >= 3:
         self.manager.go_to(WinScreen(self.screen, ("Congrats you win",)))
       else:
         self.__init__(self.screen, self.current_level+1, self.current_world+1)
+    '''
 
     # Lose condition
     if all(not p.alive for p in self.pcs):
