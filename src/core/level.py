@@ -37,7 +37,7 @@ class Level():
     grid = [[" "]*self.map_size for _ in range(self.map_size)]
     self.grid = grid
 
-    room_min_size = 3
+    room_min_size = 4
     room_max_size = 8
     rooms = [pygame.Rect(0, 0, random.randint(room_min_size, room_max_size), random.randint(room_min_size, room_max_size)) for _ in range(self.rooms_amt)]
 

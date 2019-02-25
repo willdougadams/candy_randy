@@ -138,15 +138,14 @@ def print_hallway_to_map(grid, spot, direction):
   while grid[spot[0]][spot[1]] in floor_tile_symbols:
     spot = (spot[0]+direction[0], spot[1]+direction[1])
 
-  # then keep going, if new room detected return true, else false
   while not grid[spot[0]][spot[1]] in floor_tile_symbols:
     grid[spot[0]][spot[1]] = floor_tile
     if floor_tile == 'v':
       grid[spot[0]][spot[1]-1] = '|'
       grid[spot[0]][spot[1]+1] = '|'
     else:
-      grid[spot[0]+1][spot[1]] = '-'
-      grid[spot[0]-1][spot[1]] = '_'
+      grid[spot[0]+1][spot[1]] = '='
+      grid[spot[0]-1][spot[1]] = '='
     spot = (spot[0]+direction[0], spot[1]+direction[1])
 
   return grid
@@ -264,75 +263,9 @@ def erase_space(grid, r, c):
 def all_connected(grid):
   for r in range(len(grid)):
     for c in range(len(grid[0])):
-      if grid[r][c] == '.':
+      if grid[r][c] in floor_tile_symbols:
         erased = erase_space(copy.deepcopy(grid), r, c)
-        return not any(t == '.' for row in erased for t in row)
+        return not any(t in floor_tile_symbols for row in erased for t in row)
 
-def apply_walls(grid):
-  tile_lookup = {}
+  raise Exception('Map has no floor')
 
-  tile_lookup['B..B..BBB'] = '['
-  tile_lookup['..B..BBBB'] = ']'
-  tile_lookup['BBBB..B..'] = '{'
-  tile_lookup['BB.B..B..'] = '{'
-  tile_lookup['BBB..B..B'] = '}'
-  tile_lookup['.BB..B..B'] = '}'
-
-  tile_lookup['BBB......'] = '-'
-  tile_lookup['BB.......'] = '-'
-  tile_lookup['.BB......'] = '-'
-  tile_lookup['......BBB'] = '_'
-
-  tile_lookup['BBBBBB...'] = '='
-  tile_lookup['BBBBBB..B'] = '='
-  tile_lookup['BBBBBBB..'] = '='
-  tile_lookup['...BBBBBB'] = '='
-  tile_lookup['B..BBBBBB'] = '='
-  tile_lookup['..BBBBBBB'] = '='
-
-  tile_lookup['B..B..B..'] = ';'
-  tile_lookup['..B..B..B'] = ':'
-
-  tile_lookup['BB.BB.BB.'] = '|'
-  tile_lookup['BBBBB.BB.'] = '|'
-  tile_lookup['BB.BB.BBB'] = '|'
-  tile_lookup['.BB.BB.BB'] = '|'
-  tile_lookup['BBB.BB.BB'] = '|'
-  tile_lookup['.BB.BBBBB'] = '|'
-  tile_lookup['.B..B..B.'] = '|'
-
-  tile_lookup['BBBBBBBB.'] = '('
-  tile_lookup['....BB.BB'] = '('
-  tile_lookup['..B.BB.BB'] = '('
-  tile_lookup['BBBBBB.BB'] = ')'
-  tile_lookup['...BB.BB.'] = ')'
-
-  tile_lookup['BB.BB....'] = 'r'
-  tile_lookup['.BBBBBBBB'] = 'r'
-  tile_lookup['BBBBB....'] = 'r'
-  tile_lookup['.BB.BB...'] = 'l'
-  tile_lookup['BB.BBBBBB'] = 'l'
-  tile_lookup['BBB.BB...'] = 'l'
-  
-  tile_lookup['B.BB.BB.B'] = 'v'
-  tile_lookup['B.BB.B...'] = 'v'
-  tile_lookup['...B.BB.B'] = 'v'
-  tile_lookup['BBB...BBB'] = 'h'
-  tile_lookup['.BB....BB'] = 'h'
-  tile_lookup['BB....BB.'] = 'h'
-
-  walls_to_apply = {}
-  for row in range(1, len(grid)-1):
-    for col in range(1, len(grid[row])-1):
-      patch = ''
-      for sub_row in grid[row-1:row+2]:
-        for tile in sub_row[col-1:col+2]:
-          patch += tile
-      
-      if patch in tile_lookup:
-        walls_to_apply[(row, col)] = tile_lookup[patch]
-
-  for spot, tile in walls_to_apply.iteritems():
-    grid[spot[0]][spot[1]] = tile
-
-  return grid
