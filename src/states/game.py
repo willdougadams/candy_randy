@@ -156,7 +156,10 @@ class Game(State):
       for l in self.pcs[self.active_pc].visible_tiles:
         self.level.highlight_tile(self.buffer_frame, l)
 
+    visible = self.pcs[self.active_pc].visible_tiles
     for n in self.npcs:
+      if not n.location_grid_space in visible:
+        continue
       if RUNTIME_LOG_LEVEL <= logging.DEBUG:
         self.level.highlight_tile(self.buffer_frame, n.location_grid_space)
       n.draw(self.buffer_frame)
@@ -167,6 +170,8 @@ class Game(State):
       p.draw(self.buffer_frame)
 
     for i in self.items:
+      if not i.location in visible:
+        continue
       i.draw(self.buffer_frame)
 
     for a in self.active_skills:
