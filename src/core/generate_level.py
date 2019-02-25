@@ -5,6 +5,44 @@ import random
 
 ROOM_BUFFER = 3
 
+floor_tile_offsets = {}
+floor_tile_offsets["top_left"]       = (0, 0)
+floor_tile_offsets["top_center"]     = (1, 0)
+floor_tile_offsets["top_right"]      = (2, 0)
+floor_tile_offsets["left_edge"]     = (0, 1)
+floor_tile_offsets["center"]        = (1, 1)
+floor_tile_offsets["right_edge"]    = (2, 1)
+floor_tile_offsets["bottom_left"]    = (0, 2)
+floor_tile_offsets["bottom_center"]  = (1, 2)
+floor_tile_offsets["bottom_right"]   = (2, 2)
+floor_tile_offsets["top_hallway"]    = (3, 0)
+floor_tile_offsets["vert_hallway"]   = (3, 1)
+floor_tile_offsets["bottom_hallway"] = (3, 2)
+floor_tile_offsets["left_hallway"]  = (4, 1)
+floor_tile_offsets["hori_hallway"]  = (5, 1)
+floor_tile_offsets["right_hallway"] = (6, 1)
+
+floor_tile_symbols = {}
+floor_tile_symbols["}"] = "top_right"
+floor_tile_symbols["-"] = "top_center"
+floor_tile_symbols["{"] = "top_left"
+floor_tile_symbols[";"] = "left_edge"
+floor_tile_symbols["."] = "center"
+floor_tile_symbols[":"] = "right_edge"
+floor_tile_symbols["["] = "bottom_left"
+floor_tile_symbols["_"] = "bottom_center"
+floor_tile_symbols["]"] = "bottom_right"
+floor_tile_symbols['h'] = 'hori_hallway'
+floor_tile_symbols['v'] = 'vert_hallway'
+
+wall_tile_symbols = {}
+wall_tile_symbols['='] = "top_center"
+wall_tile_symbols['('] = "top_left"
+wall_tile_symbols[')'] = "top_right"
+wall_tile_symbols['|'] = 'left_edge'
+wall_tile_symbols['l'] = 'bottom_left'
+wall_tile_symbols['r'] = 'bottom_right'
+
 def print_room_to_grid(grid, room, r, c):
   for row in range(-ROOM_BUFFER, room.height+ROOM_BUFFER):
     for col in range(-ROOM_BUFFER, room.width+ROOM_BUFFER):
@@ -13,6 +51,19 @@ def print_room_to_grid(grid, room, r, c):
   for row in range(room.height-1):
     for col in range(room.width-1):
       grid[r+row][c+col] = '.'
+
+  for row in range(room.height-1):
+    grid[r+row][c-1] = '|'
+    grid[r+row][c+room.width-1] = '|'
+
+  for col in range(room.width-1):
+    grid[r-1][c+col] = '='
+    grid[r+room.height-1][c+col] = '='
+
+  grid[r-1][c-1] = '('
+  grid[r-1][c+room.width-1] = ')'
+  grid[r+room.height-1][c-1] = 'l'
+  grid[r+room.height-1][c+room.width-1] = 'r'
 
   return grid
 
