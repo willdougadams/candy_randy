@@ -16,10 +16,10 @@ floor_tile_offsets["bottom_left"]    = (0, 2)
 floor_tile_offsets["bottom_center"]  = (1, 2)
 floor_tile_offsets["bottom_right"]   = (2, 2)
 floor_tile_offsets["top_hallway"]    = (3, 0)
-floor_tile_offsets["vert_hallway"]   = (3, 1)
+floor_tile_offsets["vert_hallway"]   = (1, 5)
 floor_tile_offsets["bottom_hallway"] = (3, 2)
 floor_tile_offsets["left_hallway"]  = (4, 1)
-floor_tile_offsets["hori_hallway"]  = (5, 1)
+floor_tile_offsets["hori_hallway"]  = (1, 3)
 floor_tile_offsets["right_hallway"] = (6, 1)
 
 floor_tile_symbols = {}
@@ -141,6 +141,12 @@ def print_hallway_to_map(grid, spot, direction):
   # then keep going, if new room detected return true, else false
   while not grid[spot[0]][spot[1]] in floor_tile_symbols:
     grid[spot[0]][spot[1]] = floor_tile
+    if floor_tile == 'v':
+      grid[spot[0]][spot[1]-1] = '|'
+      grid[spot[0]][spot[1]+1] = '|'
+    else:
+      grid[spot[0]+1][spot[1]] = '-'
+      grid[spot[0]-1][spot[1]] = '_'
     spot = (spot[0]+direction[0], spot[1]+direction[1])
 
   return grid

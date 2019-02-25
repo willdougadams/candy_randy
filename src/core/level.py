@@ -67,29 +67,15 @@ class Level():
           tileset_y = self.floor_tile_offsets[self.floor_tile_symbols[tile]][0] * self.tile_size
           tile_x = tileset_x + world_offset
           tile_y = tileset_y + level_offset
-          map_location = self.surf_to_tile((y, x))#(x * self.tile_size, y * self.tile_size)
+          map_location = self.surf_to_tile((y, x))
           tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
           self.tilemap.blit(self.floor_tilesheet, map_location, tile_rect)
         elif tile in self.wall_tile_symbols:
-          '''
-          if tile == '/':
-            tile = '|'
-            tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
-            tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
-            tile_x = tileset_x + world_offset
-            tile_y = tileset_y + level_offset
-            map_location = self.surf_to_tile((y, x))#(x * self.tile_size, y * self.tile_size)
-            tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
-            tile_surface = pygame.Surface((self.tile_size, self.tile_size))
-            tile_surface.blit(self.wall_tilesheet, (0, 0), tile_rect)
-            self.tilemap.blit(pygame.transform.flip(tile_surface, True, False), map_location, (0, 0, self.tile_size, self.tile_size))
-          else:
-          '''
           tileset_x = self.floor_tile_offsets[self.wall_tile_symbols[tile]][1] * self.tile_size
           tileset_y = self.floor_tile_offsets[self.wall_tile_symbols[tile]][0] * self.tile_size
           tile_x = tileset_x + world_offset
           tile_y = tileset_y + level_offset
-          map_location = self.surf_to_tile((y, x))#(x * self.tile_size, y * self.tile_size)
+          map_location = self.surf_to_tile((y, x))
           tile_rect = (tile_x, tile_y, self.tile_size, self.tile_size)
           self.tilemap.blit(self.wall_tilesheet, map_location, tile_rect)
 
