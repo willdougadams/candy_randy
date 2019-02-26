@@ -20,7 +20,7 @@ class Character:
     self.level = level
     self.orientation = 0
     self.step = 0
-    self.location_grid_space = self.level.surf_to_grid(self.center)#int(self.center[1]/len(self.level.grid)), int(self.center[0]/len(self.level.grid[0]))
+    self.location_grid_space = self.level.surf_to_grid(self.center)
     self.visible_tiles = self.level.get_fov(self.location_grid_space, self.orientation)
     self.r = r
     self.width = int(self.attrib_dict["sprite_width"])
@@ -31,26 +31,16 @@ class Character:
     self.moved = True
     self.gear = Gear()
 
+    self.attack = Jab(self, 'res/Skills/Swing.skill', self.gear.get_reach())
+    self.attack.set_image(self.gear.get_attack_image())
+    self.attack_file = 'res/Skills/Swing.skill'
+
     self.alive_color = colors.BLUE
     self.dead_color = colors.BLACK
     self.draw_color = self.alive_color
     self.move_speed = int(self.attrib_dict['move_speed'])
-    self.attack = Jab(self, 'res/Skills/Swing.skill', self.gear.get_reach())
-    self.attack.set_image(self.gear.get_attack_image())
     self.max_speed = 15
 
-    '''
-    skills[] will hold the actual skill objects, and will refill skill
-    slots appropriatly using skill_types, which is a list of the constructors
-    '''
-    self.skills = []
-    self.skill_types = [AOE, Bolt, Aura]
-    self.skill_files = ['res/Skills/AOE.skill', 'res/Skills/Bolt.skill', 'res/Skills/Aura.skill']
-    self.attack_file = 'res/Skills/Swing.skill'
-    for i, skill_type in enumerate(self.skill_types):
-      self.skills.append(skill_type(self, self.skill_files[i]))
-
-    self.active_skill = 0
     self.health_points = int(self.attrib_dict["health"])
     self.alive = True
 
@@ -76,9 +66,6 @@ class Character:
     self.move(elapsed)
     self.update_sprite(elapsed)
     self.apply_damage(elapsed, damage_maps)
-
-    for skill in self.skills:
-      skill.update(elapsed)
 
     self.attack.update(elapsed)
 
@@ -132,14 +119,6 @@ class Character:
       if not self.location_grid_space == grid_step:
         self.location_grid_space = grid_step
         self.refresh_fov()
-    '''
-    else:
-      x = self.center[0] - x_pos
-      y = self.center[1] - y_pos
-
-      self.center = (x_pos+x, y_pos+y)
-      self.location_grid_space = self.level.surf_to_grid(step)
-    '''
 
   def get_int_location(self):
     return tuple(map(int, self.center))

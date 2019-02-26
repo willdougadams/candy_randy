@@ -99,7 +99,7 @@ class Game(State):
       n = NPC(self.level.grid_to_surf(spawn), 10, self.buffer_frame, npc_types[n%len(npc_types)], self.level)
       new_path = self.level.get_path(n.center, self.pcs[self.active_pc].center)
       n.add_path(new_path)
-      #self.npcs.append(n)
+      self.npcs.append(n)
 
   def update(self, user_input, mouse_position, elapsed):
     self.ticks += 1
@@ -134,14 +134,12 @@ class Game(State):
           self.items.remove(i)
       p.update(elapsed, self.damage_maps)
 
-    '''
     # Win Condition
     if all(not n.alive for n in self.npcs):
       if self.current_level >= 3 or self.current_world >= 3:
         self.manager.go_to(WinScreen(self.screen, ("Congrats you win",)))
       else:
         self.__init__(self.screen, self.current_level+1, self.current_world+1)
-    '''
 
     # Lose condition
     if all(not p.alive for p in self.pcs):

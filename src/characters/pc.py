@@ -17,13 +17,23 @@ class PC(Character):
 
   def __init__(self, coord, r, buffer_frame, filename, level):
     Character.__init__(self, coord, r, buffer_frame, filename, level)
+    '''
+    skills[] will hold the actual skill objects, and will refill skill
+    slots appropriatly using skill_types, which is a list of the constructors
+    '''
+    self.skills = []
+    self.skill_types = [AOE, Bolt, Aura]
+    self.skill_files = ['res/Skills/AOE.skill', 'res/Skills/Bolt.skill', 'res/Skills/Aura.skill']
+    for i, skill_type in enumerate(self.skill_types):
+      self.skills.append(skill_type(self, self.skill_files[i]))
+
+    self.active_skill = 0
 
   def update(self, elapsed, damage_maps):
     logging.debug('Update Character: {0}'.format(str(self)))
-    
-    if not self.alive:
-      return
     Character.update(self, elapsed, damage_maps)
+    for skill in self.skills:
+      skill.update(elapsed)
 
   def move(self, elapsed):
     Character.move(self, elapsed)
